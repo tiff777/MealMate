@@ -52,3 +52,29 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Environment Variables
+.env
+appsettings.Development.json
+
+
+# React
+.DS_Store
+node_modules
+.idea
+.vscode
+
+# React build output
+build/
+dist/
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Azure deployment files
+*.publishsettings
+*.azurePubxml
+.azure/
