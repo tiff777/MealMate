@@ -78,3 +78,11 @@ coverage/
 *.publishsettings
 *.azurePubxml
 .azure/
+
+# Visual Studio specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vsidx
+.vs/
