@@ -20,7 +20,6 @@ namespace backend.Models.Entity
 
         public string[] Interests { get; set; } = new string[0];
         public string[] PreferredCuisines { get; set; } = new string[0];
-        public string BudgetRange { get; set; } = "10-20";
 
         public bool IsOnline { get; set; } = false;
         public DateTimeOffset LastSeen { get; set; } = DateTimeOffset.UtcNow;
