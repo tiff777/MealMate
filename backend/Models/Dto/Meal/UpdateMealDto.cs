@@ -8,6 +8,6 @@
         public string? RestaurantName { get; set; }
         public string? RestaurantAddress { get; set; }
         public DateTimeOffset? MealDate { get; set; }
-        public string[]? Tags { get; set; }
+        public List<String>? Tags { get; set; }
     }
 }

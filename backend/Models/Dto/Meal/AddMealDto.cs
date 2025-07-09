@@ -8,7 +8,7 @@
         public required string RestaurantName { get; set; } = "";
         public required string RestaurantAddress { get; set; } = "";
         public DateTimeOffset MealDate { get; set; }
-        public string[]? Tags { get; set; }
+        public List<String>? Tags { get; set; }
         public int HostId { get; set; }
     }
 }

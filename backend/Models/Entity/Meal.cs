@@ -19,7 +19,7 @@ namespace backend.Models.Entity
 
         public DateTimeOffset mealDate { get; set; }
 
-        public string[]? Tags { get; set; }
+        public List<String>? Tags { get; set; }
         public MealStatus status { get; set; } = MealStatus.Upcoming;
 
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;

@@ -1,5 +1,6 @@
 ﻿using backend.Models.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace backend.Data
 {
@@ -28,15 +29,11 @@ namespace backend.Data
                 entity.Property(e => e.PasswordHash).HasMaxLength(255);
                 entity.Property(e => e.Bio).HasMaxLength(1000);
 
-                // Configure string arrays to be stored as JSON
+                // Configure string arrays to be stored as comma-separated strings
                 entity.Property(e => e.Interests)
-                      .HasConversion(
-                          v => string.Join(',', v),
-                          v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+                      .HasConversion(CommaSeparatedString());
                 entity.Property(e => e.PreferredCuisines)
-                      .HasConversion(
-                          v => string.Join(',', v),
-                          v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+                      .HasConversion(CommaSeparatedString());
             });
 
 
@@ -55,7 +52,7 @@ namespace backend.Data
                 entity.Property(e => e.Tags)
                       .HasConversion(
                           v => v != null ? string.Join(',', v) : null,
-                          v => !string.IsNullOrEmpty(v) ? v.Split(',', StringSplitOptions.RemoveEmptyEntries) : new string[0]);
+                          v => !string.IsNullOrEmpty(v) ? v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() : new());
 
                 entity.HasOne(e => e.Host)
                       .WithMany(u => u.HostedMeals)
@@ -84,6 +81,16 @@ namespace backend.Data
             });
         }
 
+        private static ValueConverter<List<string>, string> CommaSeparatedString ()
+        {
+            return new ValueConverter<List<string>, string>(
+            list => list.Any() ? string.Join(',', list) : "",
+            str => string.IsNullOrEmpty(str)
+            ? new List<string>()
+            : str.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+            );
+        }
 
     }
+    
 }

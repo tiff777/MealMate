@@ -5,7 +5,7 @@ namespace backend.Data.DummyData
 {
     public static class DataSeeder
     {
-        public static async Task SeedAsync(ApplicationDbContext context)
+        public static async Task SeedAsync(ApplicationDbContext context, IConfiguration configuration)
         {
             // Clear existing data
             if (context.MealParticipants.Any())
@@ -24,7 +24,7 @@ namespace backend.Data.DummyData
             await context.SaveChangesAsync();
 
             // Seed Users
-            var users = DummyUsers.GetUsers();
+            var users = DummyUsers.GetUsers(configuration);
             context.Users.AddRange(users);
             await context.SaveChangesAsync();
 
@@ -49,7 +49,7 @@ namespace backend.Data.DummyData
                     RestaurantName = "Mukbang Korean BBQ & Soup Buffet Restaurant",
                     RestaurantAddress = "480 Queen Street, Auckland Central, Auckland 1010",
                     mealDate = DateTimeOffset.UtcNow.AddHours(3),
-                    Tags = new string[] { "Korean Food", "Social", "Weekend" },
+                    Tags = new List<string> { "Korean Food", "Social", "Weekend" },
                     status = MealStatus.Confirmed,
                     CreatedAt = DateTimeOffset.UtcNow.AddDays(-1),
                     UpdatedAt = DateTimeOffset.UtcNow
@@ -64,7 +64,7 @@ namespace backend.Data.DummyData
                     RestaurantName = "Pizza Club - Central",
                     RestaurantAddress = "16 Darby Street Cnr. of Darby St. &, Elliott Street, Auckland 1010",
                     mealDate = DateTimeOffset.UtcNow.AddDays(1),
-                    Tags = new string[] { "Study", "CS Students", "Pizza" },
+                    Tags = new List<string> { "Study", "CS Students", "Pizza" },
                     status = MealStatus.Upcoming,
                     CreatedAt = DateTimeOffset.UtcNow.AddHours(-12),
                     UpdatedAt = DateTimeOffset.UtcNow
@@ -79,7 +79,7 @@ namespace backend.Data.DummyData
                     RestaurantName = "Starbucks Symonds Street",
                     RestaurantAddress = "Tenancy G01, The Forte Building, 37 Symonds Street, Auckland 1010",
                     mealDate = DateTimeOffset.UtcNow.AddDays(2).AddHours(10),
-                    Tags = new string[] { "Coffee", "Programming", "Morning" },
+                    Tags = new List<string> { "Coffee", "Programming", "Morning" },
                     status = MealStatus.Upcoming,
                     CreatedAt = DateTimeOffset.UtcNow.AddHours(-6),
                     UpdatedAt = DateTimeOffset.UtcNow
@@ -94,7 +94,7 @@ namespace backend.Data.DummyData
                     RestaurantName = "Campus Food Court",
                     RestaurantAddress = "level 2, Kate Edger Information Commons, 2 Alfred Street, Auckland Central, Auckland 1010",
                     mealDate = DateTimeOffset.UtcNow.AddHours(2),
-                    Tags = new string[] { "Casual", "Friends", "Quick Lunch" },
+                    Tags = new List<string> { "Casual", "Friends", "Quick Lunch" },
                     status = MealStatus.Confirmed,
                     CreatedAt = DateTimeOffset.UtcNow.AddHours(-1),
                     UpdatedAt = DateTimeOffset.UtcNow
@@ -109,7 +109,7 @@ namespace backend.Data.DummyData
                     RestaurantName = "Healthy Bowls",
                     RestaurantAddress = "321 Forest Ave, Auckland",
                     mealDate = DateTimeOffset.UtcNow.AddDays(1).AddHours(17),
-                    Tags = new string[] { "Healthy", "Vegetarian", "New Place" },
+                    Tags = new List<string> { "Healthy", "Vegetarian", "New Place" },
                     status = MealStatus.Upcoming,
                     CreatedAt = DateTimeOffset.UtcNow.AddHours(-2),
                     UpdatedAt = DateTimeOffset.UtcNow
@@ -124,7 +124,7 @@ namespace backend.Data.DummyData
                     RestaurantName = "Campus Food Court",
                     RestaurantAddress = "level 2, Kate Edger Information Commons, 2 Alfred Street, Auckland Central, Auckland 1010",
                     mealDate = DateTimeOffset.UtcNow.AddDays(-1),
-                    Tags = new string[] { "Welcome", "First Years", "Social" },
+                    Tags = new List<string> { "Welcome", "First Years", "Social" },
                     status = MealStatus.Completed,
                     CreatedAt = DateTimeOffset.UtcNow.AddDays(-2),
                     UpdatedAt = DateTimeOffset.UtcNow.AddDays(-1)

@@ -18,8 +18,8 @@ namespace backend.Models.Entity
         public string Avatar { get; set; } = "👤";
 
 
-        public string[] Interests { get; set; } = new string[0];
-        public string[] PreferredCuisines { get; set; } = new string[0];
+        public List<string> Interests { get; set; } = new();
+        public List<string> PreferredCuisines { get; set; } = new();
 
         public bool IsOnline { get; set; } = false;
         public DateTimeOffset LastSeen { get; set; } = DateTimeOffset.UtcNow;
