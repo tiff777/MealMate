@@ -56,7 +56,7 @@ namespace backend.Data
 
                 entity.HasOne(e => e.Host)
                       .WithMany(u => u.HostedMeals)
-                      .HasForeignKey(e => e.hostId)
+                      .HasForeignKey(e => e.HostId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 

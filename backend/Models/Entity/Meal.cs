@@ -17,16 +17,16 @@ namespace backend.Models.Entity
         public required string RestaurantName { get; set; }
         public required string RestaurantAddress { get; set; }
 
-        public DateTimeOffset mealDate { get; set; }
+        public DateTimeOffset MealDate { get; set; }
 
         public List<String>? Tags { get; set; }
-        public MealStatus status { get; set; } = MealStatus.Upcoming;
+        public MealStatus Status { get; set; } = MealStatus.Upcoming;
 
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         // Store the host user information
-        public required int hostId { get; set; }
+        public required int HostId { get; set; }
         public virtual User Host { get; set; } = null!;
         public virtual ICollection<MealParticipant> Participants { get; set; } = new List<MealParticipant>();
     }
