@@ -12,7 +12,7 @@ namespace backend.Extention
             meal.MaxParticipant = dto.MaxParticipant ?? meal.MaxParticipant;
             meal.RestaurantName = dto.RestaurantName ?? meal.RestaurantName;
             meal.RestaurantAddress = dto.RestaurantAddress ?? meal.RestaurantAddress;
-            meal.mealDate = dto.MealDate ?? meal.mealDate;
+            meal.MealDate = dto.MealDate ?? meal.MealDate;
             meal.Tags = dto.Tags ?? meal.Tags;
             
             meal.UpdatedAt = DateTimeOffset.UtcNow;
