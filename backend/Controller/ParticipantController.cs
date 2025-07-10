@@ -1,5 +1,7 @@
 ﻿using Azure.Core;
+using backend.Attributes;
 using backend.Data;
+using backend.Extention;
 using backend.Models.Entity;
 using backend.Models.Enum;
 using Microsoft.AspNetCore.Mvc;
@@ -19,8 +21,10 @@ namespace backend.Controller
         }
 
         [HttpPost("join/{mealId}")]
-        public async Task<IActionResult> JoinMeal(int mealId, int userId)
+        [AuthorizeUser]
+        public async Task<IActionResult> JoinMeal(int mealId)
         {
+            var userId = this.GetCurrentUserId();
             try
             {
                 var meal = await _db.Meals.FindAsync(mealId);
@@ -59,8 +63,10 @@ namespace backend.Controller
         }
 
         [HttpDelete("leave/{mealId}")]
-        public async Task<IActionResult> LeaveMeal (int mealId, int userId)
+        [AuthorizeUser]
+        public async Task<IActionResult> LeaveMeal (int mealId)
         {
+            var userId = this.GetCurrentUserId();
             try
             {
                 var participant = await _db.MealParticipants
@@ -121,6 +127,14 @@ namespace backend.Controller
                 var participants = await _db.MealParticipants
                     .Include(p => p.User)
                     .Where(p => p.MealId == mealId)
+                    .Select(p => new
+                    {
+                        UserId = p.User.Uid,
+                        Name = p.User.Name,
+                        Email = p.User.Email,
+                        Avatar = p.User.Avatar,
+                        Bio = p.User.Bio
+                    })
                     .ToListAsync();
 
                 return Ok(participants);
@@ -140,6 +154,14 @@ namespace backend.Controller
                 var meals = await _db.MealParticipants
                     .Include(p => p.Meal)
                     .Where(p => p.UserId == userId)
+                    .Select(p => new
+                    {
+                        MealId = p.Meal.Mid,
+                        Title = p.Meal.Title,
+                        Description = p.Meal.Description,
+                        Date = p.Meal.MealDate,
+                        Address = p.Meal.RestaurantAddress
+                    })
                     .ToListAsync();
 
                 return Ok(meals);
