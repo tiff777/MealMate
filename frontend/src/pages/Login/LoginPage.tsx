@@ -19,7 +19,7 @@ function LoginPage() {
       });
 
       if (response.data.user) {
-        loginUser(response.data.user);
+        loginUser(response.data.user, response.data.token);
         navigate("/meal");
       }
     } catch (error) {
