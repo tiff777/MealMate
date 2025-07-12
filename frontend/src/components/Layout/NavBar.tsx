@@ -1,32 +1,54 @@
 import React, { useContext } from "react";
 import SwitchThemeButton from "../Button/SwitchThemeButton";
+import Navigation from "./Navigation";
+import { AppContext } from "../../context/AppContext";
 
 function NavBar() {
+  const { user } = useContext(AppContext);
+
+  const userNavItems = [
+    { path: "/meal", label: "Find Meal", exact: true },
+    { path: "/buddy", label: "Find Buddy", exact: true },
+    { path: "/my-meals", label: "My Meals", exact: false },
+    { path: "/messages", label: "Messages", exact: false },
+    { path: "/profile", label: "Profile", exact: false },
+  ];
+
+  const navItems = [
+    { path: "/meal", label: "Find Meal", exact: true },
+    { path: "/buddy", label: "Find Buddy", exact: true },
+  ];
+
   return (
     <>
-      <header className="bg-gradient-to-r from-rose-400 to-teal-400 dark:from-rose-500 dark:to-teal-500 px-6 py-3 shadow dark:shadow-gray-900/20 flex items-center justify-between transition-all duration-300">
+      <header className="bg-gradient-to-r from-rose-400 vida-rose-350 to-rose-300 dark:from-rose-900/60 dark:to-blue-900/90 px-6 py-3 shadow dark:shadow-gray-900/20 flex items-center justify-between transition-all duration-300">
         <div className="text-xl font-bold text-white flex items-center gap-2">
-          <img src="/logo.svg" alt="logo" className="w-6 h-6" />
           MealMate
         </div>
+        {user ? (
+          <Navigation items={userNavItems} />
+        ) : (
+          <Navigation items={navItems} />
+        )}
 
-        <nav className="flex gap-6 text-sm text-white">
-          <button className="hover:underline hover:text-white/90 transition-colors">
-            Find Meal
+        <div className="flex gap-2">
+          <button
+            className="px-4 py-2 rounded-full border bg-[#f9fafb] border-pink-500 text-rose-400 font-medium
+           hover:scale-105 hover:shadow-md transition-transform duration-300
+           dark:bg-gray-700/90 dark:border-gray-700/90 dark:text-[#f9fafb]"
+          >
+            Sign Up
           </button>
-          <button className="hover:underline hover:text-white/90 transition-colors">
-            Find Buddy
+
+          <button
+            className="px-4 py-2 rounded-full bg-pink-400 text-white font-medium
+           hover:scale-105 hover:shadow-md transition-transform duration-300
+           dark:bg-purple-600 dark:text-[#f9fafb]"
+          >
+            Sign In
           </button>
-          <button className="bg-white/20 hover:bg-white/30 dark:bg-white/25 dark:hover:bg-white/35 px-3 py-1 rounded text-white transition-all duration-200">
-            My Meals
-          </button>
-          <button className="hover:underline hover:text-white/90 transition-colors">
-            Messages
-          </button>
-          <button className="hover:underline hover:text-white/90 transition-colors">
-            Profile
-          </button>
-        </nav>
+        </div>
+
         <SwitchThemeButton />
       </header>
     </>

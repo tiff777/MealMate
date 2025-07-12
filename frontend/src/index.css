@@ -8,18 +8,12 @@
     color: #213547;
     background-color: #f9fafb;
   }
-  a:hover {
-    color: #747bff;
-  }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f1f5f9;
     background-color: #334155;
-  }
-  a:hover {
-    color: #93c5fd;
   }
 }
 

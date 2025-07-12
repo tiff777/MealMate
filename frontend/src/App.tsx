@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import MainLayout from "./Layout/MainLayout";
 import Home from "./pages/Home/HomePage";
 import MealDashboard from "./pages/Dashboard/MealDashboardPage";
+import BuddyPage from "./pages/Buddy/BuddyPage";
 
 function App() {
   return (
@@ -11,6 +11,10 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/meal" index element={<MealDashboard />} />
+          <Route path="/buddy" index element={<BuddyPage />} />
+          <Route path="/my-meals" index element={<Home />} />
+          <Route path="/messages" index element={<Home />} />
+          <Route path="/profile" index element={<Home />} />
         </Route>
       </Routes>
     </>
