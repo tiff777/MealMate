@@ -130,10 +130,7 @@ namespace backend.Controller
                     .Select(p => new
                     {
                         UserId = p.User.Uid,
-                        Name = p.User.Name,
-                        Email = p.User.Email,
                         Avatar = p.User.Avatar,
-                        Bio = p.User.Bio
                     })
                     .ToListAsync();
 

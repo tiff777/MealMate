@@ -30,11 +30,24 @@ namespace backend.Controller
             try
             {
                 var allMeals = await _db.Meals.ToListAsync();
-                return Ok(new
+
+                var mealDtos = allMeals.Select(meal => new ShowMealDto
                 {
-                    data = allMeals,
-                    count = allMeals.Count
-                });
+                    Mid = meal.Mid,
+                    Title = meal.Title,
+                    Description = meal.Description,
+                    MaxParticipant = meal.MaxParticipant,
+                    CurrentParticipant = meal.CurrentParticipant,
+                    RestaurantName = meal.RestaurantName,
+                    RestaurantAddress = meal.RestaurantAddress,
+                    MealDate = meal.MealDate,
+                    Tags = meal.Tags,
+                    Status = meal.Status,
+                    CreatedAt = meal.CreatedAt,
+                    HostId = meal.HostId
+                }).ToList();
+
+                return Ok(mealDtos);
             }
             catch (Exception ex)
             {
@@ -54,7 +67,24 @@ namespace backend.Controller
                 {
                     return NotFound();
                 }
-                return Ok(meal);
+
+                var mealDto = new ShowMealDto
+                {
+                    Mid = meal.Mid,
+                    Title = meal.Title,
+                    Description = meal.Description,
+                    MaxParticipant = meal.MaxParticipant,
+                    CurrentParticipant = meal.CurrentParticipant,
+                    RestaurantName = meal.RestaurantName,
+                    RestaurantAddress = meal.RestaurantAddress,
+                    MealDate = meal.MealDate,
+                    Tags = meal.Tags,
+                    Status = meal.Status,
+                    CreatedAt = meal.CreatedAt,
+                    HostId = meal.HostId
+                };
+
+                return Ok(mealDto);
             }
             catch (Exception ex)
             {
