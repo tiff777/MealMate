@@ -4,9 +4,10 @@ import SwitchThemeButton from "../Button/SwitchThemeButton";
 import Navigation from "./Navigation";
 import NavButton from "../Button/NavButton";
 import { AppContext } from "../../context/AppContext";
+import apiClient from "../../hook/api";
 
 function NavBar() {
-  const { user } = useContext(AppContext);
+  const { user, logoutUser } = useContext(AppContext);
   const navigate = useNavigate();
 
   const userNavItems = [
@@ -21,6 +22,15 @@ function NavBar() {
     { path: "/meal", label: "Find Meal", exact: true },
     { path: "/buddy", label: "Find Buddy", exact: true },
   ];
+
+  const handleLogout = async () => {
+    try {
+      logoutUser();
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <>
@@ -37,11 +47,7 @@ function NavBar() {
         {user ? <span>Welcome {user.name}</span> : <span>Guest</span>}
 
         {user ? (
-          <NavButton
-            label="Logout"
-            variant="outlined"
-            onClick={() => navigate("/")}
-          />
+          <NavButton label="Logout" variant="outlined" onClick={handleLogout} />
         ) : (
           <div className="flex gap-2">
             <NavButton

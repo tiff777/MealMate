@@ -6,6 +6,7 @@ import React, {
   use,
 } from "react";
 import type { User } from "../types";
+import apiClient from "../hook/api";
 
 interface AppContextType {
   user: User | null;
@@ -18,6 +19,7 @@ interface AppContextType {
   deleteUser: () => void;
   toggleDarkMode: () => void;
   setLoading: (loading: boolean) => void;
+  getToken: () => string;
 }
 
 const AppContext = createContext<AppContextType>({
@@ -31,6 +33,7 @@ const AppContext = createContext<AppContextType>({
   deleteUser: () => {},
   toggleDarkMode: () => {},
   setLoading: () => {},
+  getToken: () => "",
 });
 
 const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -47,11 +50,45 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  const logoutUser = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem("token");
-  };
+  // const logoutUser = () => {
+
+  //   setUser(null);
+  //   setIsAuthenticated(false);
+  //   localStorage.removeItem("token");
+  //   localStorage.removeItem("user");
+  // };
+
+  const logoutUser = useCallback(async () => {
+    const token = getToken();
+    console.log("Token in logout: ", token);
+
+    try {
+      setIsLoading(true);
+
+      const response = await apiClient.post(
+        "/auth/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response) {
+        throw new Error("Logout failed");
+      }
+
+      setUser(null);
+      setIsAuthenticated(false);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const fetchUserProfile = useCallback(async (): Promise<User | null> => {
     const token = localStorage.getItem("token");
@@ -91,6 +128,10 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
   };
+
+  const getToken = useCallback(() => {
+    return localStorage.getItem("token") || "";
+  }, []);
 
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => {
@@ -152,6 +193,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     logoutUser,
     updateUser,
     deleteUser,
+    getToken,
     toggleDarkMode,
     setLoading,
   };
