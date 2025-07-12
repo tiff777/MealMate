@@ -1,10 +1,13 @@
 import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import SwitchThemeButton from "../Button/SwitchThemeButton";
 import Navigation from "./Navigation";
+import NavButton from "../Button/NavButton";
 import { AppContext } from "../../context/AppContext";
 
 function NavBar() {
   const { user } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const userNavItems = [
     { path: "/meal", label: "Find Meal", exact: true },
@@ -31,23 +34,24 @@ function NavBar() {
           <Navigation items={navItems} />
         )}
 
-        <div className="flex gap-2">
-          <button
-            className="px-4 py-2 rounded-full border bg-[#f9fafb] border-pink-500 text-rose-400 font-medium
-           hover:scale-105 hover:shadow-md transition-transform duration-300
-           dark:bg-gray-700/90 dark:border-gray-700/90 dark:text-[#f9fafb]"
-          >
-            Sign Up
-          </button>
+        {user ? <span>Welcome {user.name}</span> : <span>Guest</span>}
 
-          <button
-            className="px-4 py-2 rounded-full bg-pink-400 text-white font-medium
-           hover:scale-105 hover:shadow-md transition-transform duration-300
-           dark:bg-purple-600 dark:text-[#f9fafb]"
-          >
-            Sign In
-          </button>
-        </div>
+        {user ? (
+          <NavButton
+            label="Logout"
+            variant="outlined"
+            onClick={() => navigate("/")}
+          />
+        ) : (
+          <div className="flex gap-2">
+            <NavButton
+              label="Sign Up"
+              variant="outlined"
+              onClick={() => navigate("/register")}
+            />
+            <NavButton label="Sign In" onClick={() => navigate("/login")} />
+          </div>
+        )}
 
         <SwitchThemeButton />
       </header>

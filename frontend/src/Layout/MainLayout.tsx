@@ -3,6 +3,7 @@ import NavBar from "../components/Layout/NavBar";
 import Footer from "../components/Layout/Footer";
 
 function MainLayout() {
+  const showFooter = location.pathname == "/";
   return (
     <>
       <NavBar />
@@ -10,8 +11,7 @@ function MainLayout() {
       <main className="flex-1 dark:bg-[#334155] text-[#213547] dark:text-[#f1f5f9] transition-colors">
         <Outlet />
       </main>
-
-      <Footer />
+      {showFooter && <Footer />}
     </>
   );
 }
