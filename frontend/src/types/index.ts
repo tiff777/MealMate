@@ -1,13 +1,13 @@
 export interface User {
-  id: string;
+  uid: string;
   name: string;
   email: string;
   university: string;
   major: string;
   bio: string;
-  avatarUrl: string;
+  avatar: string;
   interests: string[];
-  preferredCusine: string[];
+  preferredCuisines: string[];
   isOnline: boolean;
   lastActive: Date;
 }
@@ -19,7 +19,7 @@ export interface RegisterUser {
   university: string;
   major: string;
   bio: string;
-  avatarUrl: string;
+  avatar: string;
   interests: string[];
   preferredCusine: string[];
 }
@@ -45,7 +45,7 @@ export interface changePassword {
 }
 
 export interface changeAvatar {
-  avatarUrl: string;
+  avatar: string;
 }
 
 export interface Meal {
