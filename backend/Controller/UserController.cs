@@ -33,8 +33,24 @@ namespace backend.Controller
         {
             try
             {
-                var allUsers = await _db.Users.ToListAsync();
-                return Ok(allUsers);
+                var dbAllUsers = await _db.Users.ToListAsync();
+
+                var users = dbAllUsers.Select(user => new ShowUserDto
+                {
+                    Uid = user.Uid,
+                    Name = user.Name,
+                    Email = user.Email,
+                    University = user.University,
+                    Major = user.Major,
+                    Bio = user.Bio,
+                    Avatar = user.Avatar,
+                    Interests = user.Interests,
+                    PreferredCuisines = user.PreferredCuisines,
+                    IsOnline = user.IsOnline,
+                    LastSeen = user.LastSeen,
+                }).ToList();
+
+                return Ok(users);
             }
             catch (Exception ex)
             {
@@ -48,8 +64,22 @@ namespace backend.Controller
         public async Task<IActionResult> GetUserProfile()
         {
             var user = this.GetCurrentUser();
+            var usersDto = new ShowUserDto
+            {
+                Uid = user.Uid,
+                Name = user.Name,
+                Email = user.Email,
+                University = user.University,
+                Major = user.Major,
+                Bio = user.Bio,
+                Avatar = user.Avatar,
+                Interests = user.Interests,
+                PreferredCuisines = user.PreferredCuisines,
+                IsOnline = user.IsOnline,
+                LastSeen = user.LastSeen,
+            };
 
-            return Ok(user);
+            return Ok(usersDto);
         }
 
         [HttpGet("{id:int}")]
@@ -57,12 +87,27 @@ namespace backend.Controller
         {
             try
             {
-                var user = await _db.Users.FindAsync(id);
+                var dbuser = await _db.Users.FindAsync(id);
 
-                if (user == null)
+                if (dbuser == null)
                 {
                     return NotFound();
                 }
+
+                var user = new ShowUserDto
+                {
+                    Uid = dbuser.Uid,
+                    Name = dbuser.Name,
+                    Email = dbuser.Email,
+                    University = dbuser.University,
+                    Major = dbuser.Major,
+                    Bio = dbuser.Bio,
+                    Avatar = dbuser.Avatar,
+                    Interests = dbuser.Interests,
+                    PreferredCuisines = dbuser.PreferredCuisines,
+                    IsOnline = dbuser.IsOnline,
+                    LastSeen = dbuser.LastSeen,
+                };
                 return Ok(user);
             }
             catch (Exception ex)

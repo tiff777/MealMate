@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using backend.Attributes;
 using backend.Extention;
+using backend.Models.Dto.User;
 
 namespace backend.Controller
 {
@@ -23,16 +24,31 @@ namespace backend.Controller
         [HttpPost("login")]
         public async Task<IActionResult> Login ([FromBody] LoginDto dto)
         {
-            Console.WriteLine("testing: ", dto);
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
-            if (user == null || !_authService.VerifyPassword(dto.Password, user.PasswordHash))
+            Console.WriteLine("testing email: ", dto.Email);
+            Console.WriteLine("testing password: ", dto.Email);
+            var dbuser = await _db.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            if (dbuser == null || !_authService.VerifyPassword(dto.Password, dbuser.PasswordHash))
             {
                 return Unauthorized(new { message = "Invalid credentials" });
             }
 
-            var token = _authService.GenerateToken(user);
+            var token = _authService.GenerateToken(dbuser);
+            var user = new ShowUserDto
+            {
+                Uid = dbuser.Uid,
+                Name = dbuser.Name,
+                Email = dbuser.Email,
+                University = dbuser.University,
+                Major = dbuser.Major,
+                Bio = dbuser.Bio,
+                Avatar = dbuser.Avatar,
+                Interests = dbuser.Interests,
+                PreferredCuisines = dbuser.PreferredCuisines,
+                IsOnline = dbuser.IsOnline,
+                LastSeen = dbuser.LastSeen,
+            };
 
-            return Ok(new { token });
+            return Ok(new { token, user });
         }
 
 
