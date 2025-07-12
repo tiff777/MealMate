@@ -43,7 +43,7 @@ function MealCard({ meal }: { meal: Meal }) {
       </div>
 
       <div className="flex gap-2">
-        <JoinButton />
+        <JoinButton message="Join Meal" />
       </div>
     </div>
   );
