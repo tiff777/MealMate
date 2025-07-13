@@ -4,6 +4,7 @@ import Home from "./pages/Home/HomePage";
 import MealDashboard from "./pages/Dashboard/MealDashboardPage";
 import BuddyPage from "./pages/Buddy/BuddyPage";
 import LoginPage from "./pages/Login/LoginPage";
+import ResgisterPage from "./pages/Register/RegisterPage";
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
           <Route path="/messages" index element={<Home />} />
           <Route path="/profile" index element={<Home />} />
           <Route path="/login" index element={<LoginPage />} />
-          <Route path="/register" index element={<Home />} />
+          <Route path="/register" index element={<ResgisterPage />} />
         </Route>
       </Routes>
     </>
