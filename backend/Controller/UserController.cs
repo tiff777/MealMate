@@ -125,7 +125,7 @@ namespace backend.Controller
                 if (existingUser != null)
                 {
                     return BadRequest(new { message = "User already exist" });
-                }
+                }                
 
                 var user = new User()
                 {
@@ -144,7 +144,9 @@ namespace backend.Controller
                 _db.Users.Add(user);
                 await _db.SaveChangesAsync();
 
-                return Ok(new { message = "User created successfully", user });
+                var token = _authService.GenerateToken(user);
+
+                return Ok(new { message = "User created successfully", user, token });
             }
             catch (Exception ex)
             {
