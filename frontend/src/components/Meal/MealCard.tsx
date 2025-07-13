@@ -4,7 +4,13 @@ import JoinButton from "../Button/JoinButton";
 import MealParticipantAvatar from "./MealParticipantAvatar";
 import MealStatus from "./MealStatus";
 
-function MealCard({ meal }: { meal: Meal }) {
+function MealCard({
+  meal,
+  onJoin,
+}: {
+  meal: Meal;
+  onJoin: (mealId: string) => void;
+}) {
   return (
     <div
       className={`relative bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-4 dark:border-gray-700 space-y-2 transition-colors overflow-hidden`}
@@ -43,7 +49,7 @@ function MealCard({ meal }: { meal: Meal }) {
       </div>
 
       <div className="flex gap-2">
-        <JoinButton message="Join Meal" />
+        <JoinButton message="Join Meal" onClick={() => onJoin(meal.mid)} />
       </div>
     </div>
   );

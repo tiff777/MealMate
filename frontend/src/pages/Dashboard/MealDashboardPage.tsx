@@ -4,6 +4,7 @@ import type { Meal, Participant } from "../../types";
 import MealCard from "../../components/Meal/MealCard";
 import { AppContext } from "../../context/AppContext";
 import ErrorToast from "../../components/Modal/ErrorToast";
+import SuccessToast from "../../components/Modal/SuccessfulToast";
 
 function MealDashboard() {
   type MealWithParticipants = Meal & { participants: Participant[] };
@@ -11,6 +12,7 @@ function MealDashboard() {
   const { setLoading, user } = useContext(AppContext);
   const [meals, setMeals] = useState<MealWithParticipants[]>([]);
   const [showError, setShowError] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   console.log("User in MealDashboard:", user);
 
@@ -56,6 +58,7 @@ function MealDashboard() {
       }
       console.log("Join meal");
       fetchMeals();
+      setShowSuccess(true);
     } catch (error) {
       console.log("Error in joining the meal: ", error);
     }
@@ -86,6 +89,13 @@ function MealDashboard() {
         <ErrorToast
           message={"Need login to join"}
           onClose={() => setShowError(false)}
+        />
+      )}
+
+      {showSuccess && (
+        <SuccessToast
+          message="Successful Join the meal"
+          onClose={() => setShowSuccess(false)}
         />
       )}
     </>
