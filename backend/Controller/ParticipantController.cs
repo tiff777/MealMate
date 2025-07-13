@@ -149,17 +149,30 @@ namespace backend.Controller
             try
             {
                 var meals = await _db.MealParticipants
-                    .Include(p => p.Meal)
-                    .Where(p => p.UserId == userId)
-                    .Select(p => new
-                    {
-                        MealId = p.Meal.Mid,
-                        Title = p.Meal.Title,
-                        Description = p.Meal.Description,
-                        Date = p.Meal.MealDate,
-                        Address = p.Meal.RestaurantAddress
-                    })
-                    .ToListAsync();
+     .Where(p => p.UserId == userId)
+     .Include(p => p.Meal)
+         .ThenInclude(m => m.Participants)
+             .ThenInclude(mp => mp.User)
+     .Select(p => new
+     {
+         Mid = p.Meal.Mid,
+         Title = p.Meal.Title,
+         Description = p.Meal.Description,
+         MealDate = p.Meal.MealDate,
+         RestaurantName = p.Meal.RestaurantName,
+         RestaurantAddress = p.Meal.RestaurantAddress,
+         CurrentParticipant = p.Meal.CurrentParticipant,
+         MaxParticipant = p.Meal.MaxParticipant,
+         Status = p.ParticipationStatus,
+
+         Participants = p.Meal.Participants.Select(mp => new
+         {
+             UserId = mp.User.Uid,
+             Name = mp.User.Name,
+             Avatar = mp.User.Avatar
+         }).ToList()
+     })
+     .ToListAsync();
 
                 return Ok(meals);
             }
