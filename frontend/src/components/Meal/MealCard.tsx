@@ -24,7 +24,7 @@ function MealCard({
       </div>
 
       <div className="flex flex-col text-sm text-gray-500 dark:text-gray-400 gap-1">
-        <span>📅 {formatDate(new Date(meal.createdAt))}</span>
+        <span>📅 {formatDate(new Date(meal.mealDate))}</span>
         <span>📍 {meal.restaurantName}</span>
         <span className="truncate max-w">📍{meal.restaurantAddress}</span>
       </div>
