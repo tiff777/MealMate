@@ -6,7 +6,7 @@ import React, {
   use,
 } from "react";
 import type { User } from "../types";
-import apiClient from "../hook/api";
+import { apiClient, authClient } from "../hook/api";
 
 interface AppContextType {
   user: User | null;
@@ -50,14 +50,6 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  // const logoutUser = () => {
-
-  //   setUser(null);
-  //   setIsAuthenticated(false);
-  //   localStorage.removeItem("token");
-  //   localStorage.removeItem("user");
-  // };
-
   const logoutUser = useCallback(async () => {
     const token = getToken();
     console.log("Token in logout: ", token);
@@ -65,15 +57,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setIsLoading(true);
 
-      const response = await apiClient.post(
-        "/auth/logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await authClient.post("/auth/logout");
 
       if (!response) {
         throw new Error("Logout failed");

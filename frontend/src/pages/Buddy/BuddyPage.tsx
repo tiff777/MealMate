@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect, use } from "react";
 import { AppContext } from "../../context/AppContext";
-import apiClient from "../../hook/api";
+import { apiClient }  from "../../hook/api";
 import UserCard from "../../components/User/UserCard";
 import type { User } from "../../types";
 

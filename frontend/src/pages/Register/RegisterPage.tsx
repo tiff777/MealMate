@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import RegisterForm from "../../components/Register/RegisterForm";
-import apiClient from "../../hook/api";
+import { apiClient } from "../../hook/api";
 import type { RegisterUser } from "../../types";
 import { AppContext } from "../../context/AppContext";
 

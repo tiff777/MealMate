@@ -2,7 +2,7 @@ import LoginForm from "../../components/Form/LoginForm";
 import { useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
-import apiClient from "../../hook/api";
+import { apiClient } from "../../hook/api";
 
 function LoginPage() {
   const { loginUser } = useContext(AppContext);
