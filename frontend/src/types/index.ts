@@ -88,3 +88,8 @@ export interface Participant {
   userId: string;
   avatar: string;
 }
+
+export interface ToastProps {
+  message: string;
+  onClose: () => void;
+}
