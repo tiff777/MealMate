@@ -149,7 +149,7 @@ namespace backend.Controller
             try
             {
                 var meals = await _db.MealParticipants
-     .Where(p => p.UserId == userId)
+     .Where(p => p.UserId == userId && p.Meal.HostId != userId)
      .Include(p => p.Meal)
          .ThenInclude(m => m.Participants)
              .ThenInclude(mp => mp.User)
