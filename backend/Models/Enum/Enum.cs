@@ -10,7 +10,7 @@
 
     public enum MealParticipateStatus
     {
-        left = 0,
+        host = 0,
         joined = 1,
         pending = 2        
     }

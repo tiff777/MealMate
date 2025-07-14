@@ -271,7 +271,7 @@ namespace backend.Data.DummyData
                 {
                     MealId = meals[5].Mid,
                     UserId = emma.Uid,
-                    ParticipationStatus = MealParticipateStatus.left,
+                    ParticipationStatus = MealParticipateStatus.host,
                     JoinedAt = DateTimeOffset.UtcNow.AddDays(-2).AddHours(4)
                 }
             };
