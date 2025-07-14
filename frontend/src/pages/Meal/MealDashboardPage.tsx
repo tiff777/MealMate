@@ -20,24 +20,11 @@ function MealDashboard() {
     setLoading(true);
     try {
       const response = await apiClient.get("/meal");
-      console.log("Test response: ", response);
 
       const meals = response.data;
       console.log(meals);
 
-      const mealsWithParticipants = await Promise.all(
-        meals.map(async (meal: Meal) => {
-          const res = await apiClient.get(`/participant/meal/${meal.mid}`);
-          return {
-            ...meal,
-            participants: res.data,
-          };
-        })
-      );
-
-      setMeals(mealsWithParticipants);
-
-      console.log(mealsWithParticipants);
+      setMeals(meals);
     } catch (error) {
       console.log("Error of fetching meals:", error);
     } finally {
