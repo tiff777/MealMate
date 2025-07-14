@@ -16,5 +16,7 @@ namespace backend.Models.Dto.Meal
         public MealStatus Status { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public int HostId { get; set; }
+
+        public List<ParticipantDto> Participants { get; set; } = new();
     }
 }

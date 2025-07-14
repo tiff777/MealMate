@@ -2,8 +2,10 @@
 using backend.Attributes;
 using backend.Data;
 using backend.Extention;
+using backend.Models.Dto;
 using backend.Models.Dto.Meal;
 using backend.Models.Entity;
+using backend.Models.Enum;
 using backend.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -29,24 +31,31 @@ namespace backend.Controller
         {
             try
             {
-                var allMeals = await _db.Meals.ToListAsync();
+                var mealDtos = await _db.Meals
+    .Include(m => m.Participants)
+        .ThenInclude(p => p.User)
+    .Select(meal => new ShowMealDto
+    {
+        Mid = meal.Mid,
+        Title = meal.Title,
+        Description = meal.Description,
+        MaxParticipant = meal.MaxParticipant,
+        CurrentParticipant = meal.CurrentParticipant,
+        RestaurantName = meal.RestaurantName,
+        RestaurantAddress = meal.RestaurantAddress,
+        MealDate = meal.MealDate,
+        Tags = meal.Tags,
+        Status = meal.Status,
+        CreatedAt = meal.CreatedAt,
+        HostId = meal.HostId,
 
-                var mealDtos = allMeals.Select(meal => new ShowMealDto
-                {
-                    Mid = meal.Mid,
-                    Title = meal.Title,
-                    Description = meal.Description,
-                    MaxParticipant = meal.MaxParticipant,
-                    CurrentParticipant = meal.CurrentParticipant,
-                    RestaurantName = meal.RestaurantName,
-                    RestaurantAddress = meal.RestaurantAddress,
-                    MealDate = meal.MealDate,
-                    Tags = meal.Tags,
-                    Status = meal.Status,
-                    CreatedAt = meal.CreatedAt,
-                    HostId = meal.HostId
-                }).ToList();
-
+        Participants = meal.Participants.Select(p => new ParticipantDto
+        {
+            UserId = p.UserId,
+            Avatar = p.User.Avatar
+        }).ToList()
+    })
+    .ToListAsync();
                 return Ok(mealDtos);
             }
             catch (Exception ex)
@@ -81,7 +90,14 @@ namespace backend.Controller
                     Tags = meal.Tags,
                     Status = meal.Status,
                     CreatedAt = meal.CreatedAt,
-                    HostId = meal.HostId
+                    HostId = meal.HostId,
+
+                    Participants = meal.Participants.Select(p => new ParticipantDto
+                    {
+                        UserId = p.UserId,
+                        Avatar = p.User.Avatar
+                    }).ToList()
+
                 };
 
                 return Ok(mealDto);
@@ -115,6 +131,17 @@ namespace backend.Controller
                 _db.Meals.Add(meal);
                 await _db.SaveChangesAsync();
 
+                var participant = new MealParticipant
+                {
+                    MealId = meal.Mid,
+                    UserId = userId,
+                    JoinedAt = DateTimeOffset.UtcNow,
+                    ParticipationStatus = MealParticipateStatus.host
+                };
+
+                _db.MealParticipants.Add(participant);
+                await _db.SaveChangesAsync();
+
                 var mealDto = new ShowMealDto
                 {
                     Mid= meal.Mid,
@@ -128,6 +155,12 @@ namespace backend.Controller
                     Status = meal.Status,
                     CreatedAt=meal.CreatedAt,
                     HostId=meal.HostId,
+
+                    Participants = meal.Participants.Select(p => new ParticipantDto
+                    {
+                        UserId = p.UserId,
+                        Avatar = p.User.Avatar
+                    }).ToList()
                 };
 
                 return Ok(new { message = "Meal created successfully", meal = mealDto });
@@ -242,13 +275,18 @@ namespace backend.Controller
                         Status = m.Status,
                         CreatedAt = m.CreatedAt,
                         HostId = m.HostId,
+
+                        Participants = m.Participants.Select(p => new ParticipantDto
+                        {
+                            UserId = p.UserId,
+                            Avatar = p.User.Avatar
+                        }).ToList()
                     })
                     .ToListAsync();
 
                 return Ok(new
                 {
                     message = "My hosted meals retrieved successfully",
-                    count = myHostedMeals.Count,
                     meals = myHostedMeals
                 });
             }
