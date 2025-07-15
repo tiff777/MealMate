@@ -1,10 +1,11 @@
 function NormalButton({
   message,
-
   onClick,
+  disabled,
 }: {
   message?: string;
   onClick?: () => void;
+  disabled?: boolean;
 }) {
   return (
     <button
@@ -28,6 +29,7 @@ function NormalButton({
         hover:bg-gradient-to-r hover:from-rose-400 hover:to-rose-300
         focus:ring-2 focus:ring-rose-300
       "
+      disabled={disabled}
     >
       {message}
     </button>

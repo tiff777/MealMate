@@ -1,10 +1,4 @@
-function JoinButton({
-  message,
-  onClick,
-}: {
-  message?: string;
-  onClick?: () => void;
-}) {
+function JoinButton({message, onClick}: {message?: string, onClick?: () => void}) {
   return (
     <>
       <button
