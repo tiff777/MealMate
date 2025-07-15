@@ -67,10 +67,10 @@ export interface Meal {
 export interface CreateMeal {
   title: string;
   description: string;
-  maxParticipants: number;
+  maxParticipant: number;
   restaurantName: string;
   restaurantAddress: string;
-  mealDate: string[];
+  mealDate: Date | string;
   tags: string[];
 }
 

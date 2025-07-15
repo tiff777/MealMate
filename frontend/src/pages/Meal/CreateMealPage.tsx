@@ -5,8 +5,6 @@ import CreateMealForm from "../../components/Meal/CreateMealForm";
 import type { CreateMeal } from "../../types";
 
 function CreateMealPage() {
-  const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState("");
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<CreateMeal>({
