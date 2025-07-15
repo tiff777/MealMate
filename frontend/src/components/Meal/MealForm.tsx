@@ -1,22 +1,35 @@
 import { useState } from "react";
-import type { CreateMeal } from "../../types";
+import type { CreateMeal, UpdateMeal } from "../../types";
 import SubmitButton from "../Button/SubmitButton";
 import NormalButton from "../Button/NormalButton";
+import ButtonFactory from "../Button/ButtonFactory";
 
-interface CreateMealProps {
+type MealFormData = CreateMeal | UpdateMeal;
+
+interface MeaFormlProps {
   onCancel: () => void;
   handleSubmit: (data: any) => void;
-  formData: CreateMeal;
-  setFormData: React.Dispatch<React.SetStateAction<CreateMeal>>;
+  formData: MealFormData;
+  setFormData: React.Dispatch<React.SetStateAction<MealFormData>>;
+  mode?: "create" | "update";
 }
 
-function CreateMealForm({
+function MealForm({
   onCancel,
   handleSubmit,
   formData,
   setFormData,
-}: CreateMealProps) {
+  mode = "create",
+}: MeaFormlProps) {
   const [tagInput, setTagInput] = useState("");
+
+  const dateValue = formData.mealDate
+    ? new Date(formData.mealDate).toISOString().split("T")[0]
+    : "";
+
+  const timeValue = formData.mealDate
+    ? new Date(formData.mealDate).toTimeString().slice(0, 5)
+    : "";
 
   const handleInputChange = (
     field: keyof CreateMeal,
@@ -50,10 +63,10 @@ function CreateMealForm({
   const handleAddTag = () => {
     const trimmed = tagInput.trim();
 
-    if (trimmed !== "" && !formData.tags.includes(trimmed)) {
+    if (trimmed !== "" && !(formData.tags ?? []).includes(trimmed)) {
       setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, trimmed],
+        tags: [...(prev.tags ?? []), trimmed],
       }));
       setTagInput("");
     }
@@ -64,10 +77,21 @@ function CreateMealForm({
       onSubmit={handleSubmit}
       className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow p-6 mt-6"
     >
-      <h2 className="text-xl font-bold">🍽️ Create New Meal</h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        Organize a meal and invite others to join
-      </p>
+      {mode == "create" ? (
+        <div>
+          <h2 className="text-xl font-bold">🍽️ Create New Meal</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            Organize a meal and invite others to join
+          </p>
+        </div>
+      ) : (
+        <div>
+          <h2 className="text-xl font-bold">🍽️ Update New Meal</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            Modify the meal detail
+          </p>
+        </div>
+      )}
 
       {/* Title */}
       <label className="block text-sm font-medium mb-1">Meal Title</label>
@@ -121,6 +145,7 @@ function CreateMealForm({
           <input
             name="date"
             type="date"
+            value={dateValue}
             onChange={(e) => handleDateTimeChange("date", e.target.value)}
             className="w-full rounded border p-2 mb-4"
             required
@@ -131,6 +156,7 @@ function CreateMealForm({
           <input
             name="time"
             type="time"
+            value={timeValue}
             onChange={(e) => handleDateTimeChange("time", e.target.value)}
             className="w-full rounded border p-2 mb-4"
             required
@@ -176,7 +202,7 @@ function CreateMealForm({
         </button>
       </div>
       <div className="flex flex-wrap gap-2 mb-4">
-        {formData.tags.map((tag, idx) => (
+        {(formData.tags ?? []).map((tag, idx) => (
           <span
             key={idx}
             className="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full text-xs"
@@ -188,11 +214,17 @@ function CreateMealForm({
 
       {/* Buttons */}
       <div className="flex justify-between">
-        <NormalButton message="Cancel" onClick={onCancel} />
-        <SubmitButton message="Create meal" />
+        <ButtonFactory type="cancel" message="Cancel" onClick={onCancel} />
+        {mode == "create" ? (
+          <ButtonFactory type="submit" message="Create meal" />
+        ) : (
+          <ButtonFactory type="submit" message="Update Meal" />
+        )}
+        {/* <NormalButton message="Cancel" onClick={onCancel} />
+        <SubmitButton message="Create meal" /> */}
       </div>
     </form>
   );
 }
 
-export default CreateMealForm;
+export default MealForm;
