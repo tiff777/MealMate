@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authClient } from "../../hook/api";
-import CreateMealForm from "../../components/Meal/CreateMealForm";
-import type { CreateMeal } from "../../types";
+import MealForm from "../../components/Meal/MealForm";
+import type { CreateMeal, MealFormData } from "../../types";
 
 function CreateMealPage() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<CreateMeal>({
+  const [formData, setFormData] = useState<MealFormData>({
     title: "",
     description: "",
     maxParticipant: 2,
@@ -37,11 +37,12 @@ function CreateMealPage() {
   };
 
   return (
-    <CreateMealForm
+    <MealForm
       onCancel={() => navigate("/my-meals")}
       handleSubmit={handleSubmit}
       formData={formData}
       setFormData={setFormData}
+      mode="create"
     />
   );
 }
