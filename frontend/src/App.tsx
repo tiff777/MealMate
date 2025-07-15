@@ -8,6 +8,7 @@ import ResgisterPage from "./pages/Register/RegisterPage";
 import MyMealPage from "./pages/MyMeal/MyMealPage";
 import CreateMealPage from "./pages/Meal/CreateMealPage";
 import UpdateMealPage from "./pages/Meal/ModifyMealPage";
+import SettingsPage from "./pages/Setting/SettingPage";
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
           <Route path="/buddy" index element={<BuddyPage />} />
           <Route path="/my-meals" index element={<MyMealPage />} />
           <Route path="/messages" index element={<Home />} />
-          <Route path="/profile" index element={<Home />} />
+          <Route path="/setting" index element={<SettingsPage />} />
           <Route path="/login" index element={<LoginPage />} />
           <Route path="/register" index element={<ResgisterPage />} />
           <Route path="/create-meals" index element={<CreateMealPage />} />

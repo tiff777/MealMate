@@ -4,7 +4,6 @@ import SwitchThemeButton from "../Button/SwitchThemeButton";
 import Navigation from "./Navigation";
 import NavButton from "../Button/NavButton";
 import { AppContext } from "../../context/AppContext";
-import apiClient from "../../hook/api";
 
 function NavBar() {
   const { user, logoutUser } = useContext(AppContext);
@@ -15,7 +14,7 @@ function NavBar() {
     { path: "/buddy", label: "Find Buddy", exact: true },
     { path: "/my-meals", label: "My Meals", exact: false },
     { path: "/messages", label: "Messages", exact: false },
-    { path: "/profile", label: "Profile", exact: false },
+    { path: "/setting", label: "Profile Setting", exact: false },
   ];
 
   const navItems = [
