@@ -15,7 +15,7 @@ interface AppContextType {
   isLoading: boolean;
   loginUser: (user: User, token: string) => void;
   logoutUser: () => void;
-  updateUser: () => void;
+  updateUser: (user: User) => void;
   deleteUser: () => void;
   toggleDarkMode: () => void;
   setLoading: (loading: boolean) => void;
@@ -98,13 +98,13 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  const updateUser = useCallback(async () => {
-    const userData = await fetchUserProfile();
-    if (userData) {
-      setUser(userData);
-      localStorage.setItem("user", JSON.stringify(userData));
-    }
-  }, [fetchUserProfile]);
+  const updateUser = useCallback(
+    (updatedUser: User) => {
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    },
+    [fetchUserProfile]
+  );
 
   const deleteUser = () => {
     setUser(null);

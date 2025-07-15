@@ -7,7 +7,7 @@ export interface User {
   bio: string;
   avatar: string;
   interests: string[];
-  preferredCusines: string[];
+  preferredCuisines: string[];
   isOnline: boolean;
   lastActive: Date;
 }
@@ -31,7 +31,7 @@ export interface UpdateUser {
   major?: string;
   bio?: string;
   interests?: string[];
-  preferredCusine?: string[];
+  preferredCuisines?: string[];
 }
 
 export interface LoginUser {
