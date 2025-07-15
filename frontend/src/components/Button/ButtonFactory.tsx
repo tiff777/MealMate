@@ -16,7 +16,7 @@ type ButtonType =
 interface ButtonFactoryProps {
   type: ButtonType;
   message: string;
-  onClick: () => void;
+  onClick?: () => void;
   disabled?: boolean;
 }
 
@@ -38,8 +38,10 @@ export default function ButtonFactory({
     case "leave":
       return <LeaveButton message={message} onClick={onClick} />;
 
-    // case "edit":
-    //   return <EditButton onClick={onClick} disabled={disabled} />;
+    case "edit":
+      return (
+        <NormalButton message={message} onClick={onClick} disabled={disabled} />
+      );
 
     case "delete":
       return (

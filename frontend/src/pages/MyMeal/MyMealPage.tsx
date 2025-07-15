@@ -38,7 +38,6 @@ function myMealPage() {
       } else {
         setJoinedMeals([]);
       }
-
     } catch (error) {
       console.log("Error in fetching meals: ", error);
     } finally {
@@ -46,7 +45,7 @@ function myMealPage() {
     }
   };
 
-    const handleLeave = async (mid: string) => {
+  const handleLeave = async (mid: string) => {
     if (!user) {
       return;
     }
@@ -128,6 +127,13 @@ function myMealPage() {
                   type="delete"
                   message="Delete"
                   onClick={() => handleDelete(meal.mid)}
+                  disabled={false}
+                />,
+                <ButtonFactory
+                  key="edit"
+                  type="edit"
+                  message="Modify Meal"
+                  onClick={() => navigate(`/update-meal/${meal.mid}`)}
                   disabled={false}
                 />,
               ];
