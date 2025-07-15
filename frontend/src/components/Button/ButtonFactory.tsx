@@ -3,6 +3,7 @@ import NormalButton from "./NormalButton";
 import JoinButton from "./JoinButton";
 import SubmitButton from "./SubmitButton";
 import LeaveButton from "./LeaveButton";
+import DeleteButton from "./DeleteButton";
 
 type ButtonType =
   | "view"
@@ -44,9 +45,7 @@ export default function ButtonFactory({
       );
 
     case "delete":
-      return (
-        <NormalButton message={message} onClick={onClick} disabled={disabled} />
-      );
+      return <DeleteButton message={message} onClick={onClick} />;
 
     case "cancel":
       return (
