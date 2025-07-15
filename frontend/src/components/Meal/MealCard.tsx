@@ -6,10 +6,10 @@ import MealStatus from "./MealStatus";
 
 function MealCard({
   meal,
-  onJoin,
+  buttons,
 }: {
   meal: Meal;
-  onJoin: (mealId: string) => void;
+  buttons: React.ReactNode[];
 }) {
   return (
     <div
@@ -48,9 +48,7 @@ function MealCard({
         </span>
       </div>
 
-      <div className="flex gap-2">
-        <JoinButton message="Join Meal" onClick={() => onJoin(meal.mid)} />
-      </div>
+      <div className="flex gap-2">{buttons}</div>
     </div>
   );
 }

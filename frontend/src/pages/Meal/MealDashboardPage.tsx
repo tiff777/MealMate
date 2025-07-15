@@ -5,23 +5,32 @@ import MealCard from "../../components/Meal/MealCard";
 import { AppContext } from "../../context/AppContext";
 import ErrorToast from "../../components/Modal/ErrorToast";
 import SuccessToast from "../../components/Modal/SuccessfulToast";
+import ButtonFactory from "../../components/Button/ButtonFactory";
 
 function MealDashboard() {
-  type MealWithParticipants = Meal & { participants: Participant[] };
+  type MealWithParticipants = Meal & { participants: Participant[] } & {
+    isJoined: boolean;
+  } & { isHost: boolean };
 
   const { setLoading, user } = useContext(AppContext);
   const [meals, setMeals] = useState<MealWithParticipants[]>([]);
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  console.log("User in MealDashboard:", user);
-
   const fetchMeals = async () => {
     setLoading(true);
     try {
       const response = await apiClient.get("/meal");
 
-      const meals = response.data;
+      const mealsData = response.data;
+
+      const meals = mealsData.map((meal: MealWithParticipants) => ({
+        ...meal,
+        isJoined: user
+          ? meal.participants.some((p) => p.userId === user.uid)
+          : false,
+        isHost: user ? meal.hostId === user.uid : false,
+      }));
       console.log(meals);
 
       setMeals(meals);
@@ -51,6 +60,42 @@ function MealDashboard() {
     }
   };
 
+  const handleLeave = async (mid: string) => {
+    if (!user) {
+      return;
+    }
+    try {
+      const response = await authClient.delete(`/participant/leave/${mid}`);
+      if (!response) {
+        console.log("Cannot leave");
+        return;
+      }
+      console.log("Leave meal");
+      fetchMeals();
+      // setShowSuccess(true);
+    } catch (error) {
+      console.log("Error in joining the meal: ", error);
+    }
+  };
+
+  const handleDelete = async (mid: string) => {
+    if (!user) {
+      return;
+    }
+
+    try {
+      const response = await authClient.delete(`/meal/${mid}`);
+      if (!response) {
+        console.log("Cannot not leave");
+      }
+      console.log("Leave meal");
+
+      fetchMeals();
+    } catch (error) {
+      console.log("Error in deleting: ", error);
+    }
+  };
+
   useEffect(() => {
     fetchMeals();
   }, []);
@@ -64,9 +109,35 @@ function MealDashboard() {
 
         {meals.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {meals.map((meal) => (
-              <MealCard key={meal.mid} meal={meal} onJoin={handleJoin} />
-            ))}
+            {meals.map((meal) => {
+              const buttons = [
+                meal.isHost ? (
+                  <ButtonFactory
+                    key="delete"
+                    type="delete"
+                    message="Delete"
+                    onClick={() => handleDelete(meal.mid)}
+                    disabled={false}
+                  />
+                ) : meal.isJoined ? (
+                  <ButtonFactory
+                    key="leave"
+                    type="leave"
+                    message="Leave"
+                    onClick={() => handleLeave(meal.mid)}
+                  />
+                ) : (
+                  <ButtonFactory
+                    key="join"
+                    type="join"
+                    message="Join"
+                    onClick={() => handleJoin(meal.mid)}
+                  />
+                ),
+              ];
+
+              return <MealCard key={meal.mid} meal={meal} buttons={buttons} />;
+            })}
           </div>
         ) : (
           <p className="text-gray-500 dark:text-gray-400">No meals available</p>
