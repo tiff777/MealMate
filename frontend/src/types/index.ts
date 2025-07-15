@@ -77,10 +77,10 @@ export interface CreateMeal {
 export interface UpdateMeal {
   title?: string;
   description?: string;
-  maxParticipants?: number;
+  maxParticipant?: number;
   restaurantName?: string;
   restaurantAddress?: string;
-  mealDate?: string[];
+  mealDate?: Date | string;
   tags?: string[];
 }
 
@@ -93,3 +93,5 @@ export interface ToastProps {
   message: string;
   onClose: () => void;
 }
+
+export type MealFormData = CreateMeal | UpdateMeal;
