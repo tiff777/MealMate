@@ -43,12 +43,14 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const navigate = useNavigate();
+
   const loginUser = (userData: User, token: string) => {
     setUser(userData);
     setIsAuthenticated(true);
 
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
+    navigate("/meal");
   };
 
   const logoutUser = useCallback(async () => {
@@ -114,6 +116,8 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAuthenticated(false);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+
+    navigate("/");
   };
 
   const getToken = useCallback(() => {
