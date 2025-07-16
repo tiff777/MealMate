@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using backend.Attributes;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 
 namespace backend.Controller
@@ -175,14 +176,24 @@ namespace backend.Controller
             }
         }
 
+        [HttpPost("password/verify")]
+        [AuthorizeUser]
+        public  IActionResult CheckPassword ([FromBody] CheckOldPasswordDto dto)
+        {
+            var user = this.GetCurrentUser();
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.OldPassword, user.PasswordHash))
+            {
+                return BadRequest(new { message = "Old password incorrect" });
+            }
+            return Ok();
+        }
 
         [HttpPatch("password")]
         [AuthorizeUser]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
         {
             var user = this.GetCurrentUser();
-            if (!BCrypt.Net.BCrypt.Verify(dto.OldPassword, user.PasswordHash))
-                return BadRequest(new { message = "Old password incorrect" });
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
             user.UpdatedAt = DateTimeOffset.UtcNow;
