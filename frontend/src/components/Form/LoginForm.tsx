@@ -68,12 +68,12 @@ function LoginForm({ onSubmit }: LoginFormProps) {
                 <input type="checkbox" className="mr-2" />
                 Remember me
               </label>
-              <button
-                type="button"
+              <Link
+                to="/forgot-password"
                 className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
               >
                 Forgot password?
-              </button>
+              </Link>
             </div>
 
             <SubmitButton message="Sign In" />

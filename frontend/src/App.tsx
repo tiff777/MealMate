@@ -9,6 +9,7 @@ import MyMealPage from "./pages/MyMeal/MyMealPage";
 import CreateMealPage from "./pages/Meal/CreateMealPage";
 import UpdateMealPage from "./pages/Meal/ModifyMealPage";
 import SettingsPage from "./pages/Setting/SettingPage";
+import ResetPasswordPage from "./pages/Setting/ResetUserPage";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/register" index element={<ResgisterPage />} />
           <Route path="/create-meals" index element={<CreateMealPage />} />
           <Route path="/update-meal/:mid" element={<UpdateMealPage />} />
+          <Route path="/forgot-password" element={<ResetPasswordPage />} />
         </Route>
       </Routes>
     </>
