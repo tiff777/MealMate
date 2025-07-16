@@ -10,7 +10,7 @@ import { authClient } from "../../hook/api";
 type SettingsTab = "profile" | "password" | "account";
 
 function SettingsPage() {
-  const { user, updateUser } = useContext(AppContext);
+  const { user, updateUser, logoutUser } = useContext(AppContext);
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
   const [formData, setFormData] = useState<User>(user!);
 
@@ -53,8 +53,22 @@ function SettingsPage() {
     }
   };
 
-  const handleChangePassword = () => {
-    console.log("Change Password");
+  const handleOldPasswordCheck = async (oldPassword: string) => {
+    const response = await authClient.post("/user/password/verify", {
+      oldPassword,
+    });
+
+    return response.status === 200;
+  };
+
+  const handleChangePassword = async (newPassword: string) => {
+    const response = await authClient.patch("user/password", { newPassword });
+    if (response.status !== 200) {
+      console.log("Cannot change password");
+      return;
+    }
+
+    logoutUser();
   };
 
   const handleDeleteAccount = () => {
@@ -92,7 +106,10 @@ function SettingsPage() {
             />
           )}
           {activeTab === "password" && (
-            <UserPasswordForm handleChangePassword={handleChangePassword} />
+            <UserPasswordForm
+              handleChangePassword={handleChangePassword}
+              handleOldPasswordCheck={handleOldPasswordCheck}
+            />
           )}
           {activeTab === "account" && (
             <UserDeleteForm handleDeleteAccount={handleDeleteAccount} />

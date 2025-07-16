@@ -5,6 +5,7 @@ import React, {
   useCallback,
   use,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import type { User } from "../types";
 import { apiClient, authClient } from "../hook/api";
 
@@ -41,7 +42,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-
+  const navigate = useNavigate();
   const loginUser = (userData: User, token: string) => {
     setUser(userData);
     setIsAuthenticated(true);
@@ -67,6 +68,8 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false);
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+
+      navigate("/");
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
