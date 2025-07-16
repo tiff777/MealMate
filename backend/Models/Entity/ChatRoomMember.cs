@@ -1,14 +1,14 @@
 ﻿namespace backend.Models.Entity
 {
-    public class ChatroomMember
+    public class ChatRoomMember
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public int Id { get; set; }
         public string UserId { get; set; }
         public string UserName { get; set; }
         public string ChatRoomId { get; set; }
         public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
-        public bool IsAdmin { get; set; } = false;
+        public bool IsHost { get; set; } = false;
 
-        public virtual Chatroom ChatRoom { get; set; }
+        public virtual ChatRoom ChatRoom { get; set; }
     }
 }
