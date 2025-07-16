@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using backend.Attributes;
 using backend.Extention;
 using backend.Models.Dto.User;
+using backend.Models.Entity;
 
 namespace backend.Controller
 {
@@ -71,6 +72,58 @@ namespace backend.Controller
                 return BadRequest(new { message = "Fail to logout: ", ex.Message });
             }                        
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword ([FromBody] ForgotPasswordDto dto)
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            if (user == null)
+                return BadRequest(new { message = "Email not found." });
+
+            var token = Guid.NewGuid().ToString();
+            user.ResetPasswordToken = token;
+            user.ResetPasswordTokenExpires = DateTime.UtcNow.AddMinutes(10);
+
+            await _db.SaveChangesAsync();
+
+            return Ok(token);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword ([FromBody] ResetPasswordDto dto)
+        {
+            var dbuser = await _db.Users.FirstOrDefaultAsync(u =>
+                u.ResetPasswordToken == dto.Token &&
+                u.ResetPasswordTokenExpires > DateTime.UtcNow);
+
+            if (dbuser == null)
+                return BadRequest(new { message = "Invalid or expired token." });
+
+            dbuser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            dbuser.ResetPasswordToken = null;
+            dbuser.ResetPasswordTokenExpires = null;
+
+            await _db.SaveChangesAsync();
+
+            var token = _authService.GenerateToken(dbuser);
+            var user = new ShowUserDto
+            {
+                Uid = dbuser.Uid,
+                Name = dbuser.Name,
+                Email = dbuser.Email,
+                University = dbuser.University,
+                Major = dbuser.Major,
+                Bio = dbuser.Bio,
+                Avatar = dbuser.Avatar,
+                Interests = dbuser.Interests,
+                PreferredCuisines = dbuser.PreferredCuisines,
+                IsOnline = dbuser.IsOnline,
+                LastSeen = dbuser.LastSeen,
+            };
+
+            return Ok(new { token, user });
+        }
+
 
     }
 }
