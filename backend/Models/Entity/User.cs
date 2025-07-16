@@ -29,5 +29,8 @@ namespace backend.Models.Entity
 
         public virtual ICollection<Meal> HostedMeals { get; set; } = new List<Meal>();
         public virtual ICollection<MealParticipant> ParticipatedMeals { get; set; } = new List<MealParticipant>();
+
+        public string? ResetPasswordToken { get; set; }
+        public DateTime? ResetPasswordTokenExpires { get; set; }
     }
 }
