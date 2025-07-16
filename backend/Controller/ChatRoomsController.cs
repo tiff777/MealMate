@@ -6,33 +6,45 @@ using backend.Models.Dto.Chat;
 using backend.Models.Dto.Meal;
 using backend.Models.Entity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
 
 namespace backend.Controller
 {
-    public class ChatroomController
-    {
+    
         [ApiController]
         [Route("api/chat")]
-        public class ChatRoomsController : ControllerBase
+        public class ChatRoomController : ControllerBase
         {
             private ApplicationDbContext _db;
 
-            public ChatRoomsController (ApplicationDbContext db)
+            public ChatRoomController (ApplicationDbContext db)
             {
                 _db = db;
             }
 
             [HttpGet]
             [AuthorizeUser]
-            public IActionResult GetAllRooms ()
+            public async Task<IActionResult> GetAllRooms ()
             {
                 var userId= this.GetCurrentUserId();
-                var rooms = _db.ChatRoomMembers
-                    .Where(m => m.UserId == userId) 
-                    .Select(m => m.ChatRoom)
-                    .ToList();
+                var rooms = await _db.ChatRoomMembers
+                    .Where(m => m.UserId == userId)
+                    .Select(m => new
+                    {
+                        RoomId = m.ChatRoom.Id,
+                        Name = m.ChatRoom.Name,
+                        Description = m.ChatRoom.Description,
+
+                        LastMessage = m.ChatRoom.Messages
+                        .OrderByDescending(msg => msg.Timestamp)
+                        .Select(msg => new {
+                         Content = msg.Content
+                        })
+                    .FirstOrDefault()
+                    })
+                    .ToListAsync();
                 return Ok(rooms);
             }
 
@@ -131,8 +143,8 @@ namespace backend.Controller
             {
                 var userId = this.GetCurrentUserId();
 
-                var member = _db.ChatRoomMembers
-                    .FirstOrDefault(m => m.ChatRoomId == roomId && m.UserId == userId);
+                var member = await _db.ChatRoomMembers
+                    .FirstOrDefaultAsync(m => m.ChatRoomId == roomId && m.UserId == userId);
 
                 if (member == null) return NotFound("You are not a member of this room.");
 
@@ -144,9 +156,9 @@ namespace backend.Controller
 
             [HttpGet("{roomId}/messages")]
             [AuthorizeUser]
-            public IActionResult GetMessages (int roomId)
+            public async Task<IActionResult> GetMessages (int roomId)
             {
-                var roomMessages = _db.ChatMessages
+                var roomMessages = await _db.ChatMessages
                 .Where(m => m.ChatRoomId == roomId)
                 .OrderBy(m => m.Timestamp)
                 .Select(m => new ChatMessageDto
@@ -158,7 +170,7 @@ namespace backend.Controller
                     UserName = m.UserName,
                     ChatRoomId = m.ChatRoomId,
                 })
-                .ToList();
+                .ToListAsync();
 
                 return Ok (roomMessages);
             }
@@ -186,5 +198,5 @@ namespace backend.Controller
                 return Ok(messageEntity);
             }
         }
-    }
+    
 }
