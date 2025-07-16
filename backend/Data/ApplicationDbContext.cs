@@ -34,6 +34,8 @@ namespace backend.Data
                       .HasConversion(CommaSeparatedString());
                 entity.Property(e => e.PreferredCuisines)
                       .HasConversion(CommaSeparatedString());
+
+                entity.HasQueryFilter(u => !u.IsDeleted);
             });
 
 

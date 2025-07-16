@@ -32,5 +32,7 @@ namespace backend.Models.Entity
 
         public string? ResetPasswordToken { get; set; }
         public DateTime? ResetPasswordTokenExpires { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
     }
 }

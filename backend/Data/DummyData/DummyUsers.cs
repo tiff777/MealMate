@@ -22,7 +22,8 @@ namespace backend.Data.DummyData
                     IsOnline = true,
                     LastSeen = DateTimeOffset.UtcNow,
                     CreatedAt = DateTimeOffset.Parse("2024-01-15T00:00:00Z"),
-                    UpdatedAt = DateTimeOffset.UtcNow
+                    UpdatedAt = DateTimeOffset.UtcNow,
+                    IsDeleted = false,
                 },
                 new User
                 {
@@ -38,7 +39,8 @@ namespace backend.Data.DummyData
                     IsOnline = false,
                     LastSeen = DateTimeOffset.UtcNow,
                     CreatedAt = DateTimeOffset.Parse("2024-02-01T00:00:00Z"),
-                    UpdatedAt = DateTimeOffset.UtcNow
+                    UpdatedAt = DateTimeOffset.UtcNow,
+                    IsDeleted = false,
                 },
                 new User
                 {
@@ -54,7 +56,8 @@ namespace backend.Data.DummyData
                     IsOnline = true,
                     LastSeen = DateTimeOffset.UtcNow.AddMinutes(-5),
                     CreatedAt = DateTimeOffset.Parse("2024-02-15T00:00:00Z"),
-                    UpdatedAt = DateTimeOffset.UtcNow
+                    UpdatedAt = DateTimeOffset.UtcNow,
+                    IsDeleted = false,
                 },
                 new User
                 {
@@ -70,7 +73,8 @@ namespace backend.Data.DummyData
                     IsOnline = false,
                     LastSeen = DateTimeOffset.UtcNow.AddHours(-2),
                     CreatedAt = DateTimeOffset.Parse("2024-01-20T00:00:00Z"),
-                    UpdatedAt = DateTimeOffset.UtcNow
+                    UpdatedAt = DateTimeOffset.UtcNow,
+                    IsDeleted = false,
                 },
                 new User
                 {
@@ -86,7 +90,8 @@ namespace backend.Data.DummyData
                     IsOnline = true,
                     LastSeen = DateTimeOffset.UtcNow,
                     CreatedAt = DateTimeOffset.Parse("2024-01-10T00:00:00Z"),
-                    UpdatedAt = DateTimeOffset.UtcNow
+                    UpdatedAt = DateTimeOffset.UtcNow,
+                    IsDeleted = false,
                 },
                 new User
                 {
@@ -102,7 +107,8 @@ namespace backend.Data.DummyData
                     IsOnline = true,
                     LastSeen = DateTimeOffset.UtcNow,
                     CreatedAt = DateTimeOffset.Parse("2024-03-01T00:00:00Z"),
-                    UpdatedAt = DateTimeOffset.UtcNow
+                    UpdatedAt = DateTimeOffset.UtcNow,
+                    IsDeleted = false,
                 }
             };
         }

@@ -222,15 +222,16 @@ namespace backend.Controller
 
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [AuthorizeUser]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser()
         {
             try
             {
                 var user = this.GetCurrentUser();
 
-                _db.Users.Remove(user);
+                user.IsDeleted = true;
+
                 await _db.SaveChangesAsync();
 
                 return Ok();
