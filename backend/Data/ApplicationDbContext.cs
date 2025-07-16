@@ -14,6 +14,10 @@ namespace backend.Data
         public DbSet<Meal> Meals { get; set; }
         public DbSet<MealParticipant> MealParticipants { get; set; }
 
+        public DbSet<ChatRoom> ChatRooms { get; set; }
+        public DbSet<ChatRoomMember> ChatRoomMembers { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -80,6 +84,51 @@ namespace backend.Data
                       .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasIndex(e => new { e.MealId, e.UserId }).IsUnique();
+            });
+
+            modelBuilder.Entity<ChatRoom>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(500);
+
+                entity.HasMany(e => e.Members)
+                      .WithOne(m => m.ChatRoom)
+                      .HasForeignKey(m => m.ChatRoomId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(e => e.Messages)
+                      .WithOne(m => m.ChatRoom)
+                      .HasForeignKey(m => m.ChatRoomId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ChatRoomMember>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.UserId).HasMaxLength(100);
+                entity.Property(e => e.UserName).HasMaxLength(100);
+
+                entity.HasOne(e => e.ChatRoom)
+                      .WithMany(r => r.Members)
+                      .HasForeignKey(e => e.ChatRoomId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ChatMessage>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.UserId).HasMaxLength(100);
+                entity.Property(e => e.UserName).HasMaxLength(100);
+
+                entity.HasOne(e => e.ChatRoom)
+                      .WithMany(r => r.Messages)
+                      .HasForeignKey(e => e.ChatRoomId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasQueryFilter(m => !m.IsDeleted);
             });
         }
 
