@@ -10,6 +10,7 @@ import CreateMealPage from "./pages/Meal/CreateMealPage";
 import UpdateMealPage from "./pages/Meal/ModifyMealPage";
 import SettingsPage from "./pages/Setting/SettingPage";
 import ResetPasswordPage from "./pages/Setting/ResetUserPage";
+import ChatRoomPage from "./pages/Chat/ChatRoomPage";
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
           <Route path="/meal" index element={<MealDashboard />} />
           <Route path="/buddy" index element={<BuddyPage />} />
           <Route path="/my-meals" index element={<MyMealPage />} />
-          <Route path="/messages" index element={<Home />} />
+          <Route path="/messages" index element={<ChatRoomPage />} />
           <Route path="/setting" index element={<SettingsPage />} />
           <Route path="/login" index element={<LoginPage />} />
           <Route path="/register" index element={<ResgisterPage />} />
