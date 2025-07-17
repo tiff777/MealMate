@@ -1,5 +1,5 @@
 type AvatarProps = {
-  userId: string;
+  userId: number;
   avatar: string;
   alt?: string;
 };

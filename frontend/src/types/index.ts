@@ -1,5 +1,5 @@
 export interface User {
-  uid: string;
+  uid: number;
   name: string;
   email: string;
   university: string;
@@ -49,7 +49,7 @@ export interface changeAvatar {
 }
 
 export interface Meal {
-  mid: string;
+  mid: number;
   title: string;
   description: string;
   maxParticipant: number;
