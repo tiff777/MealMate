@@ -1,11 +1,13 @@
 ﻿using backend.Attributes;
 using backend.Data;
 using backend.Extention;
+using backend.Hubs;
 using backend.Models.Dto;
 using backend.Models.Dto.Chat;
 using backend.Models.Dto.Meal;
 using backend.Models.Entity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
@@ -18,10 +20,12 @@ namespace backend.Controller
         public class ChatRoomController : ControllerBase
         {
             private ApplicationDbContext _db;
+            private IHubContext<ChatHub> _hubContext;
 
-            public ChatRoomController (ApplicationDbContext db)
+            public ChatRoomController (ApplicationDbContext db,IHubContext<ChatHub> hubContext)
             {
                 _db = db;
+                _hubContext = hubContext;
             }
 
             [HttpGet]
@@ -207,6 +211,19 @@ namespace backend.Controller
             try
             {
                 var user = this.GetCurrentUser();
+                var room = await _db.ChatRooms.FindAsync(roomId);
+                if (room == null)
+                {
+                    return NotFound(new { message = "Chat room not found" });
+                }
+
+                var isMember = await _db.ChatRoomMembers
+                    .AnyAsync(m => m.ChatRoomId == roomId && m.UserId == user.Uid);
+
+                if (!isMember)
+                {
+                    return Forbid("You are not a member of this room");
+                }
 
                 var messageEntity = new ChatMessage
                 {
@@ -220,7 +237,22 @@ namespace backend.Controller
                 _db.ChatMessages.Add(messageEntity);
                 await _db.SaveChangesAsync();
 
-                return Ok(messageEntity);
+                var messageDto = new ChatMessageDto
+                {
+                    Id = messageEntity.Id,
+                    Content = messageEntity.Content,
+                    UserName = messageEntity.UserName,
+                    UserId = messageEntity.UserId,
+                    Timestamp = messageEntity.Timestamp,
+                    ChatRoomId = messageEntity.ChatRoomId
+                };
+
+                await _hubContext.Clients.Group(roomId.ToString())
+                    .SendAsync("ReceiveMessage", messageDto);
+
+
+
+                return Ok(messageDto);
 
             }
             catch (Exception ex)

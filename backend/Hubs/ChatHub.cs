@@ -9,21 +9,21 @@ namespace backend.Hubs
     public class ChatHub:Hub
     {
 
-        public async Task JoinRoom (string roomId, string userName)
+        public async Task JoinRoom (int roomId, string userName)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-            await Clients.Group(roomId).SendAsync("UserJoined", userName, $"{userName} joined the room");
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
+            await Clients.Group(roomId.ToString()).SendAsync("UserJoined", userName, $"{userName} joined the room");
         }
 
-        public async Task LeaveRoom (string roomId, string userName)
+        public async Task LeaveRoom (int roomId, string userName)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId);
-            await Clients.Group(roomId).SendAsync("UserLeft", userName, $"{userName} left the room");
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId.ToString());
+            await Clients.Group(roomId.ToString()).SendAsync("UserLeft", userName, $"{userName} left the room");
         }
 
-        public async Task SendMessageToRoom (string roomId, string userName, ChatMessageDto messageData)
+        public async Task SendMessageToRoom (int roomId, string userName, ChatMessageDto messageData)
         {
-            await Clients.Group(roomId).SendAsync("ReceiveMessage", messageData);
+            await Clients.Group(roomId.ToString()).SendAsync("ReceiveMessage", messageData);
         }
 
         public async Task SendPrivateMessage (string toConnectionId, string fromUserName, ChatMessageDto messageData)
