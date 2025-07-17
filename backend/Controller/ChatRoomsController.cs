@@ -60,7 +60,7 @@ namespace backend.Controller
                 {
                     Name = dto.Name,
                     Description = dto.Description,
-                    IsPrivate = dto.IsPrivate,
+                    IsPrivate = false,
                     HostId = user.Uid,
                     Members = new List<ChatRoomMember>
                     {
@@ -82,12 +82,26 @@ namespace backend.Controller
 
             [HttpPost("private")]
             [AuthorizeUser]
-            public async Task<IActionResult> CreatePrivateChatRoom ([FromBody] CreateChatRoomDto dto, int targetUserId, string targetUserName)
+            public async Task<IActionResult> CreatePrivateChatRoom ([FromBody] CreatePrivateChatRoomDto dto)
             {
                 var user = this.GetCurrentUser();
+
+            try
+            {
+                var existingRoom = await _db.ChatRooms
+                .Where(r => r.IsPrivate)
+                .Where(r => r.Members.Any(m => m.UserId == user.Uid))
+                .Where(r => r.Members.Any(m => m.UserId == dto.TargetUserId))
+                .FirstOrDefaultAsync();
+
+                if (existingRoom != null)
+                {
+                    return Ok(existingRoom.Id);
+                }
+
                 var room = new ChatRoom
                 {
-                    Name = targetUserName,
+                    Name = dto.TargetUserName,
                     Description = dto.Description,
                     IsPrivate = true,
                     HostId = user.Uid,
@@ -102,8 +116,8 @@ namespace backend.Controller
                         },
                         new ChatRoomMember
                         {
-                            UserId = targetUserId,
-                            UserName = targetUserName,
+                            UserId = dto.TargetUserId,
+                            UserName = dto.TargetUserName,
                             IsHost = false,
                             JoinedAt = DateTime.UtcNow
                         }
@@ -113,7 +127,15 @@ namespace backend.Controller
                 _db.ChatRooms.Add(room);
                 await _db.SaveChangesAsync();
 
-                return Ok(room);
+
+
+                return Ok(room.Id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+                
             }
 
             [HttpPost("{roomId}/join")]
