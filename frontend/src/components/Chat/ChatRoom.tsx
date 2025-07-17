@@ -1,32 +1,46 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ChatRoomAreaHeader from "./ChateAreaHeader";
 import type { ChatRoomInfo, ChatMessage } from "../../types";
+import MessageInput from "../Form/MessageInput";
 
 interface ChatRoomProps {
   room: ChatRoomInfo;
   userName: string;
   messages: ChatMessage[];
-  newMessage: string;
-  setNewMessage: (message: string) => void;
+  // newMessage: string;
+  // setNewMessage: (message: string) => void;
   handleLeave: () => void;
-  handleSendMessage: (e: React.FormEvent) => void;
+  // handleSendMessage: (e: React.FormEvent) => void;
+  handleSendMessage: (message: string) => void;
 }
 
 const ChatRoom = ({
   room,
   userName,
   messages,
-  newMessage,
-  setNewMessage,
+  // newMessage,
+  // setNewMessage,
   handleSendMessage,
   handleLeave,
 }: ChatRoomProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  console.log(
+    "after setUserChatRooms, selectedRoomId still valid?",
+    room.roomId
+  );
   console.log("Test messages: ", messages);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const [newMessage, setNewMessage] = useState("");
+
+  const handleLocalSend = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSendMessage(newMessage);
+    setNewMessage("");
   };
 
   useEffect(() => {
@@ -41,7 +55,7 @@ const ChatRoom = ({
   };
 
   return (
-    <div className="flex flex-col h-full max-w-full mx-auto">
+    <div className="flex flex-col h-[calc(100vh-4.5rem)] max-w-full mx-auto">
       <ChatRoomAreaHeader selectedRoom={room} handleLeave={handleLeave} />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -80,24 +94,7 @@ const ChatRoom = ({
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSendMessage} className="p-4 border-t">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="submit"
-            disabled={!newMessage.trim()}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-          >
-            Send
-          </button>
-        </div>
-      </form>
+      <MessageInput onSendMessage={handleSendMessage} />
     </div>
   );
 };

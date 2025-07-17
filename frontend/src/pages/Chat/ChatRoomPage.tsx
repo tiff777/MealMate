@@ -6,7 +6,7 @@ import React, {
   useRef,
 } from "react";
 import { AppContext } from "../../context/AppContext";
-import ChatRoom from "../../components/Chat/Chatroom";
+import ChatRoom from "../../components/Chat/ChatRoom";
 import { authClient } from "../../hook/api";
 import ChatRoomNav from "../../components/Chat/ChatRoomNav";
 import type { ChatRoomInfo, ChatMessage } from "../../types";
@@ -19,7 +19,6 @@ const ChatRoomPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const chatServiceRef = useRef<ChatService | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [newMessage, setNewMessage] = useState("");
   const [isSignalRReady, setIsSignalRReady] = useState(false);
 
   const selectedRoom = userChatRooms.find(
@@ -56,6 +55,8 @@ const ChatRoomPage = () => {
   }, []);
 
   const fetchChatHistory = useCallback(async () => {
+    console.log("Fetch history");
+
     if (!selectedRoomId) return;
 
     try {
@@ -97,23 +98,37 @@ const ChatRoomPage = () => {
     }
   };
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !selectedRoomId || !user) {
+  const handleSendMessage = async (messageContent: string) => {
+    if (!messageContent.trim() || !selectedRoomId || !user) {
       return;
     }
 
-    console.log("Test new message: ", newMessage);
+    console.log("Test new message: ", messageContent);
 
     try {
       const response = await authClient.post(
         `/chat/${selectedRoomId}/messages`,
-        { content: newMessage }
+        { content: messageContent }
       );
 
       if (response.status !== 200) {
         console.log("Cannot send message");
       }
+
+      setUserChatRooms((prev) =>
+        prev.map((room) =>
+          room.roomId === selectedRoomId
+            ? {
+                ...room,
+                lastMessage: {
+                  content: messageContent,
+                  timeStamp: new Date(),
+                },
+                lastMessageTime: new Date(),
+              }
+            : room
+        )
+      );
     } catch (error) {
       console.log("Error in sending message");
     }
@@ -148,7 +163,6 @@ const ChatRoomPage = () => {
     const service = chatServiceRef.current;
     if (!service || !user || !isSignalRReady) return;
 
-
     const join = async () => {
       if (selectedRoomId) {
         await service.joinRoom(selectedRoomId, user.name);
@@ -163,11 +177,14 @@ const ChatRoomPage = () => {
         service.leaveRoom(selectedRoomId, user.name);
       }
     };
-  }, [selectedRoomId, user]);
+  }, [selectedRoomId, user, isSignalRReady]);
 
   useEffect(() => {
-    fetchChatHistory();
-  }, [selectedRoom?.roomId]);
+    console.log("selectedRoomId changed: ", selectedRoomId);
+    if (selectedRoomId) {
+      fetchChatHistory();
+    }
+  }, [selectedRoomId]);
 
   useEffect(() => {
     if (pendingRoomId) {
@@ -196,14 +213,12 @@ const ChatRoomPage = () => {
       <div className="flex-1 flex flex-col">
         {selectedRoom ? (
           <>
-            <div className="flex-1 bg-white">
+            <div className="flex-1 bg-white ">
               <ChatRoom
                 room={selectedRoom}
                 userName={user.name}
                 handleLeave={() => handleLeaveChatRoom(selectedRoom.roomId)}
                 messages={messages}
-                newMessage={newMessage}
-                setNewMessage={setNewMessage}
                 handleSendMessage={handleSendMessage}
               />
             </div>
