@@ -1,15 +1,9 @@
 import { useState } from "react";
 import { FaUniversity } from "react-icons/fa";
-import {
-  FiUser,
-  FiMail,
-  FiLock,
-  FiEye,
-  FiEyeOff,
-  FiBookOpen,
-} from "react-icons/fi";
+import { FiUser, FiMail, FiBookOpen } from "react-icons/fi";
 import type { RegisterUser } from "../../types";
 import NormalButton from "../Button/NormalButton";
+import PasswordInput from "../Form/PasswordInput";
 
 interface Props {
   formData: RegisterUser;
@@ -57,61 +51,23 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
         </div>
       </div>
 
-      <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-          Password
-        </label>
-        <div className="relative">
-          <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Create password"
-            value={formData.password}
-            onChange={(e) => handleInputChange("password", e.target.value)}
-            className="w-full pl-10 pr-12 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-rose-500 dark:focus:ring-rose-400 focus:border-transparent transition-colors text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-            required
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-          >
-            {showPassword ? (
-              <FiEyeOff className="w-4 h-4" />
-            ) : (
-              <FiEye className="w-4 h-4" />
-            )}
-          </button>
-        </div>
-      </div>
+      <PasswordInput
+        label="Password"
+        placeholder="Create password"
+        value={formData.password}
+        onChange={(val) => handleInputChange("password", val)}
+        show={showPassword}
+        setShow={setShowPassword}
+      />
 
-      <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-          Confirm Password
-        </label>
-        <div className="relative">
-          <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type={showConfirmPassword ? "text" : "password"}
-            placeholder="Confirm your password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full pl-10 pr-12 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-rose-500 dark:focus:ring-rose-400 focus:border-transparent transition-colors text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-            required
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-          >
-            {showConfirmPassword ? (
-              <FiEyeOff className="w-4 h-4" />
-            ) : (
-              <FiEye className="w-4 h-4" />
-            )}
-          </button>
-        </div>
-      </div>
+      <PasswordInput
+        label="Confirm Password"
+        placeholder="Confirm your password"
+        value={confirmPassword}
+        onChange={setConfirmPassword}
+        show={showConfirmPassword}
+        setShow={setShowConfirmPassword}
+      />
 
       <div>
         <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">

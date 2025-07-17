@@ -11,6 +11,7 @@ interface Props {
   handleSubmit: (e: React.FormEvent) => void;
   formData: RegisterUser;
   setFormData: React.Dispatch<React.SetStateAction<RegisterUser>>;
+  setAvatarFile: React.Dispatch<React.SetStateAction<File | null>>;
 }
 
 function RegisterForm({
@@ -20,6 +21,7 @@ function RegisterForm({
   formData,
   setFormData,
   handleSubmit,
+  setAvatarFile,
 }: Props) {
   const handleInputChange = (field: keyof RegisterUser, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -69,6 +71,7 @@ function RegisterForm({
               handleInputChange={handleInputChange}
               handleArrayInputChange={handleArrayInputChange}
               handleBack={handleBack}
+              setAvatarFile={setAvatarFile}
             />
           )}
         </form>
