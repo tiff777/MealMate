@@ -37,10 +37,13 @@ namespace backend.Controller
                         Name = m.ChatRoom.Name,
                         Description = m.ChatRoom.Description,
 
+                        memberCount= m.ChatRoom.Members.Count(),
+
                         LastMessage = m.ChatRoom.Messages
                         .OrderByDescending(msg => msg.Timestamp)
                         .Select(msg => new {
-                         Content = msg.Content
+                         Content = msg.Content, 
+                         TimeStamp = msg.Timestamp,
                         })
                     .FirstOrDefault()
                     })
@@ -177,25 +180,32 @@ namespace backend.Controller
 
             [HttpPost("{roomId}/messages")]
             [AuthorizeUser]
-            public async Task<IActionResult> PostMessage (int roomId, [FromBody] ChatMessageDto dto)
+            public async Task<IActionResult> PostMessage (int roomId, [FromBody] CreateMessageDto dto)
             {
-
-                dto.Timestamp = DateTime.UtcNow;
-                dto.ChatRoomId = roomId;
+            try
+            {
+                var user = this.GetCurrentUser();
 
                 var messageEntity = new ChatMessage
                 {
                     ChatRoomId = roomId,
                     Content = dto.Content,
-                    UserName = dto.UserName,
-                    UserId = dto.UserId,
-                    Timestamp = dto.Timestamp
+                    UserName = user.Name,
+                    UserId = user.Uid,
+                    Timestamp = DateTime.UtcNow
                 };
 
                 _db.ChatMessages.Add(messageEntity);
                 await _db.SaveChangesAsync();
 
                 return Ok(messageEntity);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Error in posting message: ", ex.Message });
+            }
+            
             }
         }
     
