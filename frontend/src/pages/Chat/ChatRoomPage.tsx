@@ -6,6 +6,7 @@ import ChatRoomNav from "../../components/Chat/ChatRoomNav";
 import type { ChatRoomInfo, ChatMessage } from "../../types";
 
 const ChatRoomPage = () => {
+  const { pendingRoomId, setPendingId } = useContext(AppContext);
   const [userChatRooms, setUserChatRooms] = useState<ChatRoomInfo[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,7 +34,10 @@ const ChatRoomPage = () => {
       setUserChatRooms(chatRooms);
 
       console.log("Test chatroom: ", chatRooms);
-      if (!selectedRoomId && chatRooms.length > 0) {
+      if (pendingRoomId) {
+        setSelectedRoomId(pendingRoomId);
+        setPendingId(null);
+      } else if (!selectedRoomId && chatRooms.length > 0) {
         setSelectedRoomId(chatRooms[0].roomId);
       }
     } catch (error) {
@@ -114,6 +118,13 @@ const ChatRoomPage = () => {
   useEffect(() => {
     fetchChatHistory();
   }, [selectedRoom?.roomId]);
+
+  useEffect(() => {
+    if (pendingRoomId) {
+      setSelectedRoomId(pendingRoomId);
+      setPendingId(null);
+    }
+  }, [pendingRoomId]);
 
   if (isLoading || !user) {
     return (

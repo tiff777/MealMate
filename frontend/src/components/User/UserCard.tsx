@@ -1,8 +1,15 @@
 import type { User } from "../../types";
 import JoinButton from "../Button/JoinButton";
+import ButtonFactory from "../Button/ButtonFactory";
 import UserAvatar from "./UserAvatar";
 
-function UserCard({ user }: { user: User }) {
+function UserCard({
+  user,
+  handleMessage,
+}: {
+  user: User;
+  handleMessage: (userId: number, userName: string) => void;
+}) {
   return (
     <>
       <div
@@ -45,8 +52,12 @@ function UserCard({ user }: { user: User }) {
             </div>
 
             <div className="flex gap-2 mt-2">
-              <JoinButton message="Invite Lunch" />
-              <button className="px-3 py-1 rounded border">Message</button>
+              <ButtonFactory
+                type="message"
+                onClick={() => handleMessage(user.uid, user.name)}
+                message="Message"
+              />
+              {/* <JoinButton message="Invite Lunch" /> */}
             </div>
           </div>
         </div>

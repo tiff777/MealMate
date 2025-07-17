@@ -14,12 +14,14 @@ interface AppContextType {
   isAuthenticated: boolean;
   isDarkMode: boolean;
   isLoading: boolean;
+  pendingRoomId: number | null;
   loginUser: (user: User, token: string) => void;
   logoutUser: () => void;
   updateUser: (user: User) => void;
   deleteUser: () => void;
   toggleDarkMode: () => void;
   setLoading: (loading: boolean) => void;
+  setPendingId: (roomId: number | null) => void;
   getToken: () => string;
 }
 
@@ -28,12 +30,14 @@ const AppContext = createContext<AppContextType>({
   isAuthenticated: false,
   isLoading: false,
   isDarkMode: false,
+  pendingRoomId: null,
   loginUser: () => {},
   logoutUser: () => {},
   updateUser: () => {},
   deleteUser: () => {},
   toggleDarkMode: () => {},
   setLoading: () => {},
+  setPendingId: () => {},
   getToken: () => "",
 });
 
@@ -42,6 +46,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [pendingRoomId, setPendingRoomId] = useState<number | null>(null);
   const navigate = useNavigate();
 
   const loginUser = (userData: User, token: string) => {
@@ -142,6 +147,10 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(loading);
   };
 
+  const setPendingId = (roomId: number | null) => {
+    setPendingRoomId(roomId);
+  };
+
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia(
@@ -180,6 +189,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     isAuthenticated,
     isLoading,
     isDarkMode,
+    pendingRoomId,
     loginUser,
     logoutUser,
     updateUser,
@@ -187,6 +197,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     getToken,
     toggleDarkMode,
     setLoading,
+    setPendingId,
   };
 
   return <AppContext.Provider value={context}>{children}</AppContext.Provider>;

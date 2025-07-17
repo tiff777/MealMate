@@ -1,12 +1,15 @@
-import { useContext, useState, useEffect, use } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AppContext } from "../../context/AppContext";
-import { apiClient }  from "../../hook/api";
+import { apiClient, authClient } from "../../hook/api";
 import UserCard from "../../components/User/UserCard";
 import type { User } from "../../types";
+import { useNavigate } from "react-router-dom";
+import { log } from "console";
 
 function BuddyPage() {
-  const { setLoading } = useContext(AppContext);
+  const { setLoading, setPendingId } = useContext(AppContext);
   const [users, setUsers] = useState<User[]>([]);
+  const navigate = useNavigate();
 
   async function fetchUsers() {
     setLoading(true);
@@ -23,6 +26,30 @@ function BuddyPage() {
       setLoading(false);
     }
   }
+
+  const handleMessage = async (userId: number, userName: string) => {
+    try {
+      console.log(`Message with ${userId}`);
+
+      const response = await authClient.post("/chat/private", {
+        TargetUserId: userId,
+        TargetUserName: userName,
+        Description: `Chat Room with ${userName}`,
+      });
+
+      if (response.status !== 200) {
+        console.log("Cannot send message to this user");
+      }
+
+      const roomId = response.data;
+      console.log("Test room id: ", roomId);
+
+      setPendingId(roomId);
+      navigate("/messages");
+    } catch (error) {
+      console.log("Cannot send message to user");
+    }
+  };
 
   useEffect(() => {
     fetchUsers();
@@ -46,7 +73,11 @@ function BuddyPage() {
       {users.length > 0 ? (
         <div className="flex flex-col gap-4">
           {users.map((user) => (
-            <UserCard key={user.uid} user={user} />
+            <UserCard
+              key={user.uid}
+              user={user}
+              handleMessage={handleMessage}
+            />
           ))}
         </div>
       ) : (
