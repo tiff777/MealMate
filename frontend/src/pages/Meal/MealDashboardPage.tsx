@@ -6,16 +6,18 @@ import { AppContext } from "../../context/AppContext";
 import ErrorToast from "../../components/Modal/ErrorToast";
 import SuccessToast from "../../components/Modal/SuccessfulToast";
 import ButtonFactory from "../../components/Button/ButtonFactory";
+import { useNavigate } from "react-router-dom";
 
 function MealDashboard() {
   type MealWithParticipants = Meal & { participants: Participant[] } & {
     isJoined: boolean;
-  } & { isHost: boolean };
+  } & { isHost: boolean } & { chartRoomId: number };
 
-  const { setLoading, user } = useContext(AppContext);
+  const { setLoading, user, setPendingId } = useContext(AppContext);
   const [meals, setMeals] = useState<MealWithParticipants[]>([]);
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const fetchMeals = async () => {
     setLoading(true);
@@ -41,7 +43,7 @@ function MealDashboard() {
     }
   };
 
-  const handleJoin = async (mid: string) => {
+  const handleJoin = async (mid: number) => {
     if (!user) {
       setShowError(true);
       return;
@@ -60,7 +62,7 @@ function MealDashboard() {
     }
   };
 
-  const handleLeave = async (mid: string) => {
+  const handleLeave = async (mid: number) => {
     if (!user) {
       return;
     }
@@ -78,7 +80,7 @@ function MealDashboard() {
     }
   };
 
-  const handleDelete = async (mid: string) => {
+  const handleDelete = async (mid: number) => {
     if (!user) {
       return;
     }
@@ -86,14 +88,19 @@ function MealDashboard() {
     try {
       const response = await authClient.delete(`/meal/${mid}`);
       if (!response) {
-        console.log("Cannot not leave");
+        console.log("Cannot not delete");
       }
-      console.log("Leave meal");
+      console.log("Delete meal");
 
       fetchMeals();
     } catch (error) {
       console.log("Error in deleting: ", error);
     }
+  };
+
+  const handleMessage = async (chatRoomId: number) => {
+    setPendingId(chatRoomId);
+    navigate("/messages");
   };
 
   useEffect(() => {
@@ -134,6 +141,12 @@ function MealDashboard() {
                     onClick={() => handleJoin(meal.mid)}
                   />
                 ),
+                <ButtonFactory
+                  key="message"
+                  type="message"
+                  message="Message"
+                  onClick={() => handleMessage(meal.chartRoomId)}
+                />,
               ];
 
               return <MealCard key={meal.mid} meal={meal} buttons={buttons} />;

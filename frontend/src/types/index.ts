@@ -61,7 +61,7 @@ export interface Meal {
   tags: string[];
   status: number;
   createdAt: Date;
-  hostId: string;
+  hostId: number;
 }
 
 export interface CreateMeal {
@@ -85,7 +85,7 @@ export interface UpdateMeal {
 }
 
 export interface Participant {
-  userId: string;
+  userId: number;
   avatar: string;
 }
 

@@ -45,7 +45,7 @@ function myMealPage() {
     }
   };
 
-  const handleLeave = async (mid: string) => {
+  const handleLeave = async (mid: number) => {
     if (!user) {
       return;
     }
@@ -63,7 +63,7 @@ function myMealPage() {
     }
   };
 
-  const handleDelete = async (mid: string) => {
+  const handleDelete = async (mid: number) => {
     if (!user) {
       return;
     }
