@@ -73,7 +73,7 @@ namespace backend.Controller
                             UserId = user.Uid,
                             UserName = user.Name,
                             IsHost = true,
-                            JoinedAt = DateTime.UtcNow
+                            JoinedAt = DateTimeOffset.UtcNow
                         }
                        }
                 };
@@ -116,14 +116,14 @@ namespace backend.Controller
                             UserId = user.Uid,
                             UserName = user.Name,
                             IsHost = true,
-                            JoinedAt = DateTime.UtcNow
+                            JoinedAt = DateTimeOffset.UtcNow
                         },
                         new ChatRoomMember
                         {
                             UserId = dto.TargetUserId,
                             UserName = dto.TargetUserName,
                             IsHost = false,
-                            JoinedAt = DateTime.UtcNow
+                            JoinedAt = DateTimeOffset.UtcNow
                         }
                     }
                 };

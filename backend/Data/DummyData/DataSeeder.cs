@@ -287,14 +287,14 @@ namespace backend.Data.DummyData
         Description = "Discussion for Korean BBQ meetup at Mukbang Korean BBQ",
         HostId = sophia.Uid,
         IsPrivate = false,
-        CreatedAt = DateTime.UtcNow.AddDays(-1),
+        CreatedAt = DateTimeOffset.UtcNow.AddDays(-1),
         MealId = meals[0].Mid, 
         Members = new List<ChatRoomMember>
         {
-            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddDays(-1) },
-            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name,  JoinedAt = DateTime.UtcNow.AddHours(-22) },
-            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name, JoinedAt = DateTime.UtcNow.AddHours(-19) },
-            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name,  JoinedAt = DateTime.UtcNow.AddHours(-17) }
+            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTimeOffset.UtcNow.AddDays(-1) },
+            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name,  JoinedAt = DateTimeOffset.UtcNow.AddHours(-22) },
+            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name, JoinedAt = DateTimeOffset.UtcNow.AddHours(-19) },
+            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name,  JoinedAt = DateTimeOffset.UtcNow.AddHours(-17) }
         }
     },
     
@@ -304,12 +304,12 @@ namespace backend.Data.DummyData
         Description = "Coordination for pizza study session",
         HostId = sophia.Uid,
         IsPrivate = false,
-        CreatedAt = DateTime.UtcNow.AddHours(-12),
+        CreatedAt = DateTimeOffset.UtcNow.AddHours(-12),
         MealId = meals[1].Mid,
         Members = new List<ChatRoomMember>
         {
-            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddHours(-12) },
-            new ChatRoomMember { UserId = maya.Uid, UserName = maya.Name,  JoinedAt = DateTime.UtcNow.AddHours(-11) }
+            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTimeOffset.UtcNow.AddHours(-12) },
+            new ChatRoomMember { UserId = maya.Uid, UserName = maya.Name,  JoinedAt = DateTimeOffset.UtcNow.AddHours(-11) }
         }
     },
     
@@ -319,13 +319,13 @@ namespace backend.Data.DummyData
         Description = "Morning coffee and code review discussion",
         HostId = sophia.Uid,
         IsPrivate = false,
-        CreatedAt = DateTime.UtcNow.AddHours(-6),
+        CreatedAt = DateTimeOffset.UtcNow.AddHours(-6),
         MealId = meals[2].Mid,
         Members = new List<ChatRoomMember>
         {
-            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddHours(-6) },
-            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name, JoinedAt = DateTime.UtcNow.AddHours(-5) },
-            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name,  JoinedAt = DateTime.UtcNow.AddHours(-5) }
+            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTimeOffset.UtcNow.AddHours(-6) },
+            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name, JoinedAt = DateTimeOffset.UtcNow.AddHours(-5) },
+            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name,  JoinedAt = DateTimeOffset.UtcNow.AddHours(-5) }
         }
     },
     
@@ -335,13 +335,13 @@ namespace backend.Data.DummyData
         Description = "Chat for our casual lunch meetup",
         HostId = emma.Uid,
         IsPrivate = false,
-        CreatedAt = DateTime.UtcNow.AddHours(-1),
+        CreatedAt = DateTimeOffset.UtcNow.AddHours(-1),
         MealId = meals[3].Mid,
         Members = new List<ChatRoomMember>
         {
-            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name, IsHost = true, JoinedAt = DateTime.UtcNow.AddHours(-1) },
-            new ChatRoomMember { UserId = sophie.Uid, UserName = sophie.Name,  JoinedAt = DateTime.UtcNow.AddMinutes(-50) },
-            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name, JoinedAt = DateTime.UtcNow.AddMinutes(-42) }
+            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name, IsHost = true, JoinedAt = DateTimeOffset.UtcNow.AddHours(-1) },
+            new ChatRoomMember { UserId = sophie.Uid, UserName = sophie.Name,  JoinedAt = DateTimeOffset.UtcNow.AddMinutes(-50) },
+            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name, JoinedAt = DateTimeOffset.UtcNow.AddMinutes(-42) }
         }
     },
     
@@ -351,12 +351,12 @@ namespace backend.Data.DummyData
         Description = "Planning our healthy bowl adventure",
         HostId = marcus.Uid,
         IsPrivate = false,
-        CreatedAt = DateTime.UtcNow.AddHours(-2),
+        CreatedAt = DateTimeOffset.UtcNow.AddHours(-2),
         MealId = meals[4].Mid,
         Members = new List<ChatRoomMember>
         {
-            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddHours(-2) },
-            new ChatRoomMember { UserId = maya.Uid, UserName = maya.Name, JoinedAt = DateTime.UtcNow.AddHours(-1).AddMinutes(-40) }
+            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name, IsHost = true,  JoinedAt = DateTimeOffset.UtcNow.AddHours(-2) },
+            new ChatRoomMember { UserId = maya.Uid, UserName = maya.Name, JoinedAt = DateTimeOffset.UtcNow.AddHours(-1).AddMinutes(-40) }
         }
     },
     
@@ -366,14 +366,14 @@ namespace backend.Data.DummyData
         Description = "Welcome lunch for new students - completed event",
         HostId = sophie.Uid,
         IsPrivate = false,
-        CreatedAt = DateTime.UtcNow.AddDays(-2),
+        CreatedAt = DateTimeOffset.UtcNow.AddDays(-2),
         MealId = meals[5].Mid,
         Members = new List<ChatRoomMember>
         {
-            new ChatRoomMember { UserId = sophie.Uid, UserName = sophie.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddDays(-2) },
-            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name,  JoinedAt = DateTime.UtcNow.AddDays(-2).AddHours(2) },
-            new ChatRoomMember { UserId = maya.Uid, UserName = maya.Name,  JoinedAt = DateTime.UtcNow.AddDays(-2).AddHours(3) },
-            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name,  JoinedAt = DateTime.UtcNow.AddDays(-2).AddHours(4) }
+            new ChatRoomMember { UserId = sophie.Uid, UserName = sophie.Name, IsHost = true,  JoinedAt = DateTimeOffset.UtcNow.AddDays(-2) },
+            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name,  JoinedAt = DateTimeOffset.UtcNow.AddDays(-2).AddHours(2) },
+            new ChatRoomMember { UserId = maya.Uid, UserName = maya.Name,  JoinedAt = DateTimeOffset.UtcNow.AddDays(-2).AddHours(3) },
+            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name,  JoinedAt = DateTimeOffset.UtcNow.AddDays(-2).AddHours(4) }
         }
     },
     
@@ -383,14 +383,14 @@ namespace backend.Data.DummyData
         Description = "General discussion for all students",
         HostId = sophia.Uid,
         IsPrivate = false,
-        CreatedAt = DateTime.UtcNow.AddDays(-3),
+        CreatedAt = DateTimeOffset.UtcNow.AddDays(-3),
         MealId = null, 
         Members = new List<ChatRoomMember>
         {
-            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddDays(-3) },
-            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name,  JoinedAt = DateTime.UtcNow.AddDays(-3).AddHours(2) },
-            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name, JoinedAt = DateTime.UtcNow.AddDays(-3).AddHours(4) },
-            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name, JoinedAt = DateTime.UtcNow.AddDays(-2) }
+            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTimeOffset.UtcNow.AddDays(-3) },
+            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name,  JoinedAt = DateTimeOffset.UtcNow.AddDays(-3).AddHours(2) },
+            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name, JoinedAt = DateTimeOffset.UtcNow.AddDays(-3).AddHours(4) },
+            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name, JoinedAt = DateTimeOffset.UtcNow.AddDays(-2) }
         }
     }
 };
@@ -406,7 +406,7 @@ namespace backend.Data.DummyData
         UserId = sophia.Uid,
         UserName = sophia.Name,
         Content = "Hey everyone! Looking forward to our Korean BBQ adventure tomorrow! 🥩",
-        Timestamp = DateTime.UtcNow.AddHours(-18)
+        Timestamp = DateTimeOffset.UtcNow.AddHours(-18)
     },
     new ChatMessage
     {
@@ -414,7 +414,7 @@ namespace backend.Data.DummyData
         UserId = emma.Uid,
         UserName = emma.Name,
         Content = "Same here! Should we meet at the restaurant or somewhere else first?",
-        Timestamp = DateTime.UtcNow.AddHours(-16)
+        Timestamp = DateTimeOffset.UtcNow.AddHours(-16)
     },
     
     new ChatMessage
@@ -423,7 +423,7 @@ namespace backend.Data.DummyData
         UserId = sophia.Uid,
         UserName = sophia.Name,
         Content = "Don't forget to bring your CS assignment! We can review each other's code 💻",
-        Timestamp = DateTime.UtcNow.AddHours(-10)
+        Timestamp = DateTimeOffset.UtcNow.AddHours(-10)
     },
     new ChatMessage
     {
@@ -431,7 +431,7 @@ namespace backend.Data.DummyData
         UserId = maya.Uid,
         UserName = maya.Name,
         Content = "Perfect! I'm stuck on the algorithm part, would love some help",
-        Timestamp = DateTime.UtcNow.AddHours(-9)
+        Timestamp = DateTimeOffset.UtcNow.AddHours(-9)
     },
     
     new ChatMessage
@@ -440,7 +440,7 @@ namespace backend.Data.DummyData
         UserId = sophia.Uid,
         UserName = sophia.Name,
         Content = "Morning coffee and code review sounds perfect! What time should we start?",
-        Timestamp = DateTime.UtcNow.AddHours(-5)
+        Timestamp = DateTimeOffset.UtcNow.AddHours(-5)
     },
     new ChatMessage
     {
@@ -448,7 +448,7 @@ namespace backend.Data.DummyData
         UserId = marcus.Uid,
         UserName = marcus.Name,
         Content = "How about 10 AM? I'll bring my React project for review",
-        Timestamp = DateTime.UtcNow.AddHours(-4)
+        Timestamp = DateTimeOffset.UtcNow.AddHours(-4)
     },
     
     new ChatMessage
@@ -457,7 +457,7 @@ namespace backend.Data.DummyData
         UserId = emma.Uid,
         UserName = emma.Name,
         Content = "Quick lunch at the food court! Anyone hungry? 🍽️",
-        Timestamp = DateTime.UtcNow.AddMinutes(-45)
+        Timestamp = DateTimeOffset.UtcNow.AddMinutes(-45)
     },
     new ChatMessage
     {
@@ -465,7 +465,7 @@ namespace backend.Data.DummyData
         UserId = alex.Uid,
         UserName = alex.Name,
         Content = "Count me in! I'll be there in 10 minutes",
-        Timestamp = DateTime.UtcNow.AddMinutes(-40)
+        Timestamp = DateTimeOffset.UtcNow.AddMinutes(-40)
     },
     
     new ChatMessage
@@ -474,7 +474,7 @@ namespace backend.Data.DummyData
         UserId = marcus.Uid,
         UserName = marcus.Name,
         Content = "Excited to try this new healthy bowl place! Has anyone been there before?",
-        Timestamp = DateTime.UtcNow.AddHours(-1).AddMinutes(-30)
+        Timestamp = DateTimeOffset.UtcNow.AddHours(-1).AddMinutes(-30)
     },
     new ChatMessage
     {
@@ -482,7 +482,7 @@ namespace backend.Data.DummyData
         UserId = maya.Uid,
         UserName = maya.Name,
         Content = "No, but I heard they have amazing vegan options! 🥗",
-        Timestamp = DateTime.UtcNow.AddHours(-1).AddMinutes(-20)
+        Timestamp = DateTimeOffset.UtcNow.AddHours(-1).AddMinutes(-20)
     },
     
     new ChatMessage
@@ -491,7 +491,7 @@ namespace backend.Data.DummyData
         UserId = sophie.Uid,
         UserName = sophie.Name,
         Content = "Welcome everyone to our lunch! Great to meet you all 😊",
-        Timestamp = DateTime.UtcNow.AddDays(-1).AddHours(-2)
+        Timestamp = DateTimeOffset.UtcNow.AddDays(-1).AddHours(-2)
     },
     new ChatMessage
     {
@@ -499,7 +499,7 @@ namespace backend.Data.DummyData
         UserId = emma.Uid,
         UserName = emma.Name,
         Content = "Thanks for organizing this! It was so much fun meeting everyone",
-        Timestamp = DateTime.UtcNow.AddDays(-1).AddHours(-1)
+        Timestamp = DateTimeOffset.UtcNow.AddDays(-1).AddHours(-1)
     },
     
     new ChatMessage
@@ -508,7 +508,7 @@ namespace backend.Data.DummyData
         UserId = sophia.Uid,
         UserName = sophia.Name,
         Content = "Hey everyone! Welcome to our general chat room 👋",
-        Timestamp = DateTime.UtcNow.AddDays(-2).AddHours(-3)
+        Timestamp = DateTimeOffset.UtcNow.AddDays(-2).AddHours(-3)
     },
     new ChatMessage
     {
@@ -516,7 +516,7 @@ namespace backend.Data.DummyData
         UserId = marcus.Uid,
         UserName = marcus.Name,
         Content = "Thanks for setting this up! Great way to stay connected",
-        Timestamp = DateTime.UtcNow.AddDays(-2).AddHours(-1)
+        Timestamp = DateTimeOffset.UtcNow.AddDays(-2).AddHours(-1)
     }
 };
 
