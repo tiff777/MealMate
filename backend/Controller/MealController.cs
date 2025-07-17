@@ -142,6 +142,29 @@ namespace backend.Controller
                 _db.MealParticipants.Add(participant);
                 await _db.SaveChangesAsync();
 
+                var chatRoom = new ChatRoom
+                {
+                    Name = $"{meal.Title} Chat",
+                    Description = $"Discussion for {meal.Title}",
+                    HostId = userId,
+                    IsPrivate = false,
+                    CreatedAt = DateTime.UtcNow,
+                    MealId = meal.Mid,
+                    Members = new List<ChatRoomMember>
+            {
+                new ChatRoomMember
+                {
+                    UserId = userId,
+                    UserName = this.GetCurrentUser().Name,
+                    IsHost = true,
+                    JoinedAt = DateTimeOffset.UtcNow,
+                }
+            }
+                };
+
+                _db.ChatRooms.Add(chatRoom);
+                await _db.SaveChangesAsync();
+
                 var mealDto = new ShowMealDto
                 {
                     Mid= meal.Mid,

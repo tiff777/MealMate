@@ -231,7 +231,7 @@ namespace backend.Controller
                     Content = dto.Content,
                     UserName = user.Name,
                     UserId = user.Uid,
-                    Timestamp = DateTime.UtcNow
+                    Timestamp = DateTimeOffset.UtcNow
                 };
 
                 _db.ChatMessages.Add(messageEntity);

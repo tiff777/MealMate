@@ -1,4 +1,4 @@
-using backend.Models.Entity;
+﻿using backend.Models.Entity;
 using backend.Models.Enum;
 
 namespace backend.Data.DummyData
@@ -280,125 +280,245 @@ namespace backend.Data.DummyData
             await context.SaveChangesAsync();
 
             var chatRooms = new List<ChatRoom>
+{
+    new ChatRoom
     {
-        new ChatRoom
+        Name = "Korean BBQ Adventure Chat",
+        Description = "Discussion for Korean BBQ meetup at Mukbang Korean BBQ",
+        HostId = sophia.Uid,
+        IsPrivate = false,
+        CreatedAt = DateTime.UtcNow.AddDays(-1),
+        MealId = meals[0].Mid, 
+        Members = new List<ChatRoomMember>
         {
-            Name = "General Chat",
-            Description = "A place to talk about anything",
-            HostId = sophia.Uid,
-            IsPrivate = false,
-            CreatedAt = DateTime.UtcNow.AddDays(-2),
-            Members = new List<ChatRoomMember>
-            {
-                new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true },
-                new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name },
-                new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name }
-            }
-        },
-        new ChatRoom
-        {
-            Name = "Study Group",
-            Description = "For collaborative studying",
-            HostId = emma.Uid,
-            IsPrivate = false,
-            CreatedAt = DateTime.UtcNow.AddDays(-1),
-            Members = new List<ChatRoomMember>
-            {
-                new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name, IsHost = true },
-                new ChatRoomMember { UserId = sophie.Uid, UserName = sophie.Name },
-                new ChatRoomMember { UserId = maya.Uid, UserName = maya.Name }
-            }
-        },
-        new ChatRoom
-        {
-            Name = "React Enthusiasts",
-            Description = "All about React development",
-            HostId = marcus.Uid,
-            IsPrivate = false,
-            CreatedAt = DateTime.UtcNow.AddDays(-3),
-            Members = new List<ChatRoomMember>
-            {
-                new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name, IsHost = true },
-                new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name }
-            }
-        },
-        new ChatRoom
-        {
-            Name = "1-on-1 with Emma",
-            Description = "Private chat",
-            HostId = sophia.Uid,
-            IsPrivate = true,
-            CreatedAt = DateTime.UtcNow.AddDays(-1),
-            Members = new List<ChatRoomMember>
-            {
-                new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true },
-                new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name }
-            }
+            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddDays(-1) },
+            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name,  JoinedAt = DateTime.UtcNow.AddHours(-22) },
+            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name, JoinedAt = DateTime.UtcNow.AddHours(-19) },
+            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name,  JoinedAt = DateTime.UtcNow.AddHours(-17) }
         }
-    };
+    },
+    
+    new ChatRoom
+    {
+        Name = "Pizza & Study Chat",
+        Description = "Coordination for pizza study session",
+        HostId = sophia.Uid,
+        IsPrivate = false,
+        CreatedAt = DateTime.UtcNow.AddHours(-12),
+        MealId = meals[1].Mid,
+        Members = new List<ChatRoomMember>
+        {
+            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddHours(-12) },
+            new ChatRoomMember { UserId = maya.Uid, UserName = maya.Name,  JoinedAt = DateTime.UtcNow.AddHours(-11) }
+        }
+    },
+    
+    new ChatRoom
+    {
+        Name = "Coffee & Code Chat",
+        Description = "Morning coffee and code review discussion",
+        HostId = sophia.Uid,
+        IsPrivate = false,
+        CreatedAt = DateTime.UtcNow.AddHours(-6),
+        MealId = meals[2].Mid,
+        Members = new List<ChatRoomMember>
+        {
+            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddHours(-6) },
+            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name, JoinedAt = DateTime.UtcNow.AddHours(-5) },
+            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name,  JoinedAt = DateTime.UtcNow.AddHours(-5) }
+        }
+    },
+    
+    new ChatRoom
+    {
+        Name = "Casual Lunch Chat",
+        Description = "Chat for our casual lunch meetup",
+        HostId = emma.Uid,
+        IsPrivate = false,
+        CreatedAt = DateTime.UtcNow.AddHours(-1),
+        MealId = meals[3].Mid,
+        Members = new List<ChatRoomMember>
+        {
+            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name, IsHost = true, JoinedAt = DateTime.UtcNow.AddHours(-1) },
+            new ChatRoomMember { UserId = sophie.Uid, UserName = sophie.Name,  JoinedAt = DateTime.UtcNow.AddMinutes(-50) },
+            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name, JoinedAt = DateTime.UtcNow.AddMinutes(-42) }
+        }
+    },
+    
+    new ChatRoom
+    {
+        Name = "Healthy Bowls Discussion",
+        Description = "Planning our healthy bowl adventure",
+        HostId = marcus.Uid,
+        IsPrivate = false,
+        CreatedAt = DateTime.UtcNow.AddHours(-2),
+        MealId = meals[4].Mid,
+        Members = new List<ChatRoomMember>
+        {
+            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddHours(-2) },
+            new ChatRoomMember { UserId = maya.Uid, UserName = maya.Name, JoinedAt = DateTime.UtcNow.AddHours(-1).AddMinutes(-40) }
+        }
+    },
+    
+    new ChatRoom
+    {
+        Name = "Welcome Lunch Chat",
+        Description = "Welcome lunch for new students - completed event",
+        HostId = sophie.Uid,
+        IsPrivate = false,
+        CreatedAt = DateTime.UtcNow.AddDays(-2),
+        MealId = meals[5].Mid,
+        Members = new List<ChatRoomMember>
+        {
+            new ChatRoomMember { UserId = sophie.Uid, UserName = sophie.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddDays(-2) },
+            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name,  JoinedAt = DateTime.UtcNow.AddDays(-2).AddHours(2) },
+            new ChatRoomMember { UserId = maya.Uid, UserName = maya.Name,  JoinedAt = DateTime.UtcNow.AddDays(-2).AddHours(3) },
+            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name,  JoinedAt = DateTime.UtcNow.AddDays(-2).AddHours(4) }
+        }
+    },
+    
+    new ChatRoom
+    {
+        Name = "General Chat",
+        Description = "General discussion for all students",
+        HostId = sophia.Uid,
+        IsPrivate = false,
+        CreatedAt = DateTime.UtcNow.AddDays(-3),
+        MealId = null, 
+        Members = new List<ChatRoomMember>
+        {
+            new ChatRoomMember { UserId = sophia.Uid, UserName = sophia.Name, IsHost = true,  JoinedAt = DateTime.UtcNow.AddDays(-3) },
+            new ChatRoomMember { UserId = emma.Uid, UserName = emma.Name,  JoinedAt = DateTime.UtcNow.AddDays(-3).AddHours(2) },
+            new ChatRoomMember { UserId = marcus.Uid, UserName = marcus.Name, JoinedAt = DateTime.UtcNow.AddDays(-3).AddHours(4) },
+            new ChatRoomMember { UserId = alex.Uid, UserName = alex.Name, JoinedAt = DateTime.UtcNow.AddDays(-2) }
+        }
+    }
+};
 
             context.ChatRooms.AddRange(chatRooms);
             await context.SaveChangesAsync();
 
             var chatMessages = new List<ChatMessage>
+{
+    new ChatMessage
     {
-        new ChatMessage
-        {
-            ChatRoomId = chatRooms[0].Id,
-            UserId = sophia.Uid,
-            UserName = sophia.Name,
-            Content = "Hey everyone! Welcome to the general chat.",
-            Timestamp = DateTime.UtcNow.AddHours(-5)
-        },
-        new ChatMessage
-        {
-            ChatRoomId = chatRooms[0].Id,
-            UserId = emma.Uid,
-            UserName = emma.Name,
-            Content = "Thanks Sophia! Glad to join.",
-            Timestamp = DateTime.UtcNow.AddHours(-4)
-        },
-        new ChatMessage
-        {
-            ChatRoomId = chatRooms[1].Id,
-            UserId = emma.Uid,
-            UserName = emma.Name,
-            Content = "Let's start by reviewing Chapter 3.",
-            Timestamp = DateTime.UtcNow.AddHours(-2)
-        },
-        new ChatMessage
-        {
-            ChatRoomId = chatRooms[1].Id,
-            UserId = maya.Uid,
-            UserName = maya.Name,
-            Content = "Got it, I have some notes prepared.",
-            Timestamp = DateTime.UtcNow.AddHours(-1)
-        },
-        new ChatMessage
-        {
-            ChatRoomId = chatRooms[2].Id,
-            UserId = marcus.Uid,
-            UserName = marcus.Name,
-            Content = "React 18 has some cool features!",
-            Timestamp = DateTime.UtcNow.AddHours(-3)
-        },
-        new ChatMessage
-        {
-            ChatRoomId = chatRooms[3].Id,
-            UserId = sophia.Uid,
-            UserName = sophia.Name,
-            Content = "Hey Emma, just wanted to talk about tomorrow's plan.",
-            Timestamp = DateTime.UtcNow.AddHours(-6)
-        },
-        new ChatMessage
-        {
-            ChatRoomId = chatRooms[3].Id,
-            UserId = emma.Uid,
-            UserName = emma.Name,
-            Content = "Sure, I�m free after 3 PM.",
-            Timestamp = DateTime.UtcNow.AddHours(-5)
-        }
-    };
+        ChatRoomId = chatRooms[0].Id,
+        UserId = sophia.Uid,
+        UserName = sophia.Name,
+        Content = "Hey everyone! Looking forward to our Korean BBQ adventure tomorrow! 🥩",
+        Timestamp = DateTime.UtcNow.AddHours(-18)
+    },
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[0].Id,
+        UserId = emma.Uid,
+        UserName = emma.Name,
+        Content = "Same here! Should we meet at the restaurant or somewhere else first?",
+        Timestamp = DateTime.UtcNow.AddHours(-16)
+    },
+    
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[1].Id,
+        UserId = sophia.Uid,
+        UserName = sophia.Name,
+        Content = "Don't forget to bring your CS assignment! We can review each other's code 💻",
+        Timestamp = DateTime.UtcNow.AddHours(-10)
+    },
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[1].Id,
+        UserId = maya.Uid,
+        UserName = maya.Name,
+        Content = "Perfect! I'm stuck on the algorithm part, would love some help",
+        Timestamp = DateTime.UtcNow.AddHours(-9)
+    },
+    
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[2].Id,
+        UserId = sophia.Uid,
+        UserName = sophia.Name,
+        Content = "Morning coffee and code review sounds perfect! What time should we start?",
+        Timestamp = DateTime.UtcNow.AddHours(-5)
+    },
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[2].Id,
+        UserId = marcus.Uid,
+        UserName = marcus.Name,
+        Content = "How about 10 AM? I'll bring my React project for review",
+        Timestamp = DateTime.UtcNow.AddHours(-4)
+    },
+    
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[3].Id,
+        UserId = emma.Uid,
+        UserName = emma.Name,
+        Content = "Quick lunch at the food court! Anyone hungry? 🍽️",
+        Timestamp = DateTime.UtcNow.AddMinutes(-45)
+    },
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[3].Id,
+        UserId = alex.Uid,
+        UserName = alex.Name,
+        Content = "Count me in! I'll be there in 10 minutes",
+        Timestamp = DateTime.UtcNow.AddMinutes(-40)
+    },
+    
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[4].Id,
+        UserId = marcus.Uid,
+        UserName = marcus.Name,
+        Content = "Excited to try this new healthy bowl place! Has anyone been there before?",
+        Timestamp = DateTime.UtcNow.AddHours(-1).AddMinutes(-30)
+    },
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[4].Id,
+        UserId = maya.Uid,
+        UserName = maya.Name,
+        Content = "No, but I heard they have amazing vegan options! 🥗",
+        Timestamp = DateTime.UtcNow.AddHours(-1).AddMinutes(-20)
+    },
+    
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[5].Id,
+        UserId = sophie.Uid,
+        UserName = sophie.Name,
+        Content = "Welcome everyone to our lunch! Great to meet you all 😊",
+        Timestamp = DateTime.UtcNow.AddDays(-1).AddHours(-2)
+    },
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[5].Id,
+        UserId = emma.Uid,
+        UserName = emma.Name,
+        Content = "Thanks for organizing this! It was so much fun meeting everyone",
+        Timestamp = DateTime.UtcNow.AddDays(-1).AddHours(-1)
+    },
+    
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[6].Id,
+        UserId = sophia.Uid,
+        UserName = sophia.Name,
+        Content = "Hey everyone! Welcome to our general chat room 👋",
+        Timestamp = DateTime.UtcNow.AddDays(-2).AddHours(-3)
+    },
+    new ChatMessage
+    {
+        ChatRoomId = chatRooms[6].Id,
+        UserId = marcus.Uid,
+        UserName = marcus.Name,
+        Content = "Thanks for setting this up! Great way to stay connected",
+        Timestamp = DateTime.UtcNow.AddDays(-2).AddHours(-1)
+    }
+};
 
             context.ChatMessages.AddRange(chatMessages);
             await context.SaveChangesAsync();
