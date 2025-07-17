@@ -95,3 +95,27 @@ export interface ToastProps {
 }
 
 export type MealFormData = CreateMeal | UpdateMeal;
+
+export interface LastMessage {
+  content: string;
+  timeStamp: Date | undefined;
+}
+
+export interface ChatRoomInfo {
+  roomId: number;
+  name: string;
+  description: string;
+  memberCount: number;
+  lastMessage?: LastMessage;
+  lastMessageTime?: Date;
+  unreadCount: number;
+  isActive: boolean;
+}
+
+export interface ChatMessage {
+  id: number;
+  userName: string;
+  content: string;
+  timestamp: Date;
+  roomId: number;
+}
