@@ -1,18 +1,26 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useRef,
+} from "react";
 import { AppContext } from "../../context/AppContext";
 import ChatRoom from "../../components/Chat/Chatroom";
 import { authClient } from "../../hook/api";
 import ChatRoomNav from "../../components/Chat/ChatRoomNav";
 import type { ChatRoomInfo, ChatMessage } from "../../types";
+import { ChatService } from "../../hook/chatService";
 
 const ChatRoomPage = () => {
   const { pendingRoomId, setPendingId } = useContext(AppContext);
   const [userChatRooms, setUserChatRooms] = useState<ChatRoomInfo[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const chatServiceRef = useRef<ChatService | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [isSignalRReady, setIsSignalRReady] = useState(false);
 
   const selectedRoom = userChatRooms.find(
     (room) => room.roomId === selectedRoomId
@@ -113,7 +121,49 @@ const ChatRoomPage = () => {
 
   useEffect(() => {
     fetchUserChatRooms();
-  }, [fetchUserChatRooms]);
+  }, []);
+
+  useEffect(() => {
+    const service = new ChatService();
+    chatServiceRef.current = service;
+
+    const init = async () => {
+      await service.connect();
+      setIsSignalRReady(true);
+
+      service.onMessageReceived((message) => {
+        console.log("Received new message:", message);
+        setMessages((prev) => [...prev, message]);
+      });
+    };
+
+    init();
+
+    return () => {
+      service.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const service = chatServiceRef.current;
+    if (!service || !user || !isSignalRReady) return;
+
+
+    const join = async () => {
+      if (selectedRoomId) {
+        await service.joinRoom(selectedRoomId, user.name);
+      }
+    };
+
+    join();
+
+    // optional: 可以在 cleanup 時 leaveRoom
+    return () => {
+      if (selectedRoomId) {
+        service.leaveRoom(selectedRoomId, user.name);
+      }
+    };
+  }, [selectedRoomId, user]);
 
   useEffect(() => {
     fetchChatHistory();
