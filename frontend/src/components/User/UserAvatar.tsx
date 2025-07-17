@@ -5,7 +5,7 @@ type AvatarProps = {
 };
 
 function UserAvatar({ avatar, userId, alt = "avatar" }: AvatarProps) {
-  const isEmoji = /\p{Emoji}/u.test(avatar);
+  const isEmoji = !avatar.startsWith("/avatars");
 
   if (isEmoji) {
     return (
@@ -20,12 +20,15 @@ function UserAvatar({ avatar, userId, alt = "avatar" }: AvatarProps) {
     );
   }
 
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5050";
+  const avatarUrl = avatar.startsWith("/") ? `${baseUrl}${avatar}` : avatar;
+
   return (
     <img
-      src={avatar}
+      src={avatarUrl}
       key={userId}
       alt={alt}
-      className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600"
+      className="w-12 h-12 rounded-lg  border border-gray-300 dark:border-gray-600"
     />
   );
 }
