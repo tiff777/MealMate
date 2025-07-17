@@ -4,6 +4,7 @@ import JoinButton from "./JoinButton";
 import SubmitButton from "./SubmitButton";
 import LeaveButton from "./LeaveButton";
 import DeleteButton from "./DeleteButton";
+import MessageButton from "./MessageButton";
 
 type ButtonType =
   | "view"
@@ -12,7 +13,8 @@ type ButtonType =
   | "edit"
   | "delete"
   | "cancel"
-  | "submit";
+  | "submit"
+  | "message";
 
 interface ButtonFactoryProps {
   type: ButtonType;
@@ -50,6 +52,15 @@ export default function ButtonFactory({
     case "cancel":
       return (
         <NormalButton message={message} onClick={onClick} disabled={disabled} />
+      );
+
+    case "message":
+      return (
+        <MessageButton
+          message={message}
+          onClick={onClick}
+          disabled={disabled}
+        />
       );
 
     case "submit":
