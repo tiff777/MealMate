@@ -34,22 +34,28 @@ namespace backend.Controller
                 var mealDtos = await _db.Meals
     .Include(m => m.Participants)
         .ThenInclude(p => p.User)
-    .Select(meal => new ShowMealDto
+    .GroupJoin(
+        _db.ChatRooms,
+        meal => meal.Mid,
+        chatRoom => chatRoom.MealId,
+        (meal, chatRooms) => new { meal, chatRoom = chatRooms.FirstOrDefault() }
+    )
+    .Select(x => new ShowMealDto
     {
-        Mid = meal.Mid,
-        Title = meal.Title,
-        Description = meal.Description,
-        MaxParticipant = meal.MaxParticipant,
-        CurrentParticipant = meal.CurrentParticipant,
-        RestaurantName = meal.RestaurantName,
-        RestaurantAddress = meal.RestaurantAddress,
-        MealDate = meal.MealDate,
-        Tags = meal.Tags,
-        Status = meal.Status,
-        CreatedAt = meal.CreatedAt,
-        HostId = meal.HostId,
-
-        Participants = meal.Participants.Select(p => new ParticipantDto
+        Mid = x.meal.Mid,
+        Title = x.meal.Title,
+        Description = x.meal.Description,
+        MaxParticipant = x.meal.MaxParticipant,
+        CurrentParticipant = x.meal.CurrentParticipant,
+        RestaurantName = x.meal.RestaurantName,
+        RestaurantAddress = x.meal.RestaurantAddress,
+        MealDate = x.meal.MealDate,
+        Tags = x.meal.Tags,
+        Status = x.meal.Status,
+        CreatedAt = x.meal.CreatedAt,
+        HostId = x.meal.HostId,
+        ChatRoomId = x.chatRoom != null ? x.chatRoom.Id : (int?)null,
+        Participants = x.meal.Participants.Select(p => new ParticipantDto
         {
             UserId = p.UserId,
             Avatar = p.User.Avatar
@@ -148,7 +154,7 @@ namespace backend.Controller
                     Description = $"Discussion for {meal.Title}",
                     HostId = userId,
                     IsPrivate = false,
-                    CreatedAt = DateTime.UtcNow,
+                    CreatedAt = DateTimeOffset.UtcNow,
                     MealId = meal.Mid,
                     Members = new List<ChatRoomMember>
             {

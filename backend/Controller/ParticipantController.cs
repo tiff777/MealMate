@@ -2,9 +2,11 @@
 using backend.Attributes;
 using backend.Data;
 using backend.Extention;
+using backend.Hubs;
 using backend.Models.Entity;
 using backend.Models.Enum;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controller
@@ -14,10 +16,13 @@ namespace backend.Controller
     public class ParticipantController:ControllerBase
     {
         private ApplicationDbContext _db;
+        private readonly IHubContext<ChatHub> _chatHub;
 
-        public ParticipantController (ApplicationDbContext db)
+
+        public ParticipantController (ApplicationDbContext db, IHubContext<ChatHub> chatHub)
         {
             _db = db;
+            _chatHub = chatHub;
         }
 
         [HttpPost("join/{mealId}")]
@@ -54,6 +59,28 @@ namespace backend.Controller
                 _db.MealParticipants.Add(participant);
                 await _db.SaveChangesAsync();
 
+                var username = this.GetCurrentUser().Name;
+
+                var chatRoom = await _db.ChatRooms.FirstOrDefaultAsync(c => c.MealId == meal.Mid);
+                chatRoom.Members.Add(new ChatRoomMember
+                    {
+                    UserId = userId,
+                    UserName = username,
+                    IsHost = false,
+                    JoinedAt = DateTimeOffset.UtcNow,
+                    });
+
+                meal.CurrentParticipant++;
+
+                await _db.SaveChangesAsync();
+
+                if (chatRoom != null)
+                {
+                    await _chatHub.Clients.Group(chatRoom.Id.ToString())
+                        .SendAsync("UserJoined", username, $"{username} joined the room");
+                }
+
+
                 return Ok();
             }
             catch (Exception ex)
@@ -86,6 +113,27 @@ namespace backend.Controller
                 }
 
                 await _db.SaveChangesAsync();
+
+                var chatRoom = await _db.ChatRooms
+                .Include(c => c.Members)
+                .FirstOrDefaultAsync(c => c.MealId == mealId);
+
+                if (chatRoom != null)
+                {
+                    var chatMember = chatRoom.Members.FirstOrDefault(m => m.UserId == userId);
+                    if (chatMember != null)
+                    {
+                        chatRoom.Members.Remove(chatMember);
+                    }
+                }
+                await _db.SaveChangesAsync();
+
+                var username = this.GetCurrentUser().Name;
+                if (chatRoom != null)
+                {
+                    await _chatHub.Clients.Group(chatRoom.Id.ToString())
+                        .SendAsync("UserLeft", username, $"{username} left the room");
+                }
 
                 return Ok(new { message = "Successfully left meal" });
             }
