@@ -9,6 +9,7 @@ function ResgisterPage() {
   const { loginUser } = useContext(AppContext);
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<RegisterUser>({
     name: "",
     email: "",
@@ -35,6 +36,28 @@ function ResgisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (avatarFile) {
+      console.log("Have image", avatarFile);
+      const fileData = new FormData();
+      fileData.append("file", avatarFile);
+      const avatarResponse = await apiClient.post(
+        "/user/upload-avatar",
+        fileData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (avatarResponse.status !== 200) {
+        console.log("Error in uploading avatar");
+      }
+      formData.avatar = avatarResponse.data.avatarUrl;
+    }
+
+    console.log("Test response: ", formData.avatar);
     console.log("Sign up data:", formData);
 
     try {
@@ -61,6 +84,7 @@ function ResgisterPage() {
       formData={formData}
       setFormData={setFormData}
       handleSubmit={handleSubmit}
+      setAvatarFile={setAvatarFile}
     />
   );
 }
