@@ -155,6 +155,41 @@ namespace backend.Controller
             }
         }
 
+        [HttpPost("upload-avatar")]
+        public async Task<IActionResult> UploadAvatar (IFormFile file)
+        {
+            const long maxSize = 3 * 1024 * 1024; // 3MB
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            if (file.Length > maxSize)
+            {
+                return BadRequest("File size exceeds limit.");
+            }
+
+
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "avatars");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var avatarUrl = $"/avatars/{fileName}";
+
+            return Ok(new { avatarUrl });
+        }
+
         [HttpPatch("{id}")]
         [AuthorizeUser]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto newUser)
@@ -175,6 +210,7 @@ namespace backend.Controller
 
             }
         }
+
 
         [HttpPost("password/verify")]
         [AuthorizeUser]
