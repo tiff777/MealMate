@@ -2,6 +2,7 @@ import { useState, useContext, useEffect, use } from "react";
 import SettingNavBar from "../../components/User/SettingNavBar";
 import UserPasswordForm from "../../components/User/UserPasswordForm";
 import UserDeleteForm from "../../components/User/UserDeleteForm";
+import AvatarModal from "../../components/User/AvatraModal";
 import type { UpdateUser, User } from "../../types";
 import { AppContext } from "../../context/AppContext";
 import UserProfileEditForm from "../../components/User/UserProfileEditForm";
@@ -13,6 +14,7 @@ function SettingsPage() {
   const { user, updateUser, logoutUser, deleteUser } = useContext(AppContext);
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
   const [formData, setFormData] = useState<User>(user!);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
 
   const handleUpdateUser = async () => {
     console.log("Test update: ", formData);
@@ -50,6 +52,45 @@ function SettingsPage() {
       setFormData(updateUserData);
     } catch (error) {
       console.log("Error of updating user: ", user);
+    }
+  };
+
+  const handleUpdateAvatar = async (avatar: string | File) => {
+    let avatarValue: string;
+
+    if (typeof avatar === "string") {
+      avatarValue = avatar;
+    } else {
+      const formData = new FormData();
+      formData.append("file", avatar);
+
+      const avatarResponse = await authClient.post(
+        "/user/upload-avatar",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (avatarResponse.status !== 200) {
+        console.log("Error in uploading avatar");
+      }
+      avatarValue = avatarResponse.data.avatarUrl;
+    }
+
+    const updateResponse = await authClient.patch(`/user/${user?.uid}/avatar`, {
+      avatar: avatarValue,
+    });
+
+    if (updateResponse.status !== 200) {
+      console.error("Update avatar fail");
+    } else {
+      console.log("Avatar updated!");
+      if (user) {
+        updateUser({ ...user, avatar: avatarValue });
+      }
     }
   };
 
@@ -103,9 +144,6 @@ function SettingsPage() {
   return (
     <div className="max-w-5xl mx-auto p-4">
       <h1 className="text-3xl font-bold text-center mb-2">Settings</h1>
-      <p className="text-center text-gray-500 mb-6">
-        Manage your account and personalize your MealMate experience
-      </p>
 
       <div className="flex gap-6">
         <SettingNavBar activeTab={activeTab} onTabChange={setActiveTab} />
@@ -117,6 +155,7 @@ function SettingsPage() {
               formData={formData}
               setFormData={setFormData}
               onSubmit={handleUpdateUser}
+              onAvatarUpload={() => setShowAvatarModal(true)}
             />
           )}
           {activeTab === "password" && (
@@ -130,6 +169,14 @@ function SettingsPage() {
           )}
         </div>
       </div>
+      {showAvatarModal && (
+        <AvatarModal
+          onClose={() => setShowAvatarModal(false)}
+          onSave={(newAvatar) => {
+            handleUpdateAvatar(newAvatar);
+          }}
+        />
+      )}
     </div>
   );
 }
