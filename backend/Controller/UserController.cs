@@ -88,27 +88,61 @@ namespace backend.Controller
         {
             try
             {
-                var dbuser = await _db.Users.FindAsync(id);
+                var dbUser = await _db.Users
+            .Include(u => u.HostedMeals)
+            .Include(u => u.ParticipatedMeals)
+                .ThenInclude(p => p.Meal)
+            .FirstOrDefaultAsync(u => u.Uid == id);
 
-                if (dbuser == null)
-                {
+                if (dbUser == null)
                     return NotFound();
-                }
 
-                var user = new ShowUserDto
+                var hostedMeals = dbUser.HostedMeals
+                    .OrderByDescending(m => m.CreatedAt)
+                    .Select(m => new
+                    {
+                        Mid = m.Mid,
+                        Title = m.Title,
+                        Description = m.Description,
+                        MealDate = m.MealDate,
+                        RestaurantName = m.RestaurantName,
+                        RestaurantAddress = m.RestaurantAddress,
+                        CurrentParticipant = m.CurrentParticipant,
+                        MaxParticipant = m.MaxParticipant,
+                        Status = m.Status
+                    }).ToList();
+
+                var joinedMeals = dbUser.ParticipatedMeals
+                    .Where(p => p.Meal.HostId != dbUser.Uid)
+                    .Select(p => new
+                    {
+                        Mid = p.Meal.Mid,
+                        Title = p.Meal.Title,
+                        Description = p.Meal.Description,
+                        MealDate = p.Meal.MealDate,
+                        RestaurantName = p.Meal.RestaurantName,
+                        RestaurantAddress = p.Meal.RestaurantAddress,
+                        CurrentParticipant = p.Meal.CurrentParticipant,
+                        MaxParticipant = p.Meal.MaxParticipant,
+                        Status = p.ParticipationStatus
+                    }).ToList();
+
+                var user = new
                 {
-                    Uid = dbuser.Uid,
-                    Name = dbuser.Name,
-                    Email = dbuser.Email,
-                    University = dbuser.University,
-                    Major = dbuser.Major,
-                    Bio = dbuser.Bio,
-                    Avatar = dbuser.Avatar,
-                    Interests = dbuser.Interests,
-                    PreferredCuisines = dbuser.PreferredCuisines,
-                    IsOnline = dbuser.IsOnline,
-                    LastSeen = dbuser.LastSeen,
+                    Uid = dbUser.Uid,
+                    Name = dbUser.Name,
+                    Email = dbUser.Email,
+                    University = dbUser.University,
+                    Major = dbUser.Major,
+                    Bio = dbUser.Bio,
+                    Avatar = dbUser.Avatar,
+                    Interests = dbUser.Interests,
+                    PreferredCuisines = dbUser.PreferredCuisines,
+                    IsOnline = dbUser.IsOnline,
+                    HostedMeals = hostedMeals,
+                    JoinedMeals = joinedMeals
                 };
+
                 return Ok(user);
             }
             catch (Exception ex)

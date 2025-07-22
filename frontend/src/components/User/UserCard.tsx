@@ -2,6 +2,7 @@ import type { User } from "../../types";
 import JoinButton from "../Button/JoinButton";
 import ButtonFactory from "../Button/ButtonFactory";
 import UserAvatar from "./UserAvatar";
+import { useNavigate } from "react-router-dom";
 
 function UserCard({
   user,
@@ -10,6 +11,7 @@ function UserCard({
   user: User;
   handleMessage: (userId: number, userName: string) => void;
 }) {
+  const navigate = useNavigate();
   return (
     <>
       <div
@@ -52,6 +54,11 @@ function UserCard({
             </div>
 
             <div className="flex gap-2 mt-2">
+              <ButtonFactory
+                type="join"
+                onClick={() => navigate(`/profile/${user.uid}`)}
+                message="View More"
+              />
               <ButtonFactory
                 type="message"
                 onClick={() => handleMessage(user.uid, user.name)}

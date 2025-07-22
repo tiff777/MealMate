@@ -11,6 +11,7 @@ import UpdateMealPage from "./pages/Meal/ModifyMealPage";
 import SettingsPage from "./pages/Setting/SettingPage";
 import ResetPasswordPage from "./pages/Setting/ResetUserPage";
 import ChatRoomPage from "./pages/Chat/ChatRoomPage";
+import PublicUserProfilePage from "./pages/Buddy/ProfilePage";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/meal" index element={<MealDashboard />} />
           <Route path="/buddy" index element={<BuddyPage />} />
+          <Route path="/profile/:id" element={<PublicUserProfilePage />} />
           <Route path="/my-meals" index element={<MyMealPage />} />
           <Route path="/messages" index element={<ChatRoomPage />} />
           <Route path="/setting" index element={<SettingsPage />} />
