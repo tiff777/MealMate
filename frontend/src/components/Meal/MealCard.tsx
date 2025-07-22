@@ -1,6 +1,7 @@
 import type { Meal } from "../../types";
 import formatDate from "../../util/dateUtils";
 import JoinButton from "../Button/JoinButton";
+import TagDisplay from "../UI/TagDisplay";
 import MealParticipantAvatar from "./MealParticipantAvatar";
 import MealStatus from "./MealStatus";
 
@@ -29,9 +30,17 @@ function MealCard({
         <span className="truncate max-w">📍{meal.restaurantAddress}</span>
       </div>
 
-      <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 min-h-[3rem]">
+      <p className="text-sm text-gray-700 dark:text-gray-300 truncate max-w">
         {meal.description}
       </p>
+
+      {meal.tags.length > 0 && (
+        <div className="flex gap-1 mt-2 flex-wrap">
+          {meal.tags.map((tag, i) => (
+            <TagDisplay key={i} text={tag} />
+          ))}
+        </div>
+      )}
 
       <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
         <div className="flex -space-x-1">
