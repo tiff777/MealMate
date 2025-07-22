@@ -48,6 +48,21 @@ export interface changeAvatar {
   avatar: string;
 }
 
+export interface UserProfile {
+  uid: number;
+  name: string;
+  email: string;
+  university: string;
+  major: string;
+  bio: string;
+  avatar: string;
+  interests: string[];
+  preferredCuisines: string[];
+  isOnline: boolean;
+  hostedMeals: Meal[];
+  joinedMeals: Meal[];
+}
+
 export interface Meal {
   mid: number;
   title: string;
@@ -62,6 +77,13 @@ export interface Meal {
   status: number;
   createdAt: Date;
   hostId: number;
+}
+
+export interface MealWithParticipants extends Meal {
+  participants: Participant[];
+  isJoined: boolean;
+  isHost: boolean;
+  chartRoomId: number;
 }
 
 export interface CreateMeal {

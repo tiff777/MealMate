@@ -1,22 +1,29 @@
 import { useContext, useEffect, useState } from "react";
 import { apiClient, authClient } from "../../hook/api";
-import type { Meal, Participant } from "../../types";
+import type { Meal, Participant, MealWithParticipants } from "../../types";
 import MealCard from "../../components/Meal/MealCard";
 import { AppContext } from "../../context/AppContext";
 import ErrorToast from "../../components/Modal/ErrorToast";
 import SuccessToast from "../../components/Modal/SuccessfulToast";
 import ButtonFactory from "../../components/Button/ButtonFactory";
+import MealFilterSidebar from "../../components/Meal/MenuFilter";
+import { useFilteredMeals } from "../../hook/useFilteredMeals";
+import { useMealButtons } from "../../hook/useMealButtons";
 import { useNavigate } from "react-router-dom";
 
 function MealDashboard() {
-  type MealWithParticipants = Meal & { participants: Participant[] } & {
-    isJoined: boolean;
-  } & { isHost: boolean } & { chartRoomId: number };
-
   const { setLoading, user, setPendingId } = useContext(AppContext);
   const [meals, setMeals] = useState<MealWithParticipants[]>([]);
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [filters, setFilters] = useState({
+    tag: "",
+    availability: "all",
+    searchText: "",
+  });
+
   const navigate = useNavigate();
 
   const fetchMeals = async () => {
@@ -103,58 +110,59 @@ function MealDashboard() {
     navigate("/messages");
   };
 
+  const handleFilterChange = (filterType: string, value: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      [filterType]: value,
+    }));
+  };
+
+  const filteredMeals = useFilteredMeals(meals, filters);
+
+  const getMealButtons = useMealButtons({
+    onDelete: handleDelete,
+    onLeave: handleLeave,
+    onJoin: handleJoin,
+    onMessage: handleMessage,
+  });
+
   useEffect(() => {
     fetchMeals();
   }, []);
 
   return (
     <>
-      <div className="p-4 space-y-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          Meal Dashboard
-        </h1>
+      <div className="flex gap-4 p-4">
+        <MealFilterSidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+        />
 
-        {meals.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {meals.map((meal) => {
-              const buttons = [
-                meal.isHost ? (
-                  <ButtonFactory
-                    key="delete"
-                    type="delete"
-                    message="Delete"
-                    onClick={() => handleDelete(meal.mid)}
-                    disabled={false}
-                  />
-                ) : meal.isJoined ? (
-                  <ButtonFactory
-                    key="leave"
-                    type="leave"
-                    message="Leave"
-                    onClick={() => handleLeave(meal.mid)}
-                  />
-                ) : (
-                  <ButtonFactory
-                    key="join"
-                    type="join"
-                    message="Join"
-                    onClick={() => handleJoin(meal.mid)}
-                  />
-                ),
-                <ButtonFactory
-                  key="message"
-                  type="message"
-                  message="Message"
-                  onClick={() => handleMessage(meal.chartRoomId)}
-                />,
-              ];
+        <div className="flex-1 space-y-4">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Meal Dashboard
+          </h1>
 
-              return <MealCard key={meal.mid} meal={meal} buttons={buttons} />;
-            })}
-          </div>
-        ) : (
-          <p className="text-gray-500 dark:text-gray-400">No meals available</p>
-        )}
+          {filteredMeals.length === 0 && <p>No meals available</p>}
+
+          {meals.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredMeals.map((meal) => (
+                <MealCard
+                  key={meal.mid}
+                  meal={meal}
+                  buttons={getMealButtons(meal)}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">
+              No meals available
+            </p>
+          )}
+        </div>
       </div>
       {showError && (
         <ErrorToast
