@@ -1,4 +1,6 @@
 import type { Meal } from "../../types";
+import { FiMapPin, FiUser } from "react-icons/fi";
+import { FaCalendarAlt } from "react-icons/fa";
 import formatDate from "../../util/dateUtils";
 import JoinButton from "../Button/JoinButton";
 import TagDisplay from "../UI/TagDisplay";
@@ -13,51 +15,92 @@ function MealCard({
   buttons: React.ReactNode[];
 }) {
   return (
-    <div
-      className={`relative bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/20 p-4 dark:border-gray-700 space-y-2 transition-colors overflow-hidden`}
-    >
-      <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 dark:from-pink-500/30 dark:via-purple-500/30 dark:to-blue-500/30"></div>
-      <div className="flex justify-between items-start">
-        <h2 className="font-bold text-lg text-gray-900 dark:text-white">
-          {meal.title}
-        </h2>
-        <MealStatus status={meal.status} />
-      </div>
-
-      <div className="flex flex-col text-sm text-gray-500 dark:text-gray-400 gap-1">
-        <span>📅 {formatDate(new Date(meal.mealDate))}</span>
-        <span>📍 {meal.restaurantName}</span>
-        <span className="truncate max-w">📍{meal.restaurantAddress}</span>
-      </div>
-
-      <p className="text-sm text-gray-700 dark:text-gray-300 truncate max-w">
-        {meal.description}
-      </p>
-
-      {meal.tags.length > 0 && (
-        <div className="flex gap-1 mt-2 flex-wrap">
-          {meal.tags.map((tag, i) => (
-            <TagDisplay key={i} text={tag} />
-          ))}
+    <div className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/30 overflow-hidden hover:shadow-2xl dark:hover:shadow-gray-900/50 transition-all duration-300 transform hover:scale-105 cursor-pointer">
+      <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl bg-gradient-to-r from-[#FF7F7F] to-[#FFA07A] dark:from-[#0F0F23] dark:via-[#1A1A2E] dark:to-[#16213E]"></div>
+      <div className="p-6">
+        {/* Header section */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors duration-300 leading-tight">
+              {meal.title}
+            </h2>
+          </div>
+          <MealStatus status={meal.status} />
         </div>
-      )}
 
-      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-        <div className="flex -space-x-1">
-          {meal.participants.slice(0, meal.maxParticipant).map((p) => (
-            <MealParticipantAvatar
-              key={p.userId}
-              userId={p.userId}
-              avatar={p.avatar}
-            />
-          ))}
+        <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2 leading-relaxed break-words min-h-[3em]">
+          {meal.description}
+        </p>
+
+        {/* Info section with icons */}
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+            <FaCalendarAlt className="w-4 h-4 text-orange-500" />
+            <span>{formatDate(new Date(meal.mealDate))}</span>
+          </div>
+          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+            <FiMapPin className="w-4 h-4 text-orange-500" />
+            <span className="truncate">{meal.restaurantName}</span>
+          </div>
+          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+            <FiMapPin className="w-4 h-4 text-orange-500" />
+            <span className="truncate text-xs">{meal.restaurantAddress}</span>
+          </div>
         </div>
-        <span>
-          {meal.currentParticipant}/{meal.maxParticipant} joined
-        </span>
-      </div>
 
-      <div className="flex gap-2">{buttons}</div>
+        {/* Tags section */}
+        {meal.tags.length > 0 && (
+          <div className="flex gap-1 mt-2 flex-wrap">
+            {meal.tags.map((tag, i) => (
+              <TagDisplay key={i} text={tag} />
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            {/* Avatar stack */}
+            <div className="flex -space-x-2">
+              {meal.participants
+                .slice(0, Math.min(3, meal.maxParticipant))
+                .map((p) => (
+                  <div key={p.userId} className="relative">
+                    <MealParticipantAvatar
+                      userId={p.userId}
+                      avatar={p.avatar}
+                    />
+                  </div>
+                ))}
+              {meal.participants.length > 3 && (
+                <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 border-2 border-white dark:border-gray-800">
+                  +{meal.participants.length - 3}
+                </div>
+              )}
+            </div>
+
+            {/* Participant count */}
+            <div className="flex items-center space-x-1">
+              <FiUser className="w-4 h-4 text-gray-400" />
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {meal.currentParticipant}/{meal.maxParticipant}
+              </span>
+            </div>
+          </div>
+
+          {/* Buttons with enhanced styling */}
+          <div className="flex gap-2">
+            {buttons.map((button, index) => (
+              <div
+                key={index}
+                className="group-hover:scale-110 transform transition-transform duration-200"
+              >
+                {button}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
