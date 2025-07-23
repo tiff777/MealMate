@@ -3,6 +3,9 @@ import { FiX } from "react-icons/fi";
 import { IoIosPricetags } from "react-icons/io";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import CurrentTimeCard from "../UI/CurrentTimeCard";
+import SmallGroupTagDisplay from "../UI/SmallGroupTagDisplay";
+import LargeGroupTagDisplay from "../UI/LargeGroupTagDisplay";
+import SearchBar from "../UI/SearchBar";
 
 interface FilterState {
   tag: string;
@@ -30,14 +33,14 @@ const DUMMY_TAGS = [
   "Welcome",
 ];
 
-const MealFilterSidebar: React.FC<MealFilterSidebarProps> = ({
+function MealFilterSidebar({
   isOpen,
   onClose,
   filters,
   onFilterChange,
   tags = DUMMY_TAGS,
   className = "",
-}) => {
+}: MealFilterSidebarProps) {
   const [searchValue, setSearchValue] = useState(filters.searchText || "");
 
   const clearAllFilters = () => {
@@ -55,11 +58,6 @@ const MealFilterSidebar: React.FC<MealFilterSidebarProps> = ({
   };
 
   const activeFiltersCount = getActiveFiltersCount();
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onFilterChange("searchText", searchValue);
-  };
 
   return (
     <>
@@ -116,82 +114,42 @@ const MealFilterSidebar: React.FC<MealFilterSidebarProps> = ({
           </div>
 
           {/* Search Bar */}
-          <div className="mb-6">
-            <label htmlFor="default-search" className="sr-only">
-              Search
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <HiMagnifyingGlass />
-              </div>
-              <input
-                type="search"
-                id="default-search"
-                value={searchValue}
-                onChange={(e) => {
-                  setSearchValue(e.target.value);
-                  onFilterChange("searchText", e.target.value);
-                }}
-                className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                placeholder="Search Meals..."
-              />
-            </div>
-          </div>
+          <SearchBar
+            value={searchValue}
+            onChange={(val) => {
+              setSearchValue(val);
+              onFilterChange("searchText", val);
+            }}
+            placeholder="Search Meals..."
+          />
 
           {/* Meal Tags */}
-          <div className="mb-6">
-            <h4 className="text-sm font-medium mb-3 text-gray-700 dark:text-gray-300 flex items-center">
-              <IoIosPricetags size={16} className="mr-2" />
-              Meal Tags
-            </h4>
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag, index) => (
-                <button
-                  key={index}
-                  onClick={() => onFilterChange("tag", tag)}
-                  className={`p-3 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-105 ${
-                    filters.tag === tag
-                      ? "bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-md transform scale-105"
-                      : "bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200"
-                  }`}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
+          <LargeGroupTagDisplay
+            title="Meal Tags"
+            icon={<IoIosPricetags />}
+            filterKey="tag"
+            value={filters.tag}
+            onFilterChange={onFilterChange}
+            options={tags.map((tag) => ({ key: tag, label: tag }))}
+          />
 
           {/* Status filter */}
-          <div className="mb-6">
-            <h4 className="text-sm font-medium mb-3 text-gray-700 dark:text-gray-300">
-              Status
-            </h4>
-            <div className="space-y-2">
-              {[
-                { key: "all", label: "All Meals", icon: "🍽️" },
-                { key: "available", label: "Available to Join", icon: "✅" },
-                { key: "soon", label: "Upcoming", icon: "⏰" },
-                { key: "completed", label: "Completed", icon: "📍" },
-              ].map((option) => (
-                <button
-                  key={option.key}
-                  onClick={() => onFilterChange("availability", option.key)}
-                  className={`w-full flex items-center p-3 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-105 ${
-                    filters.availability === option.key
-                      ? "bg-gradient-to-r from-purple-400 to-pink-400 text-white shadow-md transform scale-105"
-                      : "bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200"
-                  }`}
-                >
-                  <span className="mr-3">{option.icon}</span>
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          <SmallGroupTagDisplay
+            title="Status"
+            filterKey="availability"
+            value={filters.availability}
+            onFilterChange={onFilterChange}
+            options={[
+              { key: "all", label: "All Meals", icon: "🍽️" },
+              { key: "available", label: "Available to Join", icon: "✅" },
+              { key: "soon", label: "Upcoming", icon: "⏰" },
+              { key: "completed", label: "Completed", icon: "📍" },
+            ]}
+          />
         </div>
       </div>
     </>
   );
-};
+}
 
 export default MealFilterSidebar;
