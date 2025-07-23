@@ -2,13 +2,21 @@ import { useContext, useState, useEffect } from "react";
 import { AppContext } from "../../context/AppContext";
 import { apiClient, authClient } from "../../hook/api";
 import UserCard from "../../components/User/UserCard";
+import BuddyFilterSidebar from "../../components/User/BuddyFilter";
 import type { User } from "../../types";
 import { useNavigate } from "react-router-dom";
-import { log } from "console";
+import { useFilteredUsers } from "../../hook/useFilteredUsers";
 
 function BuddyPage() {
   const { setLoading, setPendingId } = useContext(AppContext);
   const [users, setUsers] = useState<User[]>([]);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [filters, setFilters] = useState({
+    interest: "",
+    cuisine: "",
+    searchText: "",
+  });
+
   const navigate = useNavigate();
 
   async function fetchUsers() {
@@ -51,38 +59,56 @@ function BuddyPage() {
     }
   };
 
+  const handleFilterChange = (filterType: string, value: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      [filterType]: value,
+    }));
+  };
+
+  const filteredUsers = useFilteredUsers(users, filters);
+
   useEffect(() => {
     fetchUsers();
   }, []);
 
   return (
-    <div className="p-4 space-y-4 bg-gray-150 rounded-xl shadow-md">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4"></h1>
+    <div className="p-4 bg-gray-150 rounded-xl shadow-md flex gap-4">
+      {/* 左邊 Sidebar */}
+      <BuddyFilterSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        filters={filters}
+        onFilterChange={handleFilterChange}
+      />
 
-      <div className="flex justify-between items-center mb-4">
-        <div className="text-2xl font-semibold flex items-center gap-2 text-gray-900 dark:text-[#f9fafb] mb-4">
-          🍕 Available for Lunch
+      {/* 右邊內容 */}
+      <div className="flex-1 space-y-4">
+        <div className="flex justify-between items-center mb-4">
+          <div className="text-2xl font-semibold flex items-center gap-2 text-gray-900 dark:text-[#f9fafb] mb-4">
+            🍕 Available for Lunch
+          </div>
+          <div className="flex gap-4 text-sm text-gray-600 dark:text-[#f9fafb]">
+            <span>28 students online</span>
+          </div>
         </div>
-        <div className="flex gap-4 text-sm text-gray-600 dark:text-[#f9fafb]  ">
-          <span>28 students online</span>
-        </div>
+
+        <hr />
+
+        {filteredUsers.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredUsers.map((user) => (
+              <UserCard
+                key={user.uid}
+                user={user}
+                handleMessage={handleMessage}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 dark:text-gray-400">No users available</p>
+        )}
       </div>
-
-      <hr />
-
-      {users.length > 0 ? (
-        <div className="flex flex-col gap-4">
-          {users.map((user) => (
-            <UserCard
-              key={user.uid}
-              user={user}
-              handleMessage={handleMessage}
-            />
-          ))}
-        </div>
-      ) : (
-        <p className="text-gray-500 dark:text-gray-400">No meals available</p>
-      )}
     </div>
   );
 }
