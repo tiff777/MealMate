@@ -114,6 +114,41 @@ namespace backend.Controller
             }
         }
 
+        [HttpGet("latest")]
+        public async Task<IActionResult> GetLatestUpcomingMeals ()
+        {
+            try
+            {
+                var meals = await _db.Meals
+                    .Where(m => m.Status == 0)
+                    .OrderByDescending(m => m.CreatedAt)
+                    .Take(3)
+                    .Select(m => new ShowMealDto
+                    {
+                        Mid = m.Mid,
+                        Title = m.Title,
+                        Description = m.Description,
+                        MealDate = m.MealDate,
+                        MaxParticipant = m.MaxParticipant,
+                        CurrentParticipant = m.CurrentParticipant,
+                        RestaurantName = m.RestaurantName,
+                        RestaurantAddress = m.RestaurantAddress,
+                        Tags = m.Tags,
+                        Status = m.Status,
+                        CreatedAt = m.CreatedAt,
+                        HostId = m.HostId
+                    })
+                    .ToListAsync();
+
+                return Ok(meals);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Error retrieving latest upcoming meals", error = ex.Message });
+            }
+        }
+
+
         [HttpPost]
         [AuthorizeUser]
         public async Task<IActionResult> AddMeal ([FromBody]AddMealDto newMeal)
