@@ -2,6 +2,7 @@ import RegisterPage1 from "./RegisterPage1";
 import RegisterPage2 from "./RegisterPage2";
 import type { RegisterUser } from "../../types";
 import { useState } from "react";
+import { useSimpleUserValidation } from "../../hook/useUserValidation";
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -38,6 +39,20 @@ function RegisterForm({
     setFormData((prev) => ({ ...prev, [field]: items }));
   };
 
+  const {
+    formData: validatedUserData,
+    errors: userErrors,
+    updateField: updateUserField,
+    validateAll,
+    isFormValid: isUserFormValid,
+  } = useSimpleUserValidation({
+    name: formData.name,
+    email: formData.email,
+    university: formData.university,
+    major: formData.major,
+    bio: formData.bio,
+  });
+
   return (
     <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center bg-gray-50 dark:bg-[#334155] p-4">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md dark:bg-slate-600">
@@ -64,6 +79,8 @@ function RegisterForm({
               formData={formData}
               handleInputChange={handleInputChange}
               handleNext={handleNext}
+              userErrors={userErrors}
+              updateUserField={updateUserField}
             />
           ) : (
             <RegisterPage2
@@ -72,6 +89,9 @@ function RegisterForm({
               handleArrayInputChange={handleArrayInputChange}
               handleBack={handleBack}
               setAvatarFile={setAvatarFile}
+              userErrors={userErrors}
+              updateUserField={updateUserField}
+              isUserFormValid={isUserFormValid}
             />
           )}
         </form>

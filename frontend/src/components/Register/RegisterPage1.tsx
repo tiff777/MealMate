@@ -2,22 +2,29 @@ import { useState, useEffect } from "react";
 import { FaUniversity } from "react-icons/fa";
 import { FiUser, FiMail, FiBookOpen } from "react-icons/fi";
 import type { RegisterUser } from "../../types";
-import NormalButton from "../Button/NormalButton";
 import PasswordInput from "../Form/PasswordInput";
 import TextInput from "../Form/TextInput";
 import { usePasswordValidation } from "../../hook/usePasswordValidation";
 import PasswordValidationFeedback from "../User/PasswordValidationFeedback";
 import ConfirmPasswordFeedback from "../User/ConfirmationPasswordFeedback";
 import ButtonFactory from "../Button/ButtonFactory";
-import { useSimpleUserValidation } from "../../hook/useUserValidation";
+import type { UserFormData } from "../../util/userValidation";
 
 interface Props {
   formData: RegisterUser;
   handleInputChange: (field: keyof RegisterUser, value: string) => void;
   handleNext: () => void;
+  updateUserField: (field: keyof UserFormData, value: string) => Promise<void>;
+  userErrors: Record<string, string>;
 }
 
-function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
+function RegisterPage1({
+  formData,
+  handleInputChange,
+  handleNext,
+  updateUserField,
+  userErrors,
+}: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
@@ -34,18 +41,6 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
     setConfirmPassword,
   } = usePasswordValidation();
 
-  const {
-    formData: userData,
-    errors: userErrors,
-    updateField: updateUserField,
-    isFormValid: isUserDataValid,
-  } = useSimpleUserValidation({
-    name: formData.name,
-    email: formData.email,
-    university: formData.university,
-    major: formData.major,
-  });
-
   const handlePasswordBlur = () => {
     setIsConfirmedPasswordFocused(false);
     if (isPasswordValid) {
@@ -57,7 +52,14 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
 
   const handlePasswordChange = setPassword;
   const handleConfirmPasswordChange = setConfirmPassword;
-  const canProceed = isUserDataValid && isPasswordValid;
+
+  const canProceed =
+    Object.values(userErrors).every((e) => !e) &&
+    formData.name.trim() &&
+    formData.email.trim() &&
+    formData.university.trim() &&
+    formData.major.trim() &&
+    isPasswordValid;
 
   return (
     <>
@@ -69,6 +71,7 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
           handleInputChange("name", value);
           updateUserField("name", value);
         }}
+        onBlur={(value) => updateUserField("name", value)}
         icon={<FiUser className="w-4 h-4" />}
         error={userErrors.name}
         required
