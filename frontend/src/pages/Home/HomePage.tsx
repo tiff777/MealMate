@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import FeaturedSection from "../../components/Landing/FeactureSection";
 import type { Meal } from "../../types";
@@ -6,12 +6,20 @@ import { apiClient } from "../../hook/api";
 import HeroSection from "../../components/Landing/HeroSection";
 import CTASection from "../../components/Landing/CTASection";
 import MealMeetingSection from "../../components/Landing/MealMeetingSection";
+import { AppContext } from "../../context/AppContext";
 
-function LandingPage() {
+function HomePage() {
   const [currentMealIndex, setCurrentMealIndex] = useState(0);
+  const { isAuthenticated } = useContext(AppContext);
   const navigate = useNavigate();
 
   const [latestMeals, setLatestMeals] = useState<Meal[]>();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/meal", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const fetchLatestMeal = async () => {
     try {
@@ -74,4 +82,4 @@ function LandingPage() {
   );
 }
 
-export default LandingPage;
+export default HomePage;
