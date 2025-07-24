@@ -6,13 +6,13 @@ type NavButtonProps = {
 
 function NavButton({ label, variant = "filled", onClick }: NavButtonProps) {
   const base =
-    "px-4 py-2 rounded-full font-medium hover:scale-105 hover:shadow-md transition-transform duration-300";
+    "px-4 py-2 rounded-full font-semibold transition-all duration-200 transform hover:scale-105";
 
   const filled =
-    "bg-pink-400 text-white dark:bg-purple-600 dark:text-[#f9fafb]";
+    "bg-orange-500 dark:bg-orange-400 text-white dark:text-gray-900 hover:bg-orange-600 dark:hover:bg-orange-300";
 
   const outlined =
-    "border bg-[#f9fafb] border-pink-500 text-rose-400 dark:bg-gray-700/90 dark:border-gray-700/90 dark:text-[#f9fafb]";
+    "bg-white dark:bg-gray-800 text-orange-500 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-gray-700  dark:border-orange-500";
 
   return (
     <button
