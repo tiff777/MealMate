@@ -39,7 +39,7 @@ function RegisterForm({
   };
 
   return (
-    <div className="h-[calc(100vh-4.5rem)] flex items-center justify-center">
+    <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center bg-gray-50 dark:bg-[#334155] p-4">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md dark:bg-slate-600">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold">Create Account</h2>
@@ -52,7 +52,7 @@ function RegisterForm({
         <div className="mb-6">
           <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-slate-500">
             <div
-              className="bg-gradient-to-r from-rose-400 to-rose-300 h-2 rounded-full"
+              className="bg-gradient-to-r from-[#FF7F7F] to-[#FFA07A] dark:from-[#0F0F23] dark:via-[#1A1A2E] dark:to-[#16213E] h-2 rounded-full"
               style={{ width: `${(currentPage / 2) * 100}%` }}
             />
           </div>
@@ -76,7 +76,6 @@ function RegisterForm({
           )}
         </form>
 
-        {/* Footer - only show on page 1 */}
         <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-4">
           Already have an account?{" "}
           <Link

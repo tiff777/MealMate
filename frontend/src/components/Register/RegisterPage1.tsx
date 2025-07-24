@@ -9,6 +9,7 @@ import { usePasswordValidation } from "../../hook/usePasswordValidation";
 import PasswordValidationFeedback from "../User/PasswordValidationFeedback";
 import ConfirmPasswordFeedback from "../User/ConfirmationPasswordFeedback";
 import ButtonFactory from "../Button/ButtonFactory";
+import { useSimpleUserValidation } from "../../hook/useUserValidation";
 
 interface Props {
   formData: RegisterUser;
@@ -20,20 +21,34 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isConfirmedPasswordFocused, setIsConfirmedPasswordFocused] =
+    useState(false);
 
   const {
     password,
     confirmPassword,
     passwordValidation,
     matchValidation,
-    isFormValid,
+    isPasswordValid,
     setPassword,
     setConfirmPassword,
   } = usePasswordValidation();
-  console.log("Test is form valid: ", isFormValid);
+
+  const {
+    formData: userData,
+    errors: userErrors,
+    updateField: updateUserField,
+    isFormValid: isUserDataValid,
+  } = useSimpleUserValidation({
+    name: formData.name,
+    email: formData.email,
+    university: formData.university,
+    major: formData.major,
+  });
 
   const handlePasswordBlur = () => {
-    if (isFormValid) {
+    setIsConfirmedPasswordFocused(false);
+    if (isPasswordValid) {
       handleInputChange("password", password);
     } else {
       handleInputChange("password", "");
@@ -42,6 +57,7 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
 
   const handlePasswordChange = setPassword;
   const handleConfirmPasswordChange = setConfirmPassword;
+  const canProceed = isUserDataValid && isPasswordValid;
 
   return (
     <>
@@ -49,8 +65,12 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
         label="Full Name"
         placeholder="Enter your full name"
         value={formData.name}
-        onChange={(value) => handleInputChange("name", value)}
+        onChange={(value) => {
+          handleInputChange("name", value);
+          updateUserField("name", value);
+        }}
         icon={<FiUser className="w-4 h-4" />}
+        error={userErrors.name}
         required
       />
 
@@ -59,8 +79,14 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
         placeholder="you@example.com"
         type="email"
         value={formData.email}
-        onChange={(value) => handleInputChange("email", value)}
+        onChange={(value) => {
+          handleInputChange("email", value);
+        }}
         icon={<FiMail className="w-4 h-4" />}
+        error={userErrors.email}
+        onBlur={async (value) => {
+          await updateUserField("email", value);
+        }}
         required
       />
 
@@ -69,7 +95,7 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
           label="Password"
           placeholder="Create password"
           value={password}
-          onChange={() => handlePasswordChange}
+          onChange={handlePasswordChange}
           show={showPassword}
           setShow={setShowPassword}
           onFocus={() => setIsPasswordFocused(true)}
@@ -93,11 +119,12 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
           onChange={handleConfirmPasswordChange}
           show={showConfirmPassword}
           setShow={setShowConfirmPassword}
+          onFocus={() => setIsConfirmedPasswordFocused(true)}
           onBlur={handlePasswordBlur}
         />
 
         {/* Confirm Password Validation Feedback */}
-        {confirmPassword && (
+        {isConfirmedPasswordFocused && confirmPassword && (
           <ConfirmPasswordFeedback
             confirmPassword={confirmPassword}
             matchValidation={matchValidation}
@@ -109,8 +136,12 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
         label="University"
         placeholder="Enter your university"
         value={formData.university}
-        onChange={(value) => handleInputChange("university", value)}
+        onChange={(value) => {
+          handleInputChange("university", value);
+          updateUserField("university", value);
+        }}
         icon={<FaUniversity className="w-4 h-4" />}
+        error={userErrors.university}
         required
       />
 
@@ -118,16 +149,20 @@ function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
         label="Major"
         placeholder="Enter your major"
         value={formData.major}
-        onChange={(value) => handleInputChange("major", value)}
+        onChange={(value) => {
+          handleInputChange("major", value);
+          updateUserField("major", value);
+        }}
         icon={<FiBookOpen className="w-4 h-4" />}
+        error={userErrors.major}
         required
       />
 
       <ButtonFactory
         type="view"
         onClick={() => handleNext()}
-        message="Continue"
-        disabled={!isFormValid}
+        message={canProceed ? "Continue" : "Complete All Fields"}
+        disabled={!canProceed}
       />
     </>
   );
