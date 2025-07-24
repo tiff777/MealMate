@@ -19,7 +19,12 @@ function UserCard({
       >
         <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 dark:from-pink-500/30 dark:via-purple-500/30 dark:to-blue-500/30"></div>
         <div className="flex gap-4">
-          <UserAvatar avatar={user.avatar} userId={user.uid} alt={user.name} />
+          <UserAvatar
+            avatar={user.avatar}
+            userId={user.uid}
+            alt={user.name}
+            isOnline={user.isOnline}
+          />
 
           <div className="flex-1">
             <div className="flex justify-between">

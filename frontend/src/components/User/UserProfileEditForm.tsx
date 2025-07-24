@@ -35,7 +35,11 @@ function UserProfileEditForm({
       <form onSubmit={onSubmit} className="space-y-6">
         {/* 頭像區塊 */}
         <div className="flex flex-row items-center gap-2">
-          <UserAvatar avatar={formData.avatar} userId={formData.uid} />
+          <UserAvatar
+            avatar={formData.avatar}
+            userId={formData.uid}
+            isOnline={formData.isOnline}
+          />
 
           <div className="flex flex-col gap-2">
             <p>{formData.name}</p>

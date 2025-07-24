@@ -12,7 +12,11 @@ function PublicUserProfile({ user }: { user: UserProfile }) {
     <div className="max-w-3xl mx-auto p-4 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <UserAvatar avatar={user.avatar} userId={user.uid} />
+        <UserAvatar
+          avatar={user.avatar}
+          userId={user.uid}
+          isOnline={user.isOnline}
+        />
 
         <div>
           <h2 className="text-2xl font-semibold">{user.name}</h2>
