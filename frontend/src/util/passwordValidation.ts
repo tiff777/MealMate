@@ -97,7 +97,7 @@ export function validatePasswordForm(
   return {
     password: passwordValidation,
     match: matchValidation,
-    isFormValid: passwordValidation.isValid && matchValidation.matches,
+    isPasswordValid: passwordValidation.isValid && matchValidation.matches,
   };
 }
 

@@ -13,7 +13,7 @@ interface UsePasswordValidationReturn {
   confirmPassword: string;
   passwordValidation: PasswordValidationResult | null;
   matchValidation: PasswordMatchResult | null;
-  isFormValid: boolean;
+  isPasswordValid: boolean;
   setPassword: (password: string) => void;
   setConfirmPassword: (confirmPassword: string) => void;
   handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -64,7 +64,7 @@ export function usePasswordValidation(): UsePasswordValidationReturn {
     []
   );
 
-  const isFormValid = Boolean(
+  const isPasswordValid = Boolean(
     passwordValidation?.isValid && matchValidation?.matches
   );
 
@@ -72,7 +72,7 @@ export function usePasswordValidation(): UsePasswordValidationReturn {
     const formValidation = validatePasswordForm(password, confirmPassword);
     setPasswordValidation(formValidation.password);
     setMatchValidation(formValidation.match);
-    return formValidation.isFormValid;
+    return formValidation.isPasswordValid;
   }, [password, confirmPassword]);
 
   const resetValidation = useCallback(() => {
@@ -87,7 +87,7 @@ export function usePasswordValidation(): UsePasswordValidationReturn {
     confirmPassword,
     passwordValidation,
     matchValidation,
-    isFormValid,
+    isPasswordValid,
     setPassword,
     setConfirmPassword,
     handlePasswordChange,
