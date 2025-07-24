@@ -69,7 +69,6 @@ function RegisterPage1({
         value={formData.name}
         onChange={(value) => {
           handleInputChange("name", value);
-          updateUserField("name", value);
         }}
         onBlur={(value) => updateUserField("name", value)}
         icon={<FiUser className="w-4 h-4" />}

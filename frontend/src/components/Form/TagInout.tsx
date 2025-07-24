@@ -16,17 +16,26 @@ const TagInput: React.FC<TagInputProps> = ({
   placeholder = "Add a tag",
 }) => {
   const [input, setInput] = useState("");
+  const [error, setError] = useState("");
+  const hasError = tags.length >= 10;
 
   const handleAdd = () => {
     const trimmed = input.trim();
-    if (trimmed !== "" && !tags.includes(trimmed)) {
+    if (trimmed !== "" && !tags.includes(trimmed) && !hasError) {
       setTags([...tags, trimmed]);
       setInput("");
+      setError(""); // clear error if previously shown
+    } else if (hasError) {
+      setError("You can only add up to 10 tags.");
     }
   };
 
   const handleRemove = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
+    const newTags = tags.filter((tag) => tag !== tagToRemove);
+    setTags(newTags);
+    if (newTags.length < 10) {
+      setError(""); // clear error once below limit
+    }
   };
 
   return (
@@ -56,11 +65,22 @@ const TagInput: React.FC<TagInputProps> = ({
         <button
           type="button"
           onClick={handleAdd}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm"
+          disabled={hasError}
+          className={`px-3 py-1 rounded text-sm text-white ${
+            hasError
+              ? "bg-orange-300 cursor-not-allowed"
+              : "bg-orange-500 hover:bg-orange-600"
+          }`}
         >
           Add
         </button>
       </div>
+
+      {hasError && (
+        <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+          <span className="font-medium"></span> {error}
+        </p>
+      )}
 
       <div className="flex flex-wrap gap-2 mb-4">
         {tags.map((tag, idx) => (
