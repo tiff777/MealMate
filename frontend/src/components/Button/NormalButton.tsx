@@ -11,24 +11,46 @@ function NormalButton({
     <button
       type="button"
       onClick={onClick}
-      className="
-        w-full
-        py-2
-        rounded-lg
-        border-2
-        border-rose-300
-        bg-white
-        bg-clip-padding
-        bg-gradient-to-r from-rose-400 to-rose-300
-        text-transparent
-        bg-clip-text
-        font-semibold
-        transition-all transform
-        hover:scale-105
-        hover:shadow-lg
-        hover:bg-gradient-to-r hover:from-rose-400 hover:to-rose-300
-        focus:ring-2 focus:ring-rose-300
-      "
+      className={`
+    w-full 
+    py-2 
+    rounded-lg 
+    border-2 
+    font-semibold 
+    transition-all 
+    duration-200 
+    transform 
+    focus:ring-2 
+    ${
+      disabled
+        ?
+          `
+        border-gray-300 
+        dark:border-gray-600 
+        text-gray-400 
+        dark:text-gray-500 
+        bg-gray-100 
+        dark:bg-gray-800 
+        cursor-not-allowed 
+        opacity-60
+        `
+        : 
+          `
+        border-orange-500 
+        dark:border-orange-400 
+        text-orange-500 
+        dark:text-orange-400 
+        hover:scale-105 
+        hover:shadow-lg 
+        hover:bg-orange-500 
+        hover:text-white 
+        dark:hover:bg-orange-400 
+        dark:hover:text-white 
+        focus:ring-orange-300
+        cursor-pointer
+        `
+    }
+  `}
       disabled={disabled}
     >
       {message}

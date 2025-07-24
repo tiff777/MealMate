@@ -13,10 +13,10 @@ function SwitchThemeButton() {
         className={`
          relative inline-flex items-center justify-center
          w-12 h-12 rounded-full
-         bg-gray-200 dark:bg-gray-700
-         hover:bg-gray-300 dark:hover:bg-gray-600
+         bg-white/20 dark:bg-gray-700
+         hover:bg-white/30 dark:hover:bg-gray-600
          transition-all duration-300 ease-in-out
-         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+         focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-orange-300 focus:ring-offset-2
          shadow-md hover:shadow-lg
        `}
       >
@@ -25,8 +25,8 @@ function SwitchThemeButton() {
           <FiSun
             className="
              absolute inset-0 w-6 h-6
-             text-yellow-500
-             transition-all duration-300 ease-in-out
+             text-white
+             transition-all duration-300 ease-in-out transform
              opacity-100 rotate-90 scale-0
              dark:opacity-0 rotate-0 scale-100
            "
@@ -37,7 +37,7 @@ function SwitchThemeButton() {
             className="
              absolute inset-0 w-6 h-6
              text-blue-400
-             transition-all duration-300 ease-in-out
+             transition-all duration-300 ease-in-out transform
              opacity-0 rotate-0 scale-100
              dark:opacity-100 -rotate-90 scale-0
            "
