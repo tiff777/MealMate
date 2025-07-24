@@ -8,6 +8,8 @@ import React, {
 import { useNavigate } from "react-router-dom";
 import type { User } from "../types";
 import { apiClient, authClient } from "../hook/api";
+import ErrorToast from "../components/Modal/ErrorToast";
+import SuccessToast from "../components/Modal/SuccessfulToast";
 
 interface AppContextType {
   user: User | null;
@@ -23,6 +25,8 @@ interface AppContextType {
   setLoading: (loading: boolean) => void;
   setPendingId: (roomId: number | null) => void;
   getToken: () => string;
+  showError: (message: string) => void;
+  showSuccess: (message: string) => void;
 }
 
 const AppContext = createContext<AppContextType>({
@@ -39,6 +43,8 @@ const AppContext = createContext<AppContextType>({
   setLoading: () => {},
   setPendingId: () => {},
   getToken: () => "",
+  showError: () => {},
+  showSuccess: () => {},
 });
 
 const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -47,6 +53,8 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [pendingRoomId, setPendingRoomId] = useState<number | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
   const loginUser = (userData: User, token: string) => {
@@ -151,6 +159,14 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     setPendingRoomId(roomId);
   };
 
+  const showError = useCallback((msg: string) => {
+    setErrorMessage(msg);
+  }, []);
+
+  const showSuccess = useCallback((msg: string) => {
+    setSuccessMessage(msg);
+  }, []);
+
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia(
@@ -198,9 +214,27 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     toggleDarkMode,
     setLoading,
     setPendingId,
+    showError,
+    showSuccess,
   };
 
-  return <AppContext.Provider value={context}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={context}>
+      {children}
+      {errorMessage && (
+        <ErrorToast
+          message={errorMessage}
+          onClose={() => setErrorMessage("")}
+        />
+      )}
+      {successMessage && (
+        <SuccessToast
+          message={successMessage}
+          onClose={() => setSuccessMessage("")}
+        />
+      )}
+    </AppContext.Provider>
+  );
 };
 
 export { AppContext, AppContextProvider };
