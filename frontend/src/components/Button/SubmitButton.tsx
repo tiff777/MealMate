@@ -6,14 +6,16 @@ function SubmitButton({ message }: { message?: string }) {
   w-full 
   py-2 
   rounded-lg 
-  bg-gradient-to-r from-rose-400 to-rose-300
-   hover:from-rose-300 hover:to-rose-400
+  bg-gradient-to-r from-orange-400 to-red-500
+  dark:from-orange-500 dark:to-red-600
+  hover:from-orange-600 hover:to-red-500
+  dark:hover:from-orange-600 dark:hover:to-red-600
   text-white 
   font-semibold
   transition-all transform
   hover:scale-105
   hover:shadow-lg
-  focus:ring-2 focus:ring-rose-300
+  focus:ring-2 focus:ring-orange-400
 "
     >
       {message}
