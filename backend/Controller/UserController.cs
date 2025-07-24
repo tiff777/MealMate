@@ -151,6 +151,26 @@ namespace backend.Controller
             }
         }
 
+        [HttpGet("check-duplicate")]
+        public async Task<IActionResult> CheckDuplicate ([FromQuery] string field, [FromQuery] string value)
+        {
+            try
+            {
+                bool exists = field.ToLower() switch
+                {
+                    "email" => await _db.Users.AnyAsync(u => u.Email == value),
+                    "name" => await _db.Users.AnyAsync(u => u.Name == value),
+                    _ => false
+                };
+
+                return Ok(new { exists });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest (ex.Message);
+            }            
+        }
+
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody] AddUserDto newUser)
         {

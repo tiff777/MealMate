@@ -1,3 +1,5 @@
+import { apiClient } from "../hook/api";
+
 export interface ValidationResult {
   isValid: boolean;
   errors: string[];
@@ -36,7 +38,7 @@ const INVALID_NAME_PATTERNS = [
   },
 ];
 
-export function validateName(name: string): ValidationResult {
+export async function validateName(name: string): Promise<ValidationResult> {
   const errors: string[] = [];
   const trimmedName = name.trim();
 
@@ -69,13 +71,18 @@ export function validateName(name: string): ValidationResult {
     }
   }
 
+  const isDuplicate = await checkDuplicate("name", trimmedName);
+  if (isDuplicate) {
+    errors.push("This name is already taken");
+  }
+
   return {
     isValid: errors.length === 0,
     errors,
   };
 }
 
-export function validateEmail(email: string): ValidationResult {
+export async function validateEmail(email: string): Promise<ValidationResult> {
   const errors: string[] = [];
   const trimmedEmail = email.trim().toLowerCase();
 
@@ -99,6 +106,11 @@ export function validateEmail(email: string): ValidationResult {
 
   if (trimmedEmail.startsWith(".") || trimmedEmail.endsWith(".")) {
     errors.push("Email cannot start or end with a dot");
+  }
+
+  const isDuplicate = await checkDuplicate("email", trimmedEmail);
+  if (isDuplicate) {
+    errors.push("This email is already registered");
   }
 
   return {
@@ -183,11 +195,11 @@ export function validateBio(bio: string): ValidationResult {
   };
 }
 
-export function validateUserForm(
+export async function validateUserForm(
   userData: UserFormData
-): UserValidationResults {
-  const nameValidation = validateName(userData.name);
-  const emailValidation = validateEmail(userData.email);
+): Promise<UserValidationResults> {
+  const nameValidation = await validateName(userData.name);
+  const emailValidation = await validateEmail(userData.email);
   const universityValidation = validateUniversity(userData.university);
   const majorValidation = validateMajor(userData.major);
   const bioValidation = validateBio(userData.bio);
@@ -213,15 +225,15 @@ export function validateUserForm(
   };
 }
 
-export function validateField(
+export async function validateField(
   fieldName: keyof UserFormData,
   value: any
-): ValidationResult {
+): Promise<ValidationResult> {
   switch (fieldName) {
     case "name":
-      return validateName(value as string);
+      return await validateName(value as string);
     case "email":
-      return validateEmail(value as string);
+      return await validateEmail(value as string);
     case "university":
       return validateUniversity(value as string);
     case "major":
@@ -230,5 +242,19 @@ export function validateField(
       return validateBio(value as string);
     default:
       return { isValid: true, errors: [] };
+  }
+}
+
+async function checkDuplicate(field: "email" | "name", value: string) {
+    console.log("Checking");
+    
+  try {
+    const response = await apiClient.get("/user/check-duplicate", {
+      params: { field, value },
+    });
+    return response.data.exists;
+  } catch (error) {
+    console.error("Error checking duplicate:", error);
+    return false;
   }
 }
