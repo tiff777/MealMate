@@ -149,7 +149,7 @@ function SettingsPage() {
         <SettingNavBar activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* Content */}
-        <div className="flex-1 bg-white rounded shadow p-6">
+        <div className="flex-1 bg-white dark:bg-slate-800 rounded shadow p-3">
           {activeTab === "profile" && (
             <UserProfileEditForm
               formData={formData}

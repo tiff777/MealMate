@@ -27,6 +27,7 @@ interface AppContextType {
   getToken: () => string;
   showError: (message: string) => void;
   showSuccess: (message: string) => void;
+  setAuthenticated: (loading: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType>({
@@ -45,6 +46,7 @@ const AppContext = createContext<AppContextType>({
   getToken: () => "",
   showError: () => {},
   showSuccess: () => {},
+  setAuthenticated: () => {},
 });
 
 const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -119,7 +121,26 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const updateUser = useCallback(
     (updatedUser: User) => {
       setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      setIsAuthenticated(true);
+
+      // 安全地更新 localStorage
+      setTimeout(() => {
+        try {
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+          setIsAuthenticated(true);
+          console.log("✅ Context: User data saved to localStorage");
+          console.log("✅ Context: Final auth state after update:", {
+            isAuthenticated: true,
+            userUid: updatedUser.uid,
+          });
+        } catch (error) {
+          console.error(
+            "❌ Context: Failed to save user to localStorage",
+            error
+          );
+        }
+      }, 0);
     },
     [fetchUserProfile]
   );
@@ -160,12 +181,20 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const showError = useCallback((msg: string) => {
-    setErrorMessage(msg);
+    setTimeout(() => {
+      setErrorMessage(msg);
+    }, 0);
   }, []);
 
   const showSuccess = useCallback((msg: string) => {
-    setSuccessMessage(msg);
+    setTimeout(() => {
+      setSuccessMessage(msg);
+    }, 0);
   }, []);
+
+  const setAuthenticated = (auth: boolean) => {
+    setIsAuthenticated(auth);
+  };
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -216,6 +245,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     setPendingId,
     showError,
     showSuccess,
+    setAuthenticated,
   };
 
   return (

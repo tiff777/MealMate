@@ -1,4 +1,5 @@
 import { apiClient } from "../hook/api";
+import type { User } from "../types";
 
 export interface ValidationResult {
   isValid: boolean;
@@ -38,7 +39,10 @@ const INVALID_NAME_PATTERNS = [
   },
 ];
 
-export async function validateName(name: string): Promise<ValidationResult> {
+export async function validateName(
+  name: string,
+  user?: User
+): Promise<ValidationResult> {
   const errors: string[] = [];
   const trimmedName = name.trim();
 
@@ -71,9 +75,16 @@ export async function validateName(name: string): Promise<ValidationResult> {
     }
   }
 
-  const isDuplicate = await checkDuplicate("name", trimmedName);
-  if (isDuplicate) {
-    errors.push("This name is already taken");
+  if (!user || trimmedName !== user.name.trim()) {
+    const isDuplicate = await checkDuplicate("name", trimmedName);
+    console.log("Checking duplication:", {
+      trimmedName,
+      originalName: user?.name,
+      comparison: trimmedName !== user?.name?.trim(),
+    });
+    if (isDuplicate) {
+      errors.push("This name is already taken");
+    }
   }
 
   return {
@@ -196,9 +207,11 @@ export function validateBio(bio: string): ValidationResult {
 }
 
 export async function validateUserForm(
-  userData: UserFormData
+  userData: UserFormData,
+  user?: User
 ): Promise<UserValidationResults> {
-  const nameValidation = await validateName(userData.name);
+  console.log("Test user in util", user?.name);
+  const nameValidation = await validateName(userData.name, user);
   const emailValidation = await validateEmail(userData.email);
   const universityValidation = validateUniversity(userData.university);
   const majorValidation = validateMajor(userData.major);
@@ -227,11 +240,14 @@ export async function validateUserForm(
 
 export async function validateField(
   fieldName: keyof UserFormData,
-  value: any
+  value: any,
+  user?: User
 ): Promise<ValidationResult> {
+  console.log("Test user in util: ", user);
+
   switch (fieldName) {
     case "name":
-      return await validateName(value as string);
+      return await validateName(value as string, user);
     case "email":
       return await validateEmail(value as string);
     case "university":
@@ -246,8 +262,8 @@ export async function validateField(
 }
 
 async function checkDuplicate(field: "email" | "name", value: string) {
-    console.log("Checking");
-    
+  console.log("Checking");
+
   try {
     const response = await apiClient.get("/user/check-duplicate", {
       params: { field, value },

@@ -3,11 +3,14 @@ import { FaUniversity } from "react-icons/fa";
 import { FiUser, FiMail, FiBookOpen } from "react-icons/fi";
 import TagInput from "../Form/TagInout";
 import type { User } from "../../types";
-
+import { useSimpleUserValidation } from "../../hook/useUserValidation";
+import type { UserFormData } from "../../util/userValidation";
 import TextInput from "../Form/TextInput";
-
+import TextBoxInput from "../Form/TextBoxInput";
 import ButtonFactory from "../Button/ButtonFactory";
 import UserAvatar from "./UserAvatar";
+import { useContext } from "react";
+import { AppContext } from "../../context/AppContext";
 
 interface Props {
   formData: User;
@@ -22,18 +25,47 @@ function UserProfileEditForm({
   onSubmit,
   onAvatarUpload,
 }: Props) {
+  const { user } = useContext(AppContext);
+  const {
+    formData: validatedUserData,
+    errors: userErrors,
+    updateField: updateUserField,
+    validateAll,
+    isFormValid: isUserFormValid,
+  } = useSimpleUserValidation(
+    {
+      name: formData.name,
+      email: formData.email,
+      university: formData.university,
+      major: formData.major,
+      bio: formData.bio,
+    },
+    user ?? undefined
+  );
+
   const handleInputChange = (field: keyof User, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleFieldCheck = async (field: keyof User, value: string) => {
+    if (
+      field === "name" ||
+      field === "email" ||
+      field === "university" ||
+      field === "major" ||
+      field === "bio"
+    ) {
+      await updateUserField(field as keyof UserFormData, value);
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+    <div className="space-y-6 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 p-6 rounded-lg shadow">
+      <h2 className="text-xl font-semibold text-gray-800 mb-4 dark:text-gray-100 ">
         Update Personal Information
       </h2>
 
       <form onSubmit={onSubmit} className="space-y-6">
-        {/* 頭像區塊 */}
         <div className="flex flex-row items-center gap-2">
           <UserAvatar
             avatar={formData.avatar}
@@ -59,7 +91,9 @@ function UserProfileEditForm({
               placeholder="Enter your full name"
               value={formData.name}
               onChange={(val) => handleInputChange("name", val)}
+              onBlur={(val) => handleFieldCheck("name", val)}
               icon={<FiUser />}
+              error={userErrors.name}
             />
             <TextInput
               label="Email"
@@ -68,22 +102,19 @@ function UserProfileEditForm({
               onChange={(val) => handleInputChange("email", val)}
               icon={<FiMail />}
               disabled={true}
+              error={userErrors.email}
             />
           </div>
 
           <div className="grid md:grid-row-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Bio
-              </label>
-              <textarea
-                value={formData.bio}
-                onChange={(e) => handleInputChange("bio", e.target.value)}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
-                placeholder="introduce yourself"
-              />
-            </div>
+            <TextBoxInput
+              title="Bio (Optional)"
+              value={formData.bio}
+              onChange={(value) => handleInputChange("bio", value)}
+              onBlur={(value) => updateUserField("bio", value)}
+              rows={3}
+              error={userErrors.bio}
+            />
           </div>
         </div>
 
@@ -95,6 +126,7 @@ function UserProfileEditForm({
               value={formData.university}
               onChange={(val) => handleInputChange("university", val)}
               icon={<FaUniversity />}
+              error={userErrors.university}
             />
           </div>
           <div className="relative z-0 w-full mb-5 group">
@@ -104,6 +136,7 @@ function UserProfileEditForm({
               value={formData.major}
               onChange={(val) => handleInputChange("major", val)}
               icon={<FiBookOpen />}
+              error={userErrors.major}
             />
           </div>
         </div>

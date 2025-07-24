@@ -1,4 +1,3 @@
-// hooks/useSimpleUserValidation.ts
 import { useState, useMemo, useRef } from "react";
 import {
   validateUserForm,
@@ -6,6 +5,7 @@ import {
   type UserFormData,
   type ValidationResult,
 } from "../util/userValidation";
+import type { User } from "../types";
 
 const defaultFormData: UserFormData = {
   name: "",
@@ -19,7 +19,8 @@ const defaultFormData: UserFormData = {
 };
 
 export function useSimpleUserValidation(
-  initialData: Partial<UserFormData> = {}
+  initialData: Partial<UserFormData> = {},
+  user?: User | null
 ) {
   const [formData, setFormData] = useState<UserFormData>({
     ...defaultFormData,
@@ -29,6 +30,9 @@ export function useSimpleUserValidation(
   const [errors, setErrors] = useState<Record<string, string>>({});
   const previousValuesRef = useRef<Record<string, string>>({});
 
+  const userRef = useRef<User | undefined>(user);
+  userRef.current = user;
+
   const updateField = async (field: keyof UserFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
@@ -36,7 +40,11 @@ export function useSimpleUserValidation(
       return;
     }
 
-    const result: ValidationResult = await validateField(field, value);
+    const result: ValidationResult = await validateField(
+      field,
+      value,
+      user || undefined
+    );
     previousValuesRef.current[field] = value;
 
     setErrors((prev) => ({
@@ -46,7 +54,10 @@ export function useSimpleUserValidation(
   };
 
   const validateAll = async (): Promise<boolean> => {
-    const result = await validateUserForm(formData);
+    const result = await validateUserForm(
+      formData,
+      userRef.current || undefined
+    );
 
     Object.entries(formData).forEach(([key, value]) => {
       previousValuesRef.current[key] = value;
