@@ -1,0 +1,234 @@
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+}
+
+export interface UserValidationResults {
+  name: ValidationResult;
+  email: ValidationResult;
+  university: ValidationResult;
+  major: ValidationResult;
+  bio: ValidationResult;
+  isFormValid: boolean;
+  allErrors: string[];
+}
+
+export interface UserFormData {
+  name: string;
+  email: string;
+  university: string;
+  major: string;
+  bio: string;
+  avatar: string;
+  interests: string[];
+  preferredCuisines: string[];
+}
+
+const INVALID_NAME_PATTERNS = [
+  { pattern: /^[0-9]+$/, message: "Name cannot be only numbers" },
+  {
+    pattern: /^[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/,
+    message: "Name cannot be only special characters",
+  },
+  {
+    pattern: /test|admin|user|guest|null|undefined/i,
+    message: "Please enter a real name",
+  },
+];
+
+export function validateName(name: string): ValidationResult {
+  const errors: string[] = [];
+  const trimmedName = name.trim();
+
+  if (!trimmedName) {
+    errors.push("Name is required");
+    return { isValid: false, errors };
+  }
+
+  if (trimmedName.length > 100) {
+    errors.push("Name cannot exceed 100 characters");
+  }
+
+  if (trimmedName.length < 2) {
+    errors.push("Name must be at least 2 characters long");
+  }
+
+  if (
+    !/^[a-zA-Z\s\u4e00-\u9fff\u0100-\u017f\u0180-\u024f\u1e00-\u1eff'-]+$/.test(
+      trimmedName
+    )
+  ) {
+    errors.push(
+      "Name can only contain letters, spaces, hyphens, and apostrophes"
+    );
+  }
+
+  for (const { pattern, message } of INVALID_NAME_PATTERNS) {
+    if (pattern.test(trimmedName)) {
+      return { isValid: false, errors: [message] };
+    }
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}
+
+export function validateEmail(email: string): ValidationResult {
+  const errors: string[] = [];
+  const trimmedEmail = email.trim().toLowerCase();
+
+  if (!trimmedEmail) {
+    errors.push("Email is required");
+    return { isValid: false, errors };
+  }
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(trimmedEmail)) {
+    errors.push("Invalid email format");
+  }
+
+  if (trimmedEmail.length > 254) {
+    errors.push("Email address is too long");
+  }
+
+  if (trimmedEmail.includes("..")) {
+    errors.push("Email cannot contain consecutive dots");
+  }
+
+  if (trimmedEmail.startsWith(".") || trimmedEmail.endsWith(".")) {
+    errors.push("Email cannot start or end with a dot");
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}
+
+export function validateUniversity(university: string): ValidationResult {
+  const errors: string[] = [];
+  const trimmedUniversity = university.trim();
+
+  if (trimmedUniversity.length > 200) {
+    errors.push("University name cannot exceed 200 characters");
+  }
+
+  if (trimmedUniversity && trimmedUniversity.length < 2) {
+    errors.push("University name must be at least 2 characters long");
+  }
+
+  if (
+    trimmedUniversity &&
+    !/^[a-zA-Z0-9\s\u4e00-\u9fff\u0100-\u017f\u0180-\u024f\u1e00-\u1eff'&.-]+$/.test(
+      trimmedUniversity
+    )
+  ) {
+    errors.push("University name contains invalid characters");
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}
+
+export function validateMajor(major: string): ValidationResult {
+  const errors: string[] = [];
+  const trimmedMajor = major.trim();
+
+  if (trimmedMajor.length > 100) {
+    errors.push("Major cannot exceed 100 characters");
+  }
+
+  if (trimmedMajor && trimmedMajor.length < 2) {
+    errors.push("Major must be at least 2 characters long");
+  }
+
+  if (
+    trimmedMajor &&
+    !/^[a-zA-Z0-9\s\u4e00-\u9fff\u0100-\u017f\u0180-\u024f\u1e00-\u1eff'&.-]+$/.test(
+      trimmedMajor
+    )
+  ) {
+    errors.push("Major contains invalid characters");
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}
+
+export function validateBio(bio: string): ValidationResult {
+  const errors: string[] = [];
+  const trimmedBio = bio.trim();
+
+  if (trimmedBio.length > 500) {
+    errors.push("Bio cannot exceed 500 characters");
+  }
+
+  if (trimmedBio && /^(.)\1{20,}$/.test(trimmedBio)) {
+    errors.push("Bio cannot consist of repeated characters");
+  }
+
+  if (/[!?.,]{5,}/.test(trimmedBio)) {
+    errors.push("Bio contains too many consecutive punctuation marks");
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}
+
+export function validateUserForm(
+  userData: UserFormData
+): UserValidationResults {
+  const nameValidation = validateName(userData.name);
+  const emailValidation = validateEmail(userData.email);
+  const universityValidation = validateUniversity(userData.university);
+  const majorValidation = validateMajor(userData.major);
+  const bioValidation = validateBio(userData.bio);
+
+  const allErrors = [
+    ...nameValidation.errors,
+    ...emailValidation.errors,
+    ...universityValidation.errors,
+    ...majorValidation.errors,
+    ...bioValidation.errors,
+  ];
+
+  const isFormValid = allErrors.length === 0;
+
+  return {
+    name: nameValidation,
+    email: emailValidation,
+    university: universityValidation,
+    major: majorValidation,
+    bio: bioValidation,
+    isFormValid,
+    allErrors,
+  };
+}
+
+export function validateField(
+  fieldName: keyof UserFormData,
+  value: any
+): ValidationResult {
+  switch (fieldName) {
+    case "name":
+      return validateName(value as string);
+    case "email":
+      return validateEmail(value as string);
+    case "university":
+      return validateUniversity(value as string);
+    case "major":
+      return validateMajor(value as string);
+    case "bio":
+      return validateBio(value as string);
+    default:
+      return { isValid: true, errors: [] };
+  }
+}

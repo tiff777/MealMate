@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaUniversity } from "react-icons/fa";
 import { FiUser, FiMail, FiBookOpen } from "react-icons/fi";
 import type { RegisterUser } from "../../types";
 import NormalButton from "../Button/NormalButton";
 import PasswordInput from "../Form/PasswordInput";
+import TextInput from "../Form/TextInput";
+import { usePasswordValidation } from "../../hook/usePasswordValidation";
+import PasswordValidationFeedback from "../User/PasswordValidationFeedback";
+import ConfirmPasswordFeedback from "../User/ConfirmationPasswordFeedback";
+import ButtonFactory from "../Button/ButtonFactory";
 
 interface Props {
   formData: RegisterUser;
@@ -14,96 +19,116 @@ interface Props {
 function RegisterPage1({ formData, handleInputChange, handleNext }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+
+  const {
+    password,
+    confirmPassword,
+    passwordValidation,
+    matchValidation,
+    isFormValid,
+    setPassword,
+    setConfirmPassword,
+  } = usePasswordValidation();
+  console.log("Test is form valid: ", isFormValid);
+
+  const handlePasswordBlur = () => {
+    if (isFormValid) {
+      handleInputChange("password", password);
+    } else {
+      handleInputChange("password", "");
+    }
+  };
+
+  const handlePasswordChange = setPassword;
+  const handleConfirmPasswordChange = setConfirmPassword;
+
   return (
     <>
-      <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-          Full Name
-        </label>
-        <div className="relative">
-          <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Enter your full name"
-            value={formData.name}
-            onChange={(e) => handleInputChange("name", e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-rose-500 dark:focus:ring-rose-400 focus:border-transparent transition-colors text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-            required
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-          Email Address
-        </label>
-        <div className="relative">
-          <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="email"
-            placeholder="you@example.com"
-            value={formData.email}
-            onChange={(e) => handleInputChange("email", e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-rose-500 dark:focus:ring-rose-400 focus:border-transparent transition-colors text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-            required
-          />
-        </div>
-      </div>
-
-      <PasswordInput
-        label="Password"
-        placeholder="Create password"
-        value={formData.password}
-        onChange={(val) => handleInputChange("password", val)}
-        show={showPassword}
-        setShow={setShowPassword}
+      <TextInput
+        label="Full Name"
+        placeholder="Enter your full name"
+        value={formData.name}
+        onChange={(value) => handleInputChange("name", value)}
+        icon={<FiUser className="w-4 h-4" />}
+        required
       />
 
-      <PasswordInput
-        label="Confirm Password"
-        placeholder="Confirm your password"
-        value={confirmPassword}
-        onChange={setConfirmPassword}
-        show={showConfirmPassword}
-        setShow={setShowConfirmPassword}
+      <TextInput
+        label="Email Address"
+        placeholder="you@example.com"
+        type="email"
+        value={formData.email}
+        onChange={(value) => handleInputChange("email", value)}
+        icon={<FiMail className="w-4 h-4" />}
+        required
       />
 
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-          University
-        </label>
-        <div className="relative">
-          <FaUniversity className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Enter your university"
-            value={formData.university}
-            onChange={(e) => handleInputChange("university", e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-rose-500 dark:focus:ring-rose-400 focus:border-transparent transition-colors text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-            required
+        <PasswordInput
+          label="Password"
+          placeholder="Create password"
+          value={password}
+          onChange={() => handlePasswordChange}
+          show={showPassword}
+          setShow={setShowPassword}
+          onFocus={() => setIsPasswordFocused(true)}
+          onBlur={() => setIsPasswordFocused(false)}
+        />
+
+        {isPasswordFocused && password && (
+          <PasswordValidationFeedback
+            password={password}
+            passwordValidation={passwordValidation}
           />
-        </div>
+        )}
       </div>
 
+      {/* Confirm Password Input */}
       <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-          Major
-        </label>
-        <div className="relative">
-          <FiBookOpen className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Enter your major"
-            value={formData.major}
-            onChange={(e) => handleInputChange("major", e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-rose-500 dark:focus:ring-rose-400 focus:border-transparent transition-colors text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-            required
+        <PasswordInput
+          label="Confirm Password"
+          placeholder="Confirm your password"
+          value={confirmPassword}
+          onChange={handleConfirmPasswordChange}
+          show={showConfirmPassword}
+          setShow={setShowConfirmPassword}
+          onBlur={handlePasswordBlur}
+        />
+
+        {/* Confirm Password Validation Feedback */}
+        {confirmPassword && (
+          <ConfirmPasswordFeedback
+            confirmPassword={confirmPassword}
+            matchValidation={matchValidation}
           />
-        </div>
+        )}
       </div>
 
-      <NormalButton message="Continue" onClick={handleNext} />
+      <TextInput
+        label="University"
+        placeholder="Enter your university"
+        value={formData.university}
+        onChange={(value) => handleInputChange("university", value)}
+        icon={<FaUniversity className="w-4 h-4" />}
+        required
+      />
+
+      <TextInput
+        label="Major"
+        placeholder="Enter your major"
+        value={formData.major}
+        onChange={(value) => handleInputChange("major", value)}
+        icon={<FiBookOpen className="w-4 h-4" />}
+        required
+      />
+
+      <ButtonFactory
+        type="view"
+        onClick={() => handleNext()}
+        message="Continue"
+        disabled={!isFormValid}
+      />
     </>
   );
 }
