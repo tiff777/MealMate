@@ -3,7 +3,7 @@ type AvatarProps = {
   isOnline: boolean;
   avatar: string;
   alt?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
 };
 
 function UserAvatar({
@@ -19,7 +19,13 @@ function UserAvatar({
   const statusDotColor = isOnline ? "bg-green-400" : "bg-red-400";
 
   const sizeClasses =
-    size === "lg" ? "w-16 h-16" : size === "md" ? "w-12 h-12" : "w-10 h-10";
+    size === "lg"
+      ? "w-16 h-16"
+      : size === "md"
+      ? "w-12 h-12"
+      : size === "sm"
+      ? "w-10 h-10"
+      : "w-8 h-8";
 
   return (
     <div className={`relative ${sizeClasses}`}>

@@ -33,6 +33,9 @@ namespace backend.Controller
                 return Unauthorized(new { message = "Invalid credentials" });
             }
 
+            dbuser.IsOnline = true;
+            await _db.SaveChangesAsync();
+
             var token = _authService.GenerateToken(dbuser);
             var user = new ShowUserDto
             {
@@ -45,7 +48,7 @@ namespace backend.Controller
                 Avatar = dbuser.Avatar,
                 Interests = dbuser.Interests,
                 PreferredCuisines = dbuser.PreferredCuisines,
-                IsOnline = dbuser.IsOnline,
+                IsOnline = true,
                 LastSeen = dbuser.LastSeen,
             };
 
