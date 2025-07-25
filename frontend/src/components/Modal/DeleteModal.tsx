@@ -6,6 +6,7 @@ import LoadingSpinner from "../UI/LoadingSpinner";
 interface DeleteModalProps {
   isOpen: boolean;
   title: string;
+  para?: String;
   onClose: () => void;
   onConfirm: () => void;
   isLoading?: boolean;
@@ -16,6 +17,7 @@ function DeleteModal({
   onClose,
   onConfirm,
   title,
+  para,
   isLoading = false,
 }: DeleteModalProps) {
   const handleConfirm = () => {
@@ -57,10 +59,15 @@ function DeleteModal({
             {/* Warning Icon */}
             <IoWarning className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" />
 
-            {/* Title */}
-            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-              {title}
-            </h3>
+            {/* Text Content */}
+            <div className="mb-5">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+                {title}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                {para}
+              </p>
+            </div>
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 justify-center">
