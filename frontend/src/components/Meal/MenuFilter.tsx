@@ -63,25 +63,27 @@ function MealFilterSidebar({
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 bg-black/50 bg-opacity-50 z-20 lg:hidden transition-opacity duration-300"
           onClick={onClose}
         />
       )}
 
       <div
         className={`
-          ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-          fixed lg:relative lg:translate-x-0 z-30 w-80 h-screen lg:h-auto 
-          transition-transform duration-300 ease-in-out
-          ${className}
-        `}
+    ${isOpen ? "translate-x-0" : "-translate-x-full"} 
+    lg:translate-x-0 
+    fixed lg:static
+    top-0 left-0 z-30 lg:z-auto w-80 lg:w-72 h-full lg:h-auto
+    transition-transform duration-300 ease-in-out
+    ${className}
+  `}
       >
         <div
           className={`
-            h-full overflow-y-auto
-            bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
-            p-6 transition-colors duration-300
-          `}
+    h-full overflow-y-auto
+    bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
+    p-6 pb-24 transition-colors duration-300 scrollbar-hide
+  `}
         >
           <div className="lg:hidden flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">

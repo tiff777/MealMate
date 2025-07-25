@@ -5,7 +5,7 @@ import MealCard from "../../components/Meal/MealCard";
 import { AppContext } from "../../context/AppContext";
 import ErrorToast from "../../components/Modal/ErrorToast";
 import SuccessToast from "../../components/Modal/SuccessfulToast";
-import ButtonFactory from "../../components/Button/ButtonFactory";
+import MobileFilterButton from "../../components/Button/MobileFilterButton";
 import MealFilterSidebar from "../../components/Meal/MenuFilter";
 import { useFilteredMeals } from "../../hook/useFilteredMeals";
 import { useMealButtons } from "../../hook/useMealButtons";
@@ -115,6 +115,8 @@ function MealDashboard() {
       ...prev,
       [filterType]: value,
     }));
+
+    setSidebarOpen(false);
   };
 
   const filteredMeals = useFilteredMeals(meals, filters);
@@ -126,13 +128,34 @@ function MealDashboard() {
     onMessage: handleMessage,
   });
 
+  const getActiveFiltersCount = () => {
+    let count = 0;
+    if (filters.tag !== "") count++;
+    if (filters.availability !== "all") count++;
+    if (filters.searchText) count++;
+    return count;
+  };
+
   useEffect(() => {
     fetchMeals();
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
-      <div className="flex gap-4 p-4">
+      <div className="p-4 bg-gray-150 rounded-xl shadow-md flex gap-4 ">
         <MealFilterSidebar
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
@@ -141,9 +164,20 @@ function MealDashboard() {
         />
 
         <div className="flex-1 space-y-4">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Meal Dashboard
-          </h1>
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <MobileFilterButton
+                  onClick={() => setSidebarOpen(true)}
+                  activeFiltersCount={getActiveFiltersCount()}
+                />
+
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Find Meal
+                </h1>
+              </div>
+            </div>
+          </div>
 
           {filteredMeals.length === 0 && <p>No meals available</p>}
 
