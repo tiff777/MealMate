@@ -129,7 +129,10 @@ function SettingsPage() {
         console.log("Delete unsuccessful");
       }
 
-      deleteUser();
+      showSuccess("Account deleted successfully");
+      setTimeout(() => {
+        deleteUser();
+      }, 500);
     } catch (error) {
       console.log("Cannot delete user");
     }
