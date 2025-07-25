@@ -17,6 +17,7 @@ interface AppContextType {
   isDarkMode: boolean;
   isLoading: boolean;
   pendingRoomId: number | null;
+  hasInitAuth: boolean;
   loginUser: (user: User, token: string, isRemember?: boolean) => void;
   logoutUser: () => void;
   updateUser: (user: User) => void;
@@ -36,6 +37,7 @@ const AppContext = createContext<AppContextType>({
   isLoading: false,
   isDarkMode: false,
   pendingRoomId: null,
+  hasInitAuth: false,
   loginUser: () => {},
   logoutUser: () => {},
   updateUser: () => {},
@@ -58,6 +60,8 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
+
+  const [hasInitAuth, setHasInitAuth] = useState(false);
 
   const loginUser = (userData: User, token: string, isRemember?: boolean) => {
     setUser(userData);
@@ -235,18 +239,38 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     const cachedUser =
       localStorage.getItem("user") || sessionStorage.getItem("user");
 
-    if (!token) {
+    setIsLoading(true);
+    setHasInitAuth(true);
+
+    if (!token || !cachedUser) {
       setUser(null);
       setIsAuthenticated(false);
+      localStorage.removeItem("token");
       localStorage.removeItem("user");
       setIsLoading(false);
       return;
     }
 
-    if (cachedUser) {
-      setUser(JSON.parse(cachedUser));
-      setIsAuthenticated(true);
+    try {
+      const parsedUser = JSON.parse(cachedUser);
+      if (parsedUser?.uid) {
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+    } catch (error) {
+      console.error("Error parsing cached user:", error);
+      setUser(null);
+      setIsAuthenticated(false);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     }
+
+    setIsLoading(false);
   }, [fetchUserProfile]);
 
   const context = {
@@ -255,6 +279,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     isLoading,
     isDarkMode,
     pendingRoomId,
+    hasInitAuth,
     loginUser,
     logoutUser,
     updateUser,

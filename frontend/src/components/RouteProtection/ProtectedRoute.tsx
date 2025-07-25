@@ -19,17 +19,18 @@ function ProtectedRoute({
   redirectTo = "/",
   fallbackTo = "/login",
 }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading, showError, user, setAuthenticated } =
-    useContext(AppContext);
+  const {
+    isAuthenticated,
+    isLoading,
+    showError,
+    user,
+    setAuthenticated,
+    hasInitAuth,
+  } = useContext(AppContext);
   const hasCheckedAuth = useRef(false);
   const location = useLocation();
   const currentPath = location.pathname;
   const lastSegment = currentPath.split("/").filter(Boolean).pop();
-  const justLoggedOut = localStorage.getItem("justLoggedOut") === "true";
-
-  if (isLoading && !hasCheckedAuth.current) {
-    return <LoadingSpinner message="Authenticating..." size="md" />;
-  }
 
   hasCheckedAuth.current = true;
 
@@ -50,7 +51,11 @@ function ProtectedRoute({
     }
   }, [isLoading, user, isAuthenticated, setAuthenticated]);
 
-  if (requireAuth && !isAuthenticated && !justLoggedOut) {
+  if (!hasInitAuth) {
+    return <LoadingSpinner message="Authenticating..." size="md" />;
+  }
+
+  if (requireAuth && !isAuthenticated) {
     showError(`Please login to access ${lastSegment} page`);
     return <Navigate to={fallbackTo} replace state={{ fromProtected: true }} />;
   }
