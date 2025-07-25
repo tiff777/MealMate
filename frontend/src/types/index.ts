@@ -140,4 +140,7 @@ export interface ChatMessage {
   content: string;
   timestamp: Date;
   roomId: number;
+  avatar: string;
+  userId: number;
+  isOnline: boolean;
 }

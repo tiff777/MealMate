@@ -11,6 +11,7 @@ import { authClient } from "../../hook/api";
 import ChatRoomNav from "../../components/Chat/ChatRoomNav";
 import type { ChatRoomInfo, ChatMessage } from "../../types";
 import { ChatService } from "../../hook/chatService";
+import LoadingSpinner from "../../components/UI/LoadingSpinner";
 
 const ChatRoomPage = () => {
   const { pendingRoomId, setPendingId } = useContext(AppContext);
@@ -20,6 +21,7 @@ const ChatRoomPage = () => {
   const chatServiceRef = useRef<ChatService | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isSignalRReady, setIsSignalRReady] = useState(false);
+  const [showMobileNav, setShowMobileNav] = useState(false);
 
   const selectedRoom = userChatRooms.find(
     (room) => room.roomId === selectedRoomId
@@ -92,6 +94,7 @@ const ChatRoomPage = () => {
         setSelectedRoomId(
           remainingRooms.length > 0 ? remainingRooms[0].roomId : null
         );
+        setShowMobileNav(false);
       }
     } catch (error) {
       console.error("Failed to leave chat room:", error);
@@ -134,6 +137,11 @@ const ChatRoomPage = () => {
     }
   };
 
+  const handleRoomSelect = (roomId: number) => {
+    setSelectedRoomId(roomId);
+    setShowMobileNav(false);
+  };
+
   useEffect(() => {
     fetchUserChatRooms();
   }, []);
@@ -171,7 +179,6 @@ const ChatRoomPage = () => {
 
     join();
 
-    // optional: 可以在 cleanup 時 leaveRoom
     return () => {
       if (selectedRoomId) {
         service.leaveRoom(selectedRoomId, user.name);
@@ -194,21 +201,35 @@ const ChatRoomPage = () => {
   }, [pendingRoomId]);
 
   if (isLoading || !user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl">Loading chat rooms...</div>
-      </div>
-    );
+    return <LoadingSpinner message="Loading Chatrooms" />;
   }
 
   return (
-    <div className="flex h-[calc(100vh-4.5rem)] bg-gray-100 ">
-      <ChatRoomNav
-        userChatRooms={userChatRooms}
-        selectedRoomId={selectedRoomId}
-        setSelectedRoomId={setSelectedRoomId}
-        handleLeaveChat={handleLeaveChatRoom}
-      />
+    <div className="flex flex-col md:flex-row h-[calc(100vh-5rem)] bg-gray-50 dark:bg-gray-800 transition-colors duration-200">
+      {showMobileNav && (
+        <div
+          className="fixed inset-0 bg-black/50 bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setShowMobileNav(false)}
+        />
+      )}
+
+      <div
+        className={`
+        ${showMobileNav ? "translate-x-0" : "-translate-x-full"} 
+        lg:translate-x-0 
+        fixed lg:relative z-50 lg:z-auto
+        w-80 sm:w-96 lg:w-80 xl:w-96
+        transition-transform duration-300 ease-in-out
+        h-full
+      `}
+      >
+        <ChatRoomNav
+          userChatRooms={userChatRooms}
+          selectedRoomId={selectedRoomId}
+          setSelectedRoomId={handleRoomSelect}
+          handleLeaveChat={handleLeaveChatRoom}
+        />
+      </div>
 
       <div className="flex-1 flex flex-col">
         {selectedRoom ? (
@@ -220,6 +241,7 @@ const ChatRoomPage = () => {
                 handleLeave={() => handleLeaveChatRoom(selectedRoom.roomId)}
                 messages={messages}
                 handleSendMessage={handleSendMessage}
+                onShowNav={() => setShowMobileNav(true)}
               />
             </div>
           </>
