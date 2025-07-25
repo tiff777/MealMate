@@ -64,7 +64,7 @@ export default function ButtonFactory({
       );
 
     case "submit":
-      return <SubmitButton message={message} />;
+      return <SubmitButton message={message} disabled={disabled} />;
 
     default:
       return null;
