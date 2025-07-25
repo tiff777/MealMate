@@ -187,10 +187,24 @@ namespace backend.Controller
             [AuthorizeUser]
             public async Task<IActionResult> GetMessages (int roomId)
             {
-                var roomMessages = await _db.ChatMessages
+            var currentUserId = this.GetCurrentUserId();
+
+            var messageEntities = await _db.ChatMessages
                 .Where(m => m.ChatRoomId == roomId)
                 .OrderBy(m => m.Timestamp)
-                .Select(m => new ChatMessageDto
+                .ToListAsync();
+
+            var userIds = messageEntities.Select(m => m.UserId).Distinct().ToList();
+
+            var usersDict = await _db.Users
+                .Where(u => userIds.Contains(u.Uid))
+                .ToDictionaryAsync(u => u.Uid);
+
+            var roomMessages = messageEntities.Select(m =>
+            {
+                usersDict.TryGetValue(m.UserId, out var user);
+
+                return new ChatMessageDto
                 {
                     Id = m.Id,
                     Content = m.Content,
@@ -198,10 +212,12 @@ namespace backend.Controller
                     UserId = m.UserId,
                     UserName = m.UserName,
                     ChatRoomId = m.ChatRoomId,
-                })
-                .ToListAsync();
+                    Avatar = user?.Avatar,
+                    IsOnline = m.UserId == currentUserId ? true : user?.IsOnline
+                };
+            }).ToList();
 
-                return Ok (roomMessages);
+            return Ok (roomMessages);
             }
 
             [HttpPost("{roomId}/messages")]
@@ -244,7 +260,9 @@ namespace backend.Controller
                     UserName = messageEntity.UserName,
                     UserId = messageEntity.UserId,
                     Timestamp = messageEntity.Timestamp,
-                    ChatRoomId = messageEntity.ChatRoomId
+                    ChatRoomId = messageEntity.ChatRoomId,
+                    Avatar = user.Avatar,
+                    IsOnline = user.IsOnline,
                 };
 
                 await _hubContext.Clients.Group(roomId.ToString())
