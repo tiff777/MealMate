@@ -17,7 +17,7 @@ interface AppContextType {
   isDarkMode: boolean;
   isLoading: boolean;
   pendingRoomId: number | null;
-  loginUser: (user: User, token: string) => void;
+  loginUser: (user: User, token: string, isRemember?: boolean) => void;
   logoutUser: () => void;
   updateUser: (user: User) => void;
   deleteUser: () => void;
@@ -59,9 +59,13 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
-  const loginUser = (userData: User, token: string) => {
+  const loginUser = (userData: User, token: string, isRemember?: boolean) => {
     setUser(userData);
     setIsAuthenticated(true);
+
+    const storage = isRemember ? localStorage : sessionStorage;
+    storage.setItem("token", token);
+    storage.setItem("user", JSON.stringify(userData));
 
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
@@ -85,6 +89,10 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false);
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("user");
+
       localStorage.setItem("justLoggedOut", "true");
 
       setTimeout(() => {
@@ -222,8 +230,10 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const cachedUser = localStorage.getItem("user");
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+    const cachedUser =
+      localStorage.getItem("user") || sessionStorage.getItem("user");
 
     if (!token) {
       setUser(null);

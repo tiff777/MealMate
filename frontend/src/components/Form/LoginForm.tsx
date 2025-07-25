@@ -3,22 +3,45 @@ import React, { useState } from "react";
 import { FaUtensils } from "react-icons/fa";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import ButtonFactory from "../Button/ButtonFactory";
+import TextInput from "./TextInput";
+import PasswordInput from "./PasswordInput";
 
 type LoginFormProps = {
-  onSubmit: (email: string, password: string) => void;
+  onSubmit: (email: string, password: string, isRemember: boolean) => void;
 };
 
 function LoginForm({ onSubmit }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showpassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
-  function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    let valid = true;
+
+    if (email.trim() === "") {
+      setEmailError("This field is required");
+      valid = false;
+    } else {
+      setEmailError("");
+    }
+
+    if (password.trim() === "") {
+      setPasswordError("This field is required");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (!valid) return;
+
     console.log("Login attempt with email in form:", email);
     console.log("Login attempt with password in form:", password);
 
-    onSubmit(email, password);
+    onSubmit(email, password, rememberMe);
   }
 
   return (
@@ -40,48 +63,50 @@ function LoginForm({ onSubmit }: LoginFormProps) {
           </div>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">
-                Email Address
-              </label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-rose-300 focus:border-transparent bg-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-100"
-              />
-            </div>
+            <TextInput
+              label="Email Address"
+              placeholder="Enter your email"
+              value={email}
+              onChange={setEmail}
+              onBlur={() => {
+                if (email.trim() === "")
+                  setEmailError("This field is required");
+                else setEmailError("");
+              }}
+              icon={<FaUtensils />}
+              required
+              error={emailError}
+            />
 
             <div>
-              <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showpassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="w-full border rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-orange-300 focus:border-transparent bg-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-100"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showpassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                >
-                  {showpassword ? (
-                    <FiEyeOff className="w-4 h-4" />
-                  ) : (
-                    <FiEye className="w-4 h-4" />
-                  )}
-                </button>
-              </div>
+              <PasswordInput
+                label="Password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={setPassword}
+                show={showpassword}
+                setShow={setShowPassword}
+                onBlur={() => {
+                  if (password.trim() === "")
+                    setPasswordError("This field is required");
+                  else setPasswordError("");
+                }}
+              />
+              {passwordError && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-500">
+                  {passwordError}
+                </p>
+              )}
             </div>
 
             <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
               <label className="flex items-center">
-                <input type="checkbox" className="mr-2" />
+                <input
+                  type="checkbox"
+                  className="mr-2"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
                 Remember me
               </label>
               <Link
