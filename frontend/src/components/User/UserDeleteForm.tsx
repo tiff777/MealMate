@@ -23,7 +23,7 @@ function UserDeleteForm({
   };
   return (
     <>
-      <div className="space-y-4 sm:space-y-6 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 p-6 rounded-lg shadow">
+      <div className="space-y-4 sm:space-y-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6 rounded-lg shadow">
         <h2 className="text-lg sm:text-xl font-semibold text-red-600 dark:text-red-400 mb-3 sm:mb-4 transition-colors duration-200">
           Delete Account
         </h2>

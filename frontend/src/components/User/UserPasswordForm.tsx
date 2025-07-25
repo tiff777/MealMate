@@ -54,7 +54,7 @@ function UserPasswordForm({
   };
 
   return (
-    <div className="space-y-6 max-w-md">
+    <div className="space-y-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6 rounded-lg shadow">
       <h2 className="text-xl font-semibold text-gray-800 mb-4 dark:text-white">
         Change Password
       </h2>

@@ -150,41 +150,47 @@ function SettingsPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-2">Settings</h1>
-
-      <div className="flex gap-6">
-        <SettingNavBar activeTab={activeTab} onTabChange={setActiveTab} />
-
-        {/* Content */}
-        <div className="flex-1 bg-white dark:bg-slate-800 rounded shadow p-3">
-          {activeTab === "profile" && (
-            <UserProfileEditForm
-              formData={formData}
-              setFormData={setFormData}
-              onSubmit={handleUpdateUser}
-              onAvatarUpload={() => setShowAvatarModal(true)}
-            />
-          )}
-          {activeTab === "password" && (
-            <UserPasswordForm
-              handleChangePassword={handleChangePassword}
-              handleOldPasswordCheck={handleOldPasswordCheck}
-            />
-          )}
-          {activeTab === "account" && (
-            <UserDeleteForm handleDeleteAccount={handleDeleteAccount} />
-          )}
+    <div className="min-h-screen  transition-colors duration-200">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
+            Settings
+          </h1>
         </div>
+
+        <div className="flex flex-col md:flex-row gap-6 lg:gap-8 max-w-7xl mx-auto">
+          <SettingNavBar activeTab={activeTab} onTabChange={setActiveTab} />
+
+          {/* Content */}
+          <div className="flex-1 bg-white dark:bg-gray-800 rounded shadow p-3">
+            {activeTab === "profile" && (
+              <UserProfileEditForm
+                formData={formData}
+                setFormData={setFormData}
+                onSubmit={handleUpdateUser}
+                onAvatarUpload={() => setShowAvatarModal(true)}
+              />
+            )}
+            {activeTab === "password" && (
+              <UserPasswordForm
+                handleChangePassword={handleChangePassword}
+                handleOldPasswordCheck={handleOldPasswordCheck}
+              />
+            )}
+            {activeTab === "account" && (
+              <UserDeleteForm handleDeleteAccount={handleDeleteAccount} />
+            )}
+          </div>
+        </div>
+        {showAvatarModal && (
+          <AvatarModal
+            onClose={() => setShowAvatarModal(false)}
+            onSave={(newAvatar) => {
+              handleUpdateAvatar(newAvatar);
+            }}
+          />
+        )}
       </div>
-      {showAvatarModal && (
-        <AvatarModal
-          onClose={() => setShowAvatarModal(false)}
-          onSave={(newAvatar) => {
-            handleUpdateAvatar(newAvatar);
-          }}
-        />
-      )}
     </div>
   );
 }

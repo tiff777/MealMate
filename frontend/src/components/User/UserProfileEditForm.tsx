@@ -9,7 +9,7 @@ import TextInput from "../Form/TextInput";
 import TextBoxInput from "../Form/TextBoxInput";
 import ButtonFactory from "../Button/ButtonFactory";
 import UserAvatar from "./UserAvatar";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AppContext } from "../../context/AppContext";
 
 interface Props {
@@ -27,7 +27,6 @@ function UserProfileEditForm({
 }: Props) {
   const { user } = useContext(AppContext);
   const {
-    formData: validatedUserData,
     errors: userErrors,
     updateField: updateUserField,
     validateAll,
@@ -42,6 +41,9 @@ function UserProfileEditForm({
     },
     user ?? undefined
   );
+
+  const [initialFormData, setInitialFormData] = useState<User>(formData);
+  const [isModified, setIsModified] = useState(false);
 
   const handleInputChange = (field: keyof User, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -59,8 +61,25 @@ function UserProfileEditForm({
     }
   };
 
+  const isUserDataModified = (original: User, current: User): boolean => {
+    return (
+      original.name !== current.name ||
+      original.bio !== current.bio ||
+      original.university !== current.university ||
+      original.major !== current.major ||
+      JSON.stringify(original.interests) !==
+        JSON.stringify(current.interests) ||
+      JSON.stringify(original.preferredCuisines) !==
+        JSON.stringify(current.preferredCuisines)
+    );
+  };
+
+  useEffect(() => {
+    setIsModified(isUserDataModified(initialFormData, formData));
+  }, [formData, initialFormData]);
+
   return (
-    <div className="space-y-6 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 p-6 rounded-lg shadow">
+    <div className="space-y-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6 rounded-lg shadow">
       <h2 className="text-xl font-semibold text-gray-800 mb-4 dark:text-gray-100 ">
         Update Personal Information
       </h2>
@@ -161,7 +180,11 @@ function UserProfileEditForm({
           icon={<FiHeart />}
         />
 
-        <ButtonFactory type="submit" message="Update Profile" />
+        <ButtonFactory
+          type="submit"
+          message="Update Profile"
+          disabled={!isModified || !isUserFormValid}
+        />
       </form>
     </div>
   );
