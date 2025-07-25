@@ -21,7 +21,7 @@ function CurrentTimeCard() {
   });
 
   return (
-    <div className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-xl shadow p-4 text-center">
+    <div className="bg-gradient-to-r from-orange-400 to-red-400 dark:from-gray-700 dark:to-gray-600 text-white rounded-xl shadow dark:shadow-gray-900/30 p-4 text-center border dark:border-gray-600">
       <div className="text-2xl font-bold">{timeString}</div>
       <div className="text-lg font-semibold">{dateString}</div>
     </div>
