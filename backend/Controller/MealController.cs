@@ -301,6 +301,20 @@ namespace backend.Controller
                     return Forbid();
                 }
 
+                var chatRoom = await _db.ChatRooms
+            .Include(c => c.Members)
+            .Include(c => c.Messages)
+            .FirstOrDefaultAsync(c => c.MealId == id);
+
+                if (chatRoom != null)
+                {
+                    _db.ChatMessages.RemoveRange(chatRoom.Messages);
+
+                    _db.ChatRoomMembers.RemoveRange(chatRoom.Members);
+
+                    _db.ChatRooms.Remove(chatRoom);
+                }
+
                 _db.Meals.Remove(meal);
                 await _db.SaveChangesAsync();
 

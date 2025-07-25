@@ -211,6 +211,7 @@ namespace backend.Controller
          RestaurantAddress = p.Meal.RestaurantAddress,
          CurrentParticipant = p.Meal.CurrentParticipant,
          MaxParticipant = p.Meal.MaxParticipant,
+         Tags = p.Meal.Tags,
          Status = p.ParticipationStatus,
 
          Participants = p.Meal.Participants.Select(mp => new
