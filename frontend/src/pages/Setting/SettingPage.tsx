@@ -11,7 +11,8 @@ import { authClient } from "../../hook/api";
 type SettingsTab = "profile" | "password" | "account";
 
 function SettingsPage() {
-  const { user, updateUser, logoutUser, deleteUser } = useContext(AppContext);
+  const { user, updateUser, logoutUser, deleteUser, showSuccess } =
+    useContext(AppContext);
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
   const [formData, setFormData] = useState<User>(user!);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
@@ -110,7 +111,11 @@ function SettingsPage() {
         return;
       }
 
-      logoutUser();
+      showSuccess("Password update successful");
+
+      setTimeout(() => {
+        logoutUser();
+      }, 500);
     } catch (error) {
       console.log("Cannot change password");
     }

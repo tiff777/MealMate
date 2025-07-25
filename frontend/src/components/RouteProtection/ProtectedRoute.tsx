@@ -25,6 +25,7 @@ function ProtectedRoute({
   const location = useLocation();
   const currentPath = location.pathname;
   const lastSegment = currentPath.split("/").filter(Boolean).pop();
+  const justLoggedOut = localStorage.getItem("justLoggedOut") === "true";
 
   if (isLoading && !hasCheckedAuth.current) {
     return <LoadingSpinner message="Authenticating..." size="md" />;
@@ -40,7 +41,7 @@ function ProtectedRoute({
         "🔧 ProtectedRoute: Found user but not authenticated, fixing..."
       );
       console.log("🔧 User data:", { uid: user.uid, name: user.name });
-      
+
       const savedUser = localStorage.getItem("user");
       if (savedUser && user.uid) {
         console.log("🔧 ProtectedRoute: Forcing authentication to true");
@@ -49,7 +50,7 @@ function ProtectedRoute({
     }
   }, [isLoading, user, isAuthenticated, setAuthenticated]);
 
-  if (requireAuth && !isAuthenticated) {
+  if (requireAuth && !isAuthenticated && !justLoggedOut) {
     showError(`Please login to access ${lastSegment} page`);
     return <Navigate to={fallbackTo} replace state={{ fromProtected: true }} />;
   }

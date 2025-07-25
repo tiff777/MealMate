@@ -85,8 +85,12 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false);
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      localStorage.setItem("justLoggedOut", "true");
 
-      navigate("/");
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+        localStorage.removeItem("justLoggedOut");
+      }, 0);
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
@@ -124,7 +128,6 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 
       setIsAuthenticated(true);
 
-      // 安全地更新 localStorage
       setTimeout(() => {
         try {
           localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -150,6 +153,13 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAuthenticated(false);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+
+    localStorage.setItem("justLoggedOut", "true");
+
+    setTimeout(() => {
+      navigate("/login", { replace: true });
+      localStorage.removeItem("justLoggedOut");
+    }, 0);
 
     navigate("/");
   };

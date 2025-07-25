@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { FiLock } from "react-icons/fi";
+import { usePasswordValidation } from "../../hook/usePasswordValidation";
 import PasswordInput from "../Form/PasswordInput";
 import ButtonFactory from "../Button/ButtonFactory";
+import PasswordValidationFeedback from "./PasswordValidationFeedback";
+import ConfirmPasswordFeedback from "./ConfirmationPasswordFeedback";
 interface UserPasswordFormProps {
   handleChangePassword: (password: string) => void;
   handleOldPasswordCheck: (password: string) => Promise<boolean>;
@@ -23,19 +25,42 @@ function UserPasswordForm({
   });
   const [isOldPasswordValid, setIsOldPasswordValid] = useState(false);
 
+  const {
+    password,
+    confirmPassword,
+    passwordValidation,
+    matchValidation,
+    isPasswordValid,
+    setPassword,
+    setConfirmPassword,
+  } = usePasswordValidation();
+
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isConfirmedPasswordFocused, setIsConfirmedPasswordFocused] =
+    useState(false);
+
   const oldPasswordCheck = async () => {
     const valid = await handleOldPasswordCheck(passwordData.current);
     setIsOldPasswordValid(valid);
   };
 
+  const handlePasswordBlur = () => {
+    setIsConfirmedPasswordFocused(false);
+    if (isPasswordValid) {
+      setPasswordData((prev) => ({ ...prev, new: password }));
+    } else {
+      setPasswordData((prev) => ({ ...prev, new: "" }));
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-md">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+      <h2 className="text-xl font-semibold text-gray-800 mb-4 dark:text-white">
         Change Password
       </h2>
 
       {!isOldPasswordValid && (
-        <div>
+        <div className="flex flex-col gap-4">
           <PasswordInput
             label="Current Password"
             placeholder="Enter current password"
@@ -58,36 +83,58 @@ function UserPasswordForm({
 
       {isOldPasswordValid && (
         <>
-          <PasswordInput
-            label="New Password"
-            placeholder="Enter new password"
-            value={passwordData.new}
-            onChange={(val) =>
-              setPasswordData((prev) => ({ ...prev, new: val }))
-            }
-            show={showPasswords.new}
-            setShow={(val) =>
-              setShowPasswords((prev) => ({ ...prev, new: val }))
-            }
-          />
+          {/* New Password with Validation */}
+          <div>
+            <PasswordInput
+              label="New Password"
+              placeholder="Enter new password"
+              value={password}
+              onChange={setPassword}
+              show={showPasswords.new}
+              setShow={(val) =>
+                setShowPasswords((prev) => ({ ...prev, new: val }))
+              }
+              onFocus={() => setIsPasswordFocused(true)}
+              onBlur={() => setIsPasswordFocused(false)}
+            />
+            {isPasswordFocused && password && (
+              <PasswordValidationFeedback
+                password={password}
+                passwordValidation={passwordValidation}
+              />
+            )}
+          </div>
 
-          <PasswordInput
-            label="Confirm New Password"
-            placeholder="Confirm new password"
-            value={passwordData.confirm}
-            onChange={(val) =>
-              setPasswordData((prev) => ({ ...prev, confirm: val }))
-            }
-            show={showPasswords.confirm}
-            setShow={(val) =>
-              setShowPasswords((prev) => ({ ...prev, confirm: val }))
-            }
-          />
+          {/* Confirm Password with Validation */}
+          <div>
+            <PasswordInput
+              label="Confirm New Password"
+              placeholder="Confirm new password"
+              value={confirmPassword}
+              onChange={setConfirmPassword}
+              show={showPasswords.confirm}
+              setShow={(val) =>
+                setShowPasswords((prev) => ({ ...prev, confirm: val }))
+              }
+              onFocus={() => setIsConfirmedPasswordFocused(true)}
+              onBlur={handlePasswordBlur}
+            />
+            {isConfirmedPasswordFocused && confirmPassword && (
+              <ConfirmPasswordFeedback
+                confirmPassword={confirmPassword}
+                matchValidation={matchValidation}
+              />
+            )}
+          </div>
 
           <ButtonFactory
             type="view"
             message="Update Password"
-            onClick={() => handleChangePassword(passwordData.new)}
+            onClick={() => {
+              if (isPasswordValid) {
+                handleChangePassword(password);
+              }
+            }}
           />
         </>
       )}
