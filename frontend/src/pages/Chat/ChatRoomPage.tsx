@@ -9,20 +9,30 @@ import LoadingSpinner from "../../components/UI/LoadingSpinner";
 
 const ChatRoomPage = () => {
   const { pendingRoomId, setPendingId, showError } = useContext(AppContext);
+
+  // Stores the list of chat rooms user is in
   const [userChatRooms, setUserChatRooms] = useState<ChatRoomInfo[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Reference to the real-time SignalR service
   const chatServiceRef = useRef<ChatService | null>(null);
+
+  // Stores chat messages of the selected room
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isSignalRReady, setIsSignalRReady] = useState(false);
+
+  // Controls mobile sidebar visibility
   const [showMobileNav, setShowMobileNav] = useState(false);
 
+  // Find the currently selected room details
   const selectedRoom = userChatRooms.find(
     (room) => room.roomId === selectedRoomId
   );
 
   const { user } = useContext(AppContext);
 
+  // Fetch chat rooms the user has joined
   const fetchUserChatRooms = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -49,6 +59,7 @@ const ChatRoomPage = () => {
     }
   }, []);
 
+  // Fetch previous messages when room changes
   const fetchChatHistory = useCallback(async () => {
     if (!selectedRoomId) return;
 
@@ -65,6 +76,7 @@ const ChatRoomPage = () => {
     }
   }, [selectedRoomId]);
 
+  // Leave a chat room
   const handleLeaveChatRoom = async (roomId: number) => {
     try {
       const response = await authClient.post(`chat/${roomId}/leave`);
@@ -89,6 +101,7 @@ const ChatRoomPage = () => {
     }
   };
 
+  // Send a message in current room
   const handleSendMessage = async (messageContent: string) => {
     if (!messageContent.trim() || !selectedRoomId || !user) {
       return;
@@ -123,6 +136,7 @@ const ChatRoomPage = () => {
     }
   };
 
+  // Select a chat room from sidebar
   const handleRoomSelect = (roomId: number) => {
     setSelectedRoomId(roomId);
     setShowMobileNav(false);
@@ -132,6 +146,7 @@ const ChatRoomPage = () => {
     fetchUserChatRooms();
   }, []);
 
+  // Initialize SignalR connection on mount
   useEffect(() => {
     const service = new ChatService();
     chatServiceRef.current = service;
@@ -152,6 +167,7 @@ const ChatRoomPage = () => {
     };
   }, []);
 
+  // Join/leave SignalR chat room when selected room changes
   useEffect(() => {
     const service = chatServiceRef.current;
     if (!service || !user || !isSignalRReady) return;
@@ -171,12 +187,14 @@ const ChatRoomPage = () => {
     };
   }, [selectedRoomId, user, isSignalRReady]);
 
+  // Load chat history when room changes
   useEffect(() => {
     if (selectedRoomId) {
       fetchChatHistory();
     }
   }, [selectedRoomId]);
 
+  // Handle navigation to new room if pending
   useEffect(() => {
     if (pendingRoomId) {
       setSelectedRoomId(pendingRoomId);
@@ -184,12 +202,14 @@ const ChatRoomPage = () => {
     }
   }, [pendingRoomId]);
 
+  // Show loading while initializing
   if (isLoading || !user) {
     return <LoadingSpinner message="Loading Chatrooms" />;
   }
 
   return (
     <div className="flex flex-col md:flex-row h-[calc(100vh-5rem)] bg-gray-50 dark:bg-gray-800 transition-colors duration-200">
+      {/* Mobile backdrop for sidebar */}
       {showMobileNav && (
         <div
           className="fixed inset-0 bg-black/50 bg-opacity-50 z-40 lg:hidden"
@@ -197,6 +217,7 @@ const ChatRoomPage = () => {
         />
       )}
 
+      {/* Sidebar: Chat Room List */}
       <div
         className={`
         ${showMobileNav ? "translate-x-0" : "-translate-x-full"} 
@@ -215,6 +236,7 @@ const ChatRoomPage = () => {
         />
       </div>
 
+      {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         {selectedRoom ? (
           <>

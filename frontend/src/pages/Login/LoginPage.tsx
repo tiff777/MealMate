@@ -9,6 +9,7 @@ function LoginPage() {
   const { loginUser, showError } = useContext(AppContext);
   const navigate = useNavigate();
 
+  // Handle form submission
   async function handleLogin(
     email: string,
     password: string,
@@ -20,6 +21,7 @@ function LoginPage() {
         password,
       });
 
+      // If successful, log the user in and navigate to /meal
       if (response.data.user) {
         loginUser(response.data.user, response.data.token, isRemember);
         navigate("/meal");

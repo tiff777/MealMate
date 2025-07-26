@@ -20,6 +20,7 @@ function UpdateMealPage() {
     tags: [],
   });
 
+  // Fetch meal details on page load
   const fetchMealDetail = async () => {
     const mealResponse = await apiClient.get(`/meal/${mid}`);
     if (mealResponse.status !== 200) {
@@ -41,6 +42,7 @@ function UpdateMealPage() {
     setOriginalData(meal);
   };
 
+  // Fetch meal details on page load
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -48,6 +50,7 @@ function UpdateMealPage() {
 
     const updatedFields: UpdateMeal = {};
 
+    // Only include fields that have changed
     if (formData.title !== originalData.title)
       updatedFields.title = formData.title;
     if (formData.description !== originalData.description)
@@ -75,6 +78,7 @@ function UpdateMealPage() {
     }
   };
 
+  // Fetch meal data when component mounts or ID changes
   useEffect(() => {
     fetchMealDetail();
   }, [mid]);

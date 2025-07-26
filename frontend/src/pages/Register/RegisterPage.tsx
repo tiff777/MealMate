@@ -34,6 +34,7 @@ function ResgisterPage() {
     }
   };
 
+  /** Submit the form and register user */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -62,6 +63,7 @@ function ResgisterPage() {
         throw new Error("Regiter failed");
       }
 
+      // Log in and redirect
       if (response.data.user) {
         loginUser(response.data.user, response.data.token);
         navigate("/meal");

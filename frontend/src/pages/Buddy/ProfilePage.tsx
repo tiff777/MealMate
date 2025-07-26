@@ -12,6 +12,7 @@ function PublicUserProfilePage() {
   const { setPendingId, showError } = useContext(AppContext);
   const navigate = useNavigate();
 
+  // Fetch user profile based on route ID
   const fetchProfileUser = async () => {
     if (!id) {
       showError("No id in params!");
@@ -33,6 +34,7 @@ function PublicUserProfilePage() {
     }
   };
 
+  // Create private chat room and navigate
   const handleMessage = async (userId: number, userName: string) => {
     try {
       const response = await authClient.post("/chat/private", {
@@ -53,6 +55,7 @@ function PublicUserProfilePage() {
     }
   };
 
+  // Re-fetch profile when ID changes
   useEffect(() => {
     fetchProfileUser();
   }, [id]);

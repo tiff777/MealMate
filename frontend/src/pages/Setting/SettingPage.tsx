@@ -17,6 +17,7 @@ function SettingsPage() {
   const [formData, setFormData] = useState<User>(user!);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
 
+  // Save updated profile fields (only changed fields will be sent)
   const handleUpdateUser = async () => {
     if (!user) {
       return;
@@ -53,6 +54,7 @@ function SettingsPage() {
     }
   };
 
+  // Upload or update user avatar (string or File supported)
   const handleUpdateAvatar = async (avatar: string | File) => {
     let avatarValue: string;
 
@@ -92,6 +94,7 @@ function SettingsPage() {
     }
   };
 
+  // Verify old password before allowing update
   const handleOldPasswordCheck = async (oldPassword: string) => {
     const response = await authClient.post("/user/password/verify", {
       oldPassword,
@@ -100,6 +103,7 @@ function SettingsPage() {
     return response.status === 200;
   };
 
+  // Change user password and auto logout
   const handleChangePassword = async (newPassword: string) => {
     try {
       const response = await authClient.patch("user/password", { newPassword });
@@ -118,6 +122,7 @@ function SettingsPage() {
     }
   };
 
+  // Permanently delete user account
   const handleDeleteAccount = async () => {
     try {
       const response = await authClient.delete("user");
@@ -135,6 +140,7 @@ function SettingsPage() {
     }
   };
 
+  // Sync form state with updated user context
   useEffect(() => {
     if (user) {
       setFormData(user);
@@ -148,12 +154,14 @@ function SettingsPage() {
   return (
     <div className="min-h-screen  transition-colors duration-200">
       <div className="container mx-auto px-4 py-6 sm:py-8">
+        {/* Page header */}
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
             Settings
           </h1>
         </div>
 
+        {/* Settings layout: left nav + right content */}
         <div className="flex flex-col md:flex-row gap-6 lg:gap-8 max-w-7xl mx-auto">
           <SettingNavBar activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -178,6 +186,8 @@ function SettingsPage() {
             )}
           </div>
         </div>
+
+        {/* Avatar upload modal */}
         {showAvatarModal && (
           <AvatarModal
             onClose={() => setShowAvatarModal(false)}

@@ -21,6 +21,7 @@ export default function ResetPasswordPage() {
 
   const { loginUser, showError, showSuccess } = useContext(AppContext);
 
+  //  Get reset token by verifying email
   const handleGetToken = async () => {
     try {
       const response = await apiClient.post("/auth/forgot-password", { email });
@@ -34,6 +35,7 @@ export default function ResetPasswordPage() {
     }
   };
 
+  //  Reset the password using token
   const handleResetPassword = async () => {
     try {
       const response = await apiClient.post("/auth/reset-password", {

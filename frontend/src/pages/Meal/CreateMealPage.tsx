@@ -9,6 +9,7 @@ function CreateMealPage() {
   const navigate = useNavigate();
   const { showError } = useContext(AppContext);
 
+  // Initialize meal form state
   const [formData, setFormData] = useState<MealFormData>({
     title: "",
     description: "",
@@ -19,6 +20,7 @@ function CreateMealPage() {
     tags: [],
   });
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

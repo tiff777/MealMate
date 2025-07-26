@@ -15,12 +15,14 @@ function HomePage() {
 
   const [latestMeals, setLatestMeals] = useState<Meal[]>();
 
+  // Redirect to meal dashboard if already logged in
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/meal", { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
+  // Fetch the most recent meals from the API
   const fetchLatestMeal = async () => {
     try {
       const response = apiClient.get("/meal/latest");
@@ -30,10 +32,13 @@ function HomePage() {
       showError("Error in fetching the latest meal");
     }
   };
+
+  // Load meals on initial render
   useEffect(() => {
     fetchLatestMeal();
   }, []);
 
+  // Smooth scroll to hash anchor (if present in URL)
   useEffect(() => {
     if (location.hash) {
       const element = document.querySelector(location.hash);
@@ -43,6 +48,7 @@ function HomePage() {
     }
   }, [location.hash]);
 
+  // Automatically rotate through featured meals every 4 seconds
   useEffect(() => {
     if (!latestMeals || latestMeals.length === 0) return;
     const interval = setInterval(() => {

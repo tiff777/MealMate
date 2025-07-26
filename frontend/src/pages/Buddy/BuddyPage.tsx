@@ -21,6 +21,7 @@ function BuddyPage() {
 
   const navigate = useNavigate();
 
+  // Fetch all users from backend (excluding current user if user is logged in)
   async function fetchUsers() {
     setLoading(true);
     try {
@@ -40,6 +41,7 @@ function BuddyPage() {
     }
   }
 
+  // Handle "Send Message" button click, create or get private chat room
   const handleMessage = async (userId: number, userName: string) => {
     try {
       const response = await authClient.post("/chat/private", {
@@ -61,6 +63,7 @@ function BuddyPage() {
     }
   };
 
+  // Update selected filters
   const handleFilterChange = (filterType: string, value: string) => {
     setFilters((prev) => ({
       ...prev,
@@ -70,8 +73,10 @@ function BuddyPage() {
     setSidebarOpen(false);
   };
 
+  // Apply filtering logic using custom hook
   const filteredUsers = useFilteredUsers(users, filters);
 
+  // Count how many filters are currently active
   const getActiveFiltersCount = () => {
     let count = 0;
     if (filters.interest !== "") count++;
@@ -99,6 +104,7 @@ function BuddyPage() {
 
   return (
     <div className="p-4 bg-gray-150 rounded-xl shadow-md flex gap-4 ">
+      {/* Sidebar for filtering users */}
       <BuddyFilterSidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -106,6 +112,7 @@ function BuddyPage() {
         onFilterChange={handleFilterChange}
       />
 
+      {/* Main content */}
       <div className="flex-1 space-y-4">
         <PageHeader
           title="Find Buddy"
@@ -116,6 +123,7 @@ function BuddyPage() {
           borderType="bottomAccent"
         />
 
+        {/* Grid of user cards */}
         {filteredUsers.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredUsers.map((user) => (
