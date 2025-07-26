@@ -36,7 +36,9 @@ export default function ButtonFactory({
       );
 
     case "join":
-      return <JoinButton message={message} onClick={onClick} />;
+      return (
+        <JoinButton message={message} onClick={onClick} disabled={disabled} />
+      );
 
     case "leave":
       return <LeaveButton message={message} onClick={onClick} />;
