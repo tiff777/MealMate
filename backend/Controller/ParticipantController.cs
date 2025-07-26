@@ -201,20 +201,27 @@ namespace backend.Controller
      .Include(p => p.Meal)
          .ThenInclude(m => m.Participants)
              .ThenInclude(mp => mp.User)
-     .Select(p => new
+     .GroupJoin(
+         _db.ChatRooms,
+         p => p.Meal.Mid,
+         chat => chat.MealId,
+         (p, chatRooms) => new { p, chatRoom = chatRooms.FirstOrDefault() }
+     )
+     .Select(x => new
      {
-         Mid = p.Meal.Mid,
-         Title = p.Meal.Title,
-         Description = p.Meal.Description,
-         MealDate = p.Meal.MealDate,
-         RestaurantName = p.Meal.RestaurantName,
-         RestaurantAddress = p.Meal.RestaurantAddress,
-         CurrentParticipant = p.Meal.CurrentParticipant,
-         MaxParticipant = p.Meal.MaxParticipant,
-         Tags = p.Meal.Tags,
-         Status = p.ParticipationStatus,
+         Mid = x.p.Meal.Mid,
+         Title = x.p.Meal.Title,
+         Description = x.p.Meal.Description,
+         MealDate = x.p.Meal.MealDate,
+         RestaurantName = x.p.Meal.RestaurantName,
+         RestaurantAddress = x.p.Meal.RestaurantAddress,
+         CurrentParticipant = x.p.Meal.CurrentParticipant,
+         MaxParticipant = x.p.Meal.MaxParticipant,
+         Tags = x.p.Meal.Tags,
+         Status = x.p.ParticipationStatus,
+         ChatRoomId = x.chatRoom != null ? x.chatRoom.Id : (int?)null,
 
-         Participants = p.Meal.Participants.Select(mp => new
+         Participants = x.p.Meal.Participants.Select(mp => new
          {
              UserId = mp.User.Uid,
              Name = mp.User.Name,

@@ -336,31 +336,37 @@ namespace backend.Controller
                 var userId = this.GetCurrentUserId();
 
                 var myHostedMeals = await _db.Meals
-                    .Where(m => m.HostId == userId)
-                    .OrderByDescending(m => m.CreatedAt)
-                    .Select(m => new ShowMealDto
-                    {
+    .Where(m => m.HostId == userId)
+    .OrderByDescending(m => m.CreatedAt)
+    .GroupJoin(
+        _db.ChatRooms,
+        meal => meal.Mid,
+        chat => chat.MealId,
+        (meal, chatRooms) => new { meal, chatRoom = chatRooms.FirstOrDefault() }
+    )
+    .Select(x => new ShowMealDto
+    {
+        Mid = x.meal.Mid,
+        Title = x.meal.Title,
+        Description = x.meal.Description,
+        MealDate = x.meal.MealDate,
+        MaxParticipant = x.meal.MaxParticipant,
+        CurrentParticipant = x.meal.CurrentParticipant,
+        RestaurantName = x.meal.RestaurantName,
+        RestaurantAddress = x.meal.RestaurantAddress,
+        Tags = x.meal.Tags,
+        Status = x.meal.Status,
+        CreatedAt = x.meal.CreatedAt,
+        HostId = x.meal.HostId,
+        ChatRoomId = x.chatRoom != null ? x.chatRoom.Id : (int?)null,
 
-                        Mid = m.Mid,
-                        Title = m.Title,
-                        Description = m.Description,
-                        MealDate = m.MealDate,
-                        MaxParticipant = m.MaxParticipant,
-                        CurrentParticipant = m.CurrentParticipant,
-                        RestaurantName = m.RestaurantName,
-                        RestaurantAddress = m.RestaurantAddress,
-                        Tags = m.Tags,
-                        Status = m.Status,
-                        CreatedAt = m.CreatedAt,
-                        HostId = m.HostId,
-
-                        Participants = m.Participants.Select(p => new ParticipantDto
-                        {
-                            UserId = p.UserId,
-                            Avatar = p.User.Avatar
-                        }).ToList()
-                    })
-                    .ToListAsync();
+        Participants = x.meal.Participants.Select(p => new ParticipantDto
+        {
+            UserId = p.UserId,
+            Avatar = p.User.Avatar
+        }).ToList()
+    })
+    .ToListAsync();
 
                 return Ok(new
                 {
