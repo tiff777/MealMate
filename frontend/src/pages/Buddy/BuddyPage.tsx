@@ -6,7 +6,8 @@ import BuddyFilterSidebar from "../../components/User/BuddyFilter";
 import type { User } from "../../types";
 import { useNavigate } from "react-router-dom";
 import { useFilteredUsers } from "../../hook/useFilteredUsers";
-import MobileFilterButton from "../../components/Button/MobileFilterButton";
+import { FiUsers } from "react-icons/fi";
+import PageHeader from "../../components/UI/PageHeader";
 
 function BuddyPage() {
   const { setLoading, setPendingId, user } = useContext(AppContext);
@@ -112,22 +113,14 @@ function BuddyPage() {
       />
 
       <div className="flex-1 space-y-4">
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <MobileFilterButton
-                onClick={() => setSidebarOpen(true)}
-                activeFiltersCount={getActiveFiltersCount()}
-              />
-
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Find Buddy
-              </h1>
-            </div>
-          </div>
-        </div>
-
-        <hr />
+        <PageHeader
+          title="Find Buddy"
+          icon={<FiUsers className="w-6 h-6" />}
+          subtitle="Connect with amazing people who share your interests"
+          onFilterClick={() => setSidebarOpen(true)}
+          activeFiltersCount={getActiveFiltersCount()}
+          borderType="bottomAccent"
+        />
 
         {filteredUsers.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

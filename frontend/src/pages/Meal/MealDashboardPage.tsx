@@ -5,11 +5,12 @@ import MealCard from "../../components/Meal/MealCard";
 import { AppContext } from "../../context/AppContext";
 import ErrorToast from "../../components/Modal/ErrorToast";
 import SuccessToast from "../../components/Modal/SuccessfulToast";
-import MobileFilterButton from "../../components/Button/MobileFilterButton";
 import MealFilterSidebar from "../../components/Meal/MenuFilter";
 import { useFilteredMeals } from "../../hook/useFilteredMeals";
 import { useMealButtons } from "../../hook/useMealButtons";
 import { useNavigate } from "react-router-dom";
+import { LuUtensilsCrossed } from "react-icons/lu";
+import PageHeader from "../../components/UI/PageHeader";
 
 function MealDashboard() {
   const { setLoading, user, setPendingId } = useContext(AppContext);
@@ -164,20 +165,14 @@ function MealDashboard() {
         />
 
         <div className="flex-1 space-y-4">
-          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <MobileFilterButton
-                  onClick={() => setSidebarOpen(true)}
-                  activeFiltersCount={getActiveFiltersCount()}
-                />
-
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Find Meal
-                </h1>
-              </div>
-            </div>
-          </div>
+          <PageHeader
+            title="Find Meal"
+            subtitle="Share good food. Make great connections"
+            icon={<LuUtensilsCrossed className="w-6 h-6" />}
+            onFilterClick={() => setSidebarOpen(true)}
+            activeFiltersCount={getActiveFiltersCount()}
+            borderType="bottomAccent"
+          />
 
           {filteredMeals.length === 0 && <p>No meals available</p>}
 
