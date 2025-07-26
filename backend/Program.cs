@@ -1,5 +1,6 @@
 ﻿using backend.Data;
 using backend.Data.DummyData;
+using backend.Repository;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +19,12 @@ builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register Repository services
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IMealRepository, MealRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IChatRoomRepository, ChatRoomRepository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
