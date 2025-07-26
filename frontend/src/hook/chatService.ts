@@ -3,7 +3,6 @@ import type { ChatMessage } from "../types";
 
 export class ChatService {
   private connection: signalR.HubConnection;
-  private isConnected = false;
 
   constructor(baseUrl: string = "http://localhost:5050") {
     this.connection = new signalR.HubConnectionBuilder()
@@ -24,41 +23,80 @@ export class ChatService {
 
     this.connection.onreconnected(() => {
       console.log("SignalR: Reconnected");
-      this.isConnected = true;
     });
 
-    this.connection.onclose(() => {
-      console.log("SignalR: Connection closed");
-      this.isConnected = false;
+    this.connection.onclose((error) => {
+      console.log("SignalR: Connection closed", error);
     });
   }
 
   async connect(): Promise<void> {
-    if (this.isConnected) return;
-    await this.connection.start();
-    this.isConnected = true;
-    console.log("SignalR: Connected successfully");
+    // 檢查當前連接狀態，避免重複連接
+    if (this.connection.state === signalR.HubConnectionState.Connected) {
+      return;
+    }
+    
+    if (this.connection.state === signalR.HubConnectionState.Connecting) {
+      // 如果正在連接中，等待連接完成
+      return new Promise((resolve, reject) => {
+        const checkConnection = () => {
+          if (this.connection.state === signalR.HubConnectionState.Connected) {
+            resolve();
+          } else if (this.connection.state === signalR.HubConnectionState.Disconnected) {
+            reject(new Error("Connection failed"));
+          } else {
+            setTimeout(checkConnection, 100);
+          }
+        };
+        checkConnection();
+      });
+    }
+
+    try {
+      await this.connection.start();
+      console.log("SignalR: Connected successfully");
+    } catch (error) {
+      console.error("SignalR: Connection failed", error);
+      throw error;
+    }
   }
 
   async disconnect(): Promise<void> {
-    if (!this.isConnected) return;
-    await this.connection.stop();
-    this.isConnected = false;
-    console.log("SignalR: Disconnected");
+    if (this.connection.state === signalR.HubConnectionState.Disconnected) {
+      return;
+    }
+    
+    try {
+      await this.connection.stop();
+      console.log("SignalR: Disconnected");
+    } catch (error) {
+      console.error("SignalR: Disconnect error", error);
+    }
   }
 
   async joinRoom(roomId: number, userName: string): Promise<void> {
-    if (!this.isConnected) {
-      console.warn("[SignalR] Not connected yet, connecting now…");
+    try {
+      // 確保連接
       await this.connect();
+      
+      console.log(`[SignalR] Joining room ${roomId} as ${userName}`);
+      await this.connection.invoke("JoinRoom", roomId, userName);
+    } catch (error) {
+      console.error(`Failed to join room ${roomId}:`, error);
+      throw error;
     }
-    console.log(`[SignalR] Joining room ${roomId} as ${userName}`);
-    await this.connection.invoke("JoinRoom", roomId, userName);
   }
 
   async leaveRoom(roomId: number, userName: string): Promise<void> {
-    if (!this.isConnected) return;
-    await this.connection.invoke("LeaveRoom", roomId, userName);
+    if (this.connection.state !== signalR.HubConnectionState.Connected) {
+      return;
+    }
+    
+    try {
+      await this.connection.invoke("LeaveRoom", roomId, userName);
+    } catch (error) {
+      console.error(`Failed to leave room ${roomId}:`, error);
+    }
   }
 
   async sendMessage(
@@ -66,15 +104,21 @@ export class ChatService {
     userName: string,
     message: string
   ): Promise<void> {
-    if (!this.isConnected) {
+    if (this.connection.state !== signalR.HubConnectionState.Connected) {
       throw new Error("Not connected to chat hub");
     }
-    await this.connection.invoke(
-      "SendMessageToRoom",
-      roomId,
-      userName,
-      message
-    );
+    
+    try {
+      await this.connection.invoke(
+        "SendMessageToRoom",
+        roomId,
+        userName,
+        message
+      );
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      throw error;
+    }
   }
 
   onMessageReceived(callback: (message: ChatMessage) => void): void {
