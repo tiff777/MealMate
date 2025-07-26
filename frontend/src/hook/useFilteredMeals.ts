@@ -13,17 +13,22 @@ export function useFilteredMeals(
 ) {
   return useMemo(() => {
     return meals.filter((meal) => {
+      console.log("Test meal in filter: ", meal);
+
       if (filters.availability === "available") {
-        if (meal.currentParticipant >= meal.maxParticipant && meal.status == 0)
+        if (
+          meal.currentParticipant >= meal.maxParticipant ||
+          meal.realTimeStatus !== 0
+        )
           return false;
       }
 
-      if (filters.availability === "upcoming") {
-        if (meal.status !== 0) return false;
+      if (filters.availability === "soon") {
+        if (meal.realTimeStatus !== 0) return false;
       }
 
       if (filters.availability === "completed") {
-        if (meal.status !== 2) return false;
+        if (meal.realTimeStatus !== 2) return false;
       }
 
       // Tag

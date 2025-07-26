@@ -49,7 +49,10 @@ export function useMealButtons({
           type="join"
           message="Join"
           onClick={() => onJoin(meal.mid)}
-          disabled={meal.currentParticipant === meal.maxParticipant}
+          disabled={
+            meal.currentParticipant === meal.maxParticipant ||
+            meal.realTimeStatus === 2
+          }
         />,
       ];
     },

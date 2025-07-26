@@ -1,7 +1,7 @@
 import { FiImage, FiHeart } from "react-icons/fi";
 import { FaUniversity } from "react-icons/fa";
 import { FiUser, FiMail, FiBookOpen } from "react-icons/fi";
-import TagInput from "../Form/TagInout";
+import TagInput from "../Form/TagInput";
 import type { User } from "../../types";
 import { useSimpleUserValidation } from "../../hook/useUserValidation";
 import type { UserFormData } from "../../util/userValidation";

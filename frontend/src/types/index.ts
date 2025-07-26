@@ -74,7 +74,7 @@ export interface Meal {
   restaurantAddress: string;
   mealDate: Date;
   tags: string[];
-  status: number;
+  realTimeStatus: number;
   createdAt: Date;
   hostId: number;
   chatRoomId: number;
