@@ -1,6 +1,7 @@
 import type { ValidationResult } from "./userValidation";
 import type { RawMealFormInput } from "../types";
 
+// Interface representing validation results for each meal form field
 export interface MealValidationResults {
   title: ValidationResult;
   description: ValidationResult;
@@ -12,6 +13,7 @@ export interface MealValidationResults {
   allErrors: string[];
 }
 
+// Validate the title field
 export function validateTitle(title: string): ValidationResult {
   const errors: string[] = [];
   const trimmed = title.trim();
@@ -20,6 +22,7 @@ export function validateTitle(title: string): ValidationResult {
   return { isValid: errors.length === 0, errors };
 }
 
+// Validate the description field
 export function validateDescription(desc: string): ValidationResult {
   const errors: string[] = [];
   const trimmed = desc.trim();
@@ -29,6 +32,7 @@ export function validateDescription(desc: string): ValidationResult {
   return { isValid: errors.length === 0, errors };
 }
 
+// Validate maxParticipant: must be an integer between 1 and 15
 export function validateMaxParticipant(num: number): ValidationResult {
   const errors: string[] = [];
   if (!Number.isInteger(num)) errors.push("Max participant must be an integer");
@@ -37,6 +41,7 @@ export function validateMaxParticipant(num: number): ValidationResult {
   return { isValid: errors.length === 0, errors };
 }
 
+// Validate restaurant name field
 export function validateRestaurantName(name: string): ValidationResult {
   const errors: string[] = [];
   const trimmed = name.trim();
@@ -46,6 +51,7 @@ export function validateRestaurantName(name: string): ValidationResult {
   return { isValid: errors.length === 0, errors };
 }
 
+// Validate restaurant address field
 export function validateRestaurantAddress(addr: string): ValidationResult {
   const errors: string[] = [];
   const trimmed = addr.trim();
@@ -55,6 +61,7 @@ export function validateRestaurantAddress(addr: string): ValidationResult {
   return { isValid: errors.length === 0, errors };
 }
 
+// Validate meal date: must be a valid date string
 export function validateMealDate(date: string): ValidationResult {
   const errors: string[] = [];
   const parsed = new Date(date);
@@ -63,6 +70,7 @@ export function validateMealDate(date: string): ValidationResult {
   return { isValid: errors.length === 0, errors };
 }
 
+// Main function to validate the entire form and return the result for each field
 export async function validateMealForm(
   data: RawMealFormInput
 ): Promise<MealValidationResults> {

@@ -1,14 +1,17 @@
+// Type representing the result of password validation
 export interface PasswordValidationResult {
   isValid: boolean;
   errors: string[];
   strength: "weak" | "medium" | "strong";
 }
 
+// Type representing the result of password match validation
 export interface PasswordMatchResult {
   matches: boolean;
   error?: string;
 }
 
+// Validate a password based on required criteria
 export function validatePassword(password: string): PasswordValidationResult {
   const errors: string[] = [];
   let strength: "weak" | "medium" | "strong" = "weak";
@@ -64,6 +67,7 @@ export function validatePassword(password: string): PasswordValidationResult {
   };
 }
 
+// Check whether password and confirmation match
 export function validatePasswordMatch(
   password: string,
   confirmPassword: string
@@ -87,6 +91,7 @@ export function validatePasswordMatch(
   };
 }
 
+// Validate full password form: includes both rules and matching check
 export function validatePasswordForm(
   password: string,
   confirmPassword: string
@@ -101,6 +106,7 @@ export function validatePasswordForm(
   };
 }
 
+// Return Tailwind CSS class color based on password strength
 export function getPasswordStrengthColor(
   strength: "weak" | "medium" | "strong"
 ): string {
@@ -116,6 +122,7 @@ export function getPasswordStrengthColor(
   }
 }
 
+// Return text label based on password strength
 export function getPasswordStrengthText(
   strength: "weak" | "medium" | "strong"
 ): string {

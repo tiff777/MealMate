@@ -1,11 +1,13 @@
 import { apiClient } from "../hook/api";
 import type { User } from "../types";
 
+// Result of any single field validation
 export interface ValidationResult {
   isValid: boolean;
   errors: string[];
 }
 
+// Validation results for the full user form
 export interface UserValidationResults {
   name: ValidationResult;
   email: ValidationResult;
@@ -16,6 +18,7 @@ export interface UserValidationResults {
   allErrors: string[];
 }
 
+// Shape of user input data for registration/edit forms
 export interface UserFormData {
   name: string;
   email: string;
@@ -27,6 +30,7 @@ export interface UserFormData {
   preferredCuisines: string[];
 }
 
+// Patterns considered invalid for user name
 const INVALID_NAME_PATTERNS = [
   { pattern: /^[0-9]+$/, message: "Name cannot be only numbers" },
   {
@@ -39,6 +43,7 @@ const INVALID_NAME_PATTERNS = [
   },
 ];
 
+// Validate user's full name with optional duplicate check
 export async function validateName(
   name: string,
   user?: User
@@ -88,6 +93,7 @@ export async function validateName(
   };
 }
 
+// Validate email with format, character rules, and uniqueness check
 export async function validateEmail(email: string): Promise<ValidationResult> {
   const errors: string[] = [];
   const trimmedEmail = email.trim().toLowerCase();
@@ -125,6 +131,7 @@ export async function validateEmail(email: string): Promise<ValidationResult> {
   };
 }
 
+// Validate university field (length and character rules)
 export function validateUniversity(university: string): ValidationResult {
   const errors: string[] = [];
   const trimmedUniversity = university.trim();
@@ -152,6 +159,7 @@ export function validateUniversity(university: string): ValidationResult {
   };
 }
 
+// Validate major field (length and character rules)
 export function validateMajor(major: string): ValidationResult {
   const errors: string[] = [];
   const trimmedMajor = major.trim();
@@ -179,6 +187,7 @@ export function validateMajor(major: string): ValidationResult {
   };
 }
 
+// Validate bio (length and anti-spam patterns)
 export function validateBio(bio: string): ValidationResult {
   const errors: string[] = [];
   const trimmedBio = bio.trim();
@@ -201,6 +210,7 @@ export function validateBio(bio: string): ValidationResult {
   };
 }
 
+// Validate the entire user form and return individual + aggregated results
 export async function validateUserForm(
   userData: UserFormData,
   user?: User
