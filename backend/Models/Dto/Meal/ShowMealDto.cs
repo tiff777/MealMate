@@ -13,7 +13,7 @@ namespace backend.Models.Dto.Meal
         public string RestaurantAddress { get; set; } = string.Empty;
         public DateTimeOffset MealDate { get; set; }
         public List<string>? Tags { get; set; }
-        public MealStatus Status { get; set; }
+        public MealStatus RealTimeStatus { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public int HostId { get; set; }
         public int? ChatRoomId { get; set; }

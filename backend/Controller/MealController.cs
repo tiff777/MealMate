@@ -51,7 +51,7 @@ namespace backend.Controller
         RestaurantAddress = x.meal.RestaurantAddress,
         MealDate = x.meal.MealDate,
         Tags = x.meal.Tags,
-        Status = x.meal.Status,
+        RealTimeStatus = x.meal.GetRealTimeStatus(),
         CreatedAt = x.meal.CreatedAt,
         HostId = x.meal.HostId,
         ChatRoomId = x.chatRoom != null ? x.chatRoom.Id : (int?)null,
@@ -94,7 +94,7 @@ namespace backend.Controller
                     RestaurantAddress = meal.RestaurantAddress,
                     MealDate = meal.MealDate,
                     Tags = meal.Tags,
-                    Status = meal.Status,
+                    RealTimeStatus = meal.GetRealTimeStatus(),
                     CreatedAt = meal.CreatedAt,
                     HostId = meal.HostId,
 
@@ -134,7 +134,7 @@ namespace backend.Controller
                         RestaurantName = m.RestaurantName,
                         RestaurantAddress = m.RestaurantAddress,
                         Tags = m.Tags,
-                        Status = m.Status,
+                        RealTimeStatus = m.GetRealTimeStatus(),
                         CreatedAt = m.CreatedAt,
                         HostId = m.HostId
                     })
@@ -216,8 +216,8 @@ namespace backend.Controller
                     RestaurantName = meal.RestaurantName,
                     RestaurantAddress = meal.RestaurantAddress,
                     Tags = meal.Tags,
-                    Status = meal.Status,
-                    CreatedAt=meal.CreatedAt,
+                    RealTimeStatus = meal.GetRealTimeStatus(),
+                    CreatedAt =meal.CreatedAt,
                     HostId=meal.HostId,
 
                     Participants = meal.Participants.Select(p => new ParticipantDto
@@ -268,7 +268,7 @@ namespace backend.Controller
                     RestaurantName = meal.RestaurantName,
                     RestaurantAddress = meal.RestaurantAddress,
                     Tags = meal.Tags,
-                    Status = meal.Status,
+                    RealTimeStatus = meal.GetRealTimeStatus(),
                     CreatedAt = meal.CreatedAt,
                     HostId = meal.HostId,
                 };
@@ -355,7 +355,7 @@ namespace backend.Controller
         RestaurantName = x.meal.RestaurantName,
         RestaurantAddress = x.meal.RestaurantAddress,
         Tags = x.meal.Tags,
-        Status = x.meal.Status,
+        RealTimeStatus = x.meal.GetRealTimeStatus(),
         CreatedAt = x.meal.CreatedAt,
         HostId = x.meal.HostId,
         ChatRoomId = x.chatRoom != null ? x.chatRoom.Id : (int?)null,
