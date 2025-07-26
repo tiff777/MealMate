@@ -77,6 +77,7 @@ export interface Meal {
   status: number;
   createdAt: Date;
   hostId: number;
+  chatRoomId: number;
 }
 
 export interface MealWithParticipants extends Meal {
@@ -143,4 +144,13 @@ export interface ChatMessage {
   avatar: string;
   userId: number;
   isOnline: boolean;
+}
+
+export interface RawMealFormInput {
+  title: string;
+  description: string;
+  maxParticipant: number;
+  restaurantName: string;
+  restaurantAddress: string;
+  mealDate: string; // ISO string
 }

@@ -9,7 +9,7 @@ import ButtonFactory from "../../components/Button/ButtonFactory";
 import RoundButton from "../../components/Button/RoundButton";
 
 function myMealPage() {
-  const { setLoading, user } = useContext(AppContext);
+  const { setLoading, user, setPendingId } = useContext(AppContext);
   const [activeTab, setActiveTab] = useState<"created" | "joined">("created");
   const [createdMeals, setCreatedMeals] = useState<Meal[]>([]);
   const [joinedMeals, setJoinedMeals] = useState<Meal[]>([]);
@@ -34,6 +34,9 @@ function myMealPage() {
       const joinedMealsResponse = await authClient.get(
         `/participant/user/${user.uid}`
       );
+
+      console.log("Test data: ", joinedMealsResponse.data);
+
       if (joinedMealsResponse) {
         setJoinedMeals(joinedMealsResponse.data);
       } else {
@@ -82,11 +85,15 @@ function myMealPage() {
     }
   };
 
+  const handleMessage = (roomId: number) => {
+    console.log("Test id in my-meal page: ", roomId);
+
+    setPendingId(roomId);
+    navigate("/messages");
+  };
+
   useEffect(() => {
-    if (!user) {
-    }
     fetchMeals();
-    console.log("Test hosted meal: ", createdMeals);
   }, []);
 
   return (
@@ -131,8 +138,15 @@ function myMealPage() {
                 <ButtonFactory
                   key="edit"
                   type="edit"
-                  message="Modify Meal"
+                  message="Modify"
                   onClick={() => navigate(`/update-meal/${meal.mid}`)}
+                  disabled={false}
+                />,
+                <ButtonFactory
+                  key="message"
+                  type="message"
+                  message="Message"
+                  onClick={() => handleMessage(meal.chatRoomId)}
                   disabled={false}
                 />,
               ];
@@ -153,6 +167,13 @@ function myMealPage() {
                   type="leave"
                   message="Leave"
                   onClick={() => handleLeave(meal.mid)}
+                />,
+                <ButtonFactory
+                  key="message"
+                  type="message"
+                  message="Message"
+                  onClick={() => handleMessage(meal.chatRoomId)}
+                  disabled={false}
                 />,
               ];
               return <MealCard key={meal.mid} meal={meal} buttons={butttons} />;

@@ -2,7 +2,14 @@ import { useState } from "react";
 import type { CreateMeal, UpdateMeal } from "../../types";
 import SubmitButton from "../Button/SubmitButton";
 import NormalButton from "../Button/NormalButton";
+import { useSimpleMealValidation } from "../../hook/useMealValidation";
+import { IoIosPricetags } from "react-icons/io";
 import ButtonFactory from "../Button/ButtonFactory";
+import TagInput from "../Form/TagInput";
+import TextInput from "../Form/TextInput";
+import TextBoxInput from "../Form/TextBoxInput";
+import { FaRegAddressCard } from "react-icons/fa6";
+import formatDate from "../../util/dateUtils";
 
 type MealFormData = CreateMeal | UpdateMeal;
 
@@ -21,7 +28,21 @@ function MealForm({
   setFormData,
   mode = "create",
 }: MeaFormlProps) {
-  const [tagInput, setTagInput] = useState("");
+  const [tagInput, setTagInput] = useState(formData.tags);
+  const today = new Date().toISOString().split("T")[0];
+
+  const { updateField, errors, validateAll, isFormValid } =
+    useSimpleMealValidation({
+      title: formData.title,
+      description: formData.description,
+      maxParticipant: formData.maxParticipant,
+      restaurantName: formData.restaurantName,
+      restaurantAddress: formData.restaurantAddress,
+      mealDate:
+        formData.mealDate instanceof Date
+          ? formData.mealDate.toISOString()
+          : formData.mealDate ?? "",
+    });
 
   const dateValue = formData.mealDate
     ? new Date(formData.mealDate).toISOString().split("T")[0]
@@ -60,17 +81,17 @@ function MealForm({
     });
   };
 
-  const handleAddTag = () => {
-    const trimmed = tagInput.trim();
+  // const handleAddTag = () => {
+  //   const trimmed = tagInput.trim();
 
-    if (trimmed !== "" && !(formData.tags ?? []).includes(trimmed)) {
-      setFormData((prev) => ({
-        ...prev,
-        tags: [...(prev.tags ?? []), trimmed],
-      }));
-      setTagInput("");
-    }
-  };
+  //   if (trimmed !== "" && !(formData.tags ?? []).includes(trimmed)) {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       tags: [...(prev.tags ?? []), trimmed],
+  //     }));
+  //     setTagInput("");
+  //   }
+  // };
 
   return (
     <form
@@ -94,71 +115,91 @@ function MealForm({
       )}
 
       {/* Title */}
-      <label className="block text-sm font-medium mb-1">Meal Title</label>
-      <input
-        type="text"
+      <TextInput
+        label="Meal Title"
         placeholder="e.g., Pizza & Study Session"
-        value={formData.title}
-        onChange={(e) => handleInputChange("title", e.target.value)}
-        className="w-full rounded border p-2 mb-4"
+        value={formData.title ?? ""}
+        onChange={(value) => {
+          handleInputChange("title", value);
+        }}
+        onBlur={(value) => updateField("title", value)}
+        icon={<FaRegAddressCard className="w-4 h-4" />}
+        error={errors.title}
         required
       />
 
       {/* Description */}
-      <label className="block text-sm font-medium mb-1">Description</label>
-      <textarea
-        placeholder="Describe your meal plan, what you'll be doing, or any special notes…"
-        value={formData.description}
-        onChange={(e) => handleInputChange("description", e.target.value)}
-        className="w-full rounded border p-2 mb-4"
-        rows={3}
-        required
-      />
+      <div className="mt-3">
+        <TextBoxInput
+          title="Description"
+          placeholder="Describe your meal plan, what you'll be doing, or any special notes…"
+          value={formData.description ?? ""}
+          rows={3}
+          onChange={(value) => {
+            handleInputChange("description", value);
+          }}
+          onBlur={(value) => updateField("description", value)}
+          error={errors.description}
+          required
+        />
+      </div>
 
       {/* Restaurant Name */}
-      <label className="block text-sm font-medium mb-1">Restaurant Name</label>
-      <input
-        type="text"
-        placeholder="e.g., Pizza Club"
-        value={formData.restaurantName}
-        onChange={(e) => handleInputChange("restaurantName", e.target.value)}
-        className="w-full rounded border p-2 mb-4"
-        required
-      />
+      <div className="mt-3">
+        <TextInput
+          label="Restaurant Name"
+          placeholder="e.g., Pizza Club"
+          value={formData.restaurantName ?? ""}
+          onChange={(value) => handleInputChange("restaurantName", value)}
+          onBlur={(value) => updateField("restaurantName", value)}
+          icon={<FaRegAddressCard className="w-4 h-4" />}
+          error={errors.restaurantName}
+          required
+        />
+      </div>
 
       {/* Address */}
-      <label className="block text-sm font-medium mb-1">Address</label>
-      <input
-        name="address"
-        type="text"
-        placeholder="e.g., 123 Main Street, Auckland"
-        value={formData.restaurantAddress}
-        onChange={(e) => handleInputChange("restaurantAddress", e.target.value)}
-        className="w-full rounded border p-2 mb-4"
-        required
-      />
+      <div className="mt-3">
+        <TextInput
+          label="Address"
+          placeholder="e.g., 123 Main Street, Auckland"
+          value={formData.restaurantAddress ?? ""}
+          onChange={(value) => {
+            handleInputChange("restaurantAddress", value);
+          }}
+          onBlur={(value) => updateField("restaurantAddress", value)}
+          icon={<FaRegAddressCard className="w-4 h-4" />}
+          error={errors.restaurantAddress}
+          required
+        />
+      </div>
 
       {/* Date & Time */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
         <div>
-          <label className="block text-sm font-medium mb-1">Date</label>
+          <label className="block text-sm font-medium mb-1">
+            Date<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+          </label>
           <input
             name="date"
             type="date"
             value={dateValue}
             onChange={(e) => handleDateTimeChange("date", e.target.value)}
-            className="w-full rounded border p-2 mb-4"
+            className="w-full rounded-lg border p-2 text-sm bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-rose-500 dark:focus:ring-rose-400 focus:border-transparent"
+            min={today}
             required
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Time</label>
+          <label className="block text-sm font-medium mb-1">
+            Time<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+          </label>
           <input
             name="time"
             type="time"
             value={timeValue}
             onChange={(e) => handleDateTimeChange("time", e.target.value)}
-            className="w-full rounded border p-2 mb-4"
+            className="w-full rounded-lg border p-2 text-sm bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-rose-500 dark:focus:ring-rose-400 focus:border-transparent"
             required
           />
         </div>
@@ -184,44 +225,27 @@ function MealForm({
       </p>
 
       {/* Tags */}
-      <label className="block text-sm font-medium mb-1">Tags (Optional)</label>
-      <div className="flex gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Add a tag (e.g., study, casual, birthday)"
-          value={tagInput}
-          onChange={(e) => setTagInput(e.target.value)}
-          className="flex-1 rounded border p-2"
-        />
-        <button
-          type="button"
-          onClick={handleAddTag}
-          className="bg-gray-200 px-3 py-1 rounded"
-        >
-          Add
-        </button>
-      </div>
-      <div className="flex flex-wrap gap-2 mb-4">
-        {(formData.tags ?? []).map((tag, idx) => (
-          <span
-            key={idx}
-            className="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full text-xs"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
+      <TagInput
+        label="Preferred Cuisines (Optional)"
+        icon={<IoIosPricetags />}
+        tags={formData.tags ?? []}
+        setTags={(tags) => {
+          setFormData((prev) => ({
+            ...prev,
+            tags,
+          }));
+        }}
+        placeholder="e.g., Italian, Chinese, Japanese"
+      />
 
       {/* Buttons */}
-      <div className="flex justify-between">
+      <div className="flex flex-col md:flex-row justify-between gap-5">
         <ButtonFactory type="cancel" message="Cancel" onClick={onCancel} />
         {mode == "create" ? (
           <ButtonFactory type="submit" message="Create meal" />
         ) : (
           <ButtonFactory type="submit" message="Update Meal" />
         )}
-        {/* <NormalButton message="Cancel" onClick={onCancel} />
-        <SubmitButton message="Create meal" /> */}
       </div>
     </form>
   );
