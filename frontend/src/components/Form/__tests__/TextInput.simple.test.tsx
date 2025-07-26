@@ -1,10 +1,10 @@
-import { render, screen } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
-import TextInput from '../TextInput'
-import { FiUser } from 'react-icons/fi'
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import TextInput from "../TextInput";
+import { FiUser } from "react-icons/fi";
 
-describe('TextInput - Simple', () => {
-  it('renders input element', () => {
+describe("TextInput - Simple", () => {
+  it("renders input element", () => {
     render(
       <TextInput
         label="Username"
@@ -13,13 +13,13 @@ describe('TextInput - Simple', () => {
         onChange={vi.fn()}
         icon={<FiUser />}
       />
-    )
+    );
 
-    const input = screen.getByPlaceholderText('Enter username')
-    expect(input).toBeInTheDocument()
-  })
+    const input = screen.getByPlaceholderText("Enter username");
+    expect(input).toBeInTheDocument();
+  });
 
-  it('shows label text', () => {
+  it("shows label text", () => {
     render(
       <TextInput
         label="Email"
@@ -28,12 +28,12 @@ describe('TextInput - Simple', () => {
         onChange={vi.fn()}
         icon={<FiUser />}
       />
-    )
+    );
 
-    expect(screen.getByText('Email')).toBeInTheDocument()
-  })
+    expect(screen.getByText("Email")).toBeInTheDocument();
+  });
 
-  it('shows error message when provided', () => {
+  it("shows error message when provided", () => {
     render(
       <TextInput
         label="Password"
@@ -43,12 +43,12 @@ describe('TextInput - Simple', () => {
         icon={<FiUser />}
         error="Password is required"
       />
-    )
+    );
 
-    expect(screen.getByText('Password is required')).toBeInTheDocument()
-  })
+    expect(screen.getByText("Password is required")).toBeInTheDocument();
+  });
 
-  it('shows required asterisk when required', () => {
+  it("shows required asterisk when required", () => {
     render(
       <TextInput
         label="Name"
@@ -58,12 +58,12 @@ describe('TextInput - Simple', () => {
         icon={<FiUser />}
         required
       />
-    )
+    );
 
-    expect(screen.getByText('*')).toBeInTheDocument()
-  })
+    expect(screen.getByText("*")).toBeInTheDocument();
+  });
 
-  it('displays current value', () => {
+  it("displays current value", () => {
     render(
       <TextInput
         label="Username"
@@ -72,9 +72,9 @@ describe('TextInput - Simple', () => {
         onChange={vi.fn()}
         icon={<FiUser />}
       />
-    )
+    );
 
-    const input = screen.getByDisplayValue('testuser')
-    expect(input).toBeInTheDocument()
-  })
-}) 
+    const input = screen.getByDisplayValue("testuser");
+    expect(input).toBeInTheDocument();
+  });
+});
