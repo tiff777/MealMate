@@ -6,6 +6,7 @@ import MyMealTabNav from "../../components/Meal/MyMealTabNav";
 import MealCard from "../../components/Meal/MealCard";
 import { useNavigate } from "react-router-dom";
 import ButtonFactory from "../../components/Button/ButtonFactory";
+import RoundButton from "../../components/Button/RoundButton";
 
 function myMealPage() {
   const { setLoading, user } = useContext(AppContext);
@@ -82,6 +83,8 @@ function myMealPage() {
   };
 
   useEffect(() => {
+    if (!user) {
+    }
     fetchMeals();
     console.log("Test hosted meal: ", createdMeals);
   }, []);
@@ -90,22 +93,18 @@ function myMealPage() {
     <div className="p-4">
       <div className="flex items-center justify-between mb-4 border-b pb-2">
         {/* Title */}
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-teal-500 text-transparent bg-clip-text">
-          My Meals
-        </h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+            My Meal
+          </h1>
+        </div>
 
         {/* Button */}
-        <button
-          className="
-      flex items-center gap-1
-      px-4 py-1.5 rounded-full text-sm font-medium text-white
-      bg-gradient-to-r from-pink-400 to-teal-400 shadow-sm
-      hover:from-pink-500 hover:to-teal-500 transition
-    "
+        <RoundButton
+          size="sm"
+          message="+  Create New Meal"
           onClick={() => navigate("/create-meals")}
-        >
-          <span className="text-lg">＋</span> Create New Meal
-        </button>
+        />
       </div>
       <div>
         <MyMealTabNav

@@ -22,7 +22,7 @@ function MyMealTabNav({
     <div className="w-full shadow rounded-lg">
       <div className="relative bg-white dark:bg-gray-700 rounded-lg px-1.5 py-1.5 mb-6">
         <div
-          className="absolute  top-2 bottom-2  bg-gradient-to-r from-rose-400 to-rose-300 rounded-md transition-all duration-300 ease-in-out"
+          className="absolute  top-2 bottom-2  bg-gradient-to-r from-orange-400 to-red-500  dark:from-gray-600 dark:to-gray-700 text-white shadow-md border dark:border-gray-500 rounded-md transition-all duration-300 ease-in-out"
           style={{
             transform: `translateX(${
               tabs.findIndex((t) => t.id === activeTab) * 100
