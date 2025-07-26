@@ -6,6 +6,7 @@ using backend.Models.Dto;
 using backend.Models.Dto.Meal;
 using backend.Models.Entity;
 using backend.Models.Enum;
+using backend.Repository;
 using backend.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -16,53 +17,40 @@ using System.Security.Cryptography;
 namespace backend.Controller
 {
     [ApiController]
-    [Route("api/meal")]    
-    public class MealController:ControllerBase
+    [Route("api/meal")]
+    public class MealController : ControllerBase
     {
-        private ApplicationDbContext _db;
+        private readonly IMealRepository _mealRepository;
+        private readonly IChatRoomRepository _chatRoomRepository;
+        private readonly ApplicationDbContext _db;
 
-        public MealController (ApplicationDbContext db)
+        public MealController(IMealRepository mealRepository, IChatRoomRepository chatRoomRepository, ApplicationDbContext db)
         {
+            _mealRepository = mealRepository;
+            _chatRoomRepository = chatRoomRepository;
             _db = db;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllMeal()
+                [HttpGet]
+        public async Task<IActionResult> GetAllMeal([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var mealDtos = await _db.Meals
-    .Include(m => m.Participants)
-        .ThenInclude(p => p.User)
-    .GroupJoin(
-        _db.ChatRooms,
-        meal => meal.Mid,
-        chatRoom => chatRoom.MealId,
-        (meal, chatRooms) => new { meal, chatRoom = chatRooms.FirstOrDefault() }
-    )
-    .Select(x => new ShowMealDto
-    {
-        Mid = x.meal.Mid,
-        Title = x.meal.Title,
-        Description = x.meal.Description,
-        MaxParticipant = x.meal.MaxParticipant,
-        CurrentParticipant = x.meal.CurrentParticipant,
-        RestaurantName = x.meal.RestaurantName,
-        RestaurantAddress = x.meal.RestaurantAddress,
-        MealDate = x.meal.MealDate,
-        Tags = x.meal.Tags,
-        RealTimeStatus = x.meal.GetRealTimeStatus(),
-        CreatedAt = x.meal.CreatedAt,
-        HostId = x.meal.HostId,
-        ChatRoomId = x.chatRoom != null ? x.chatRoom.Id : (int?)null,
-        Participants = x.meal.Participants.Select(p => new ParticipantDto
-        {
-            UserId = p.UserId,
-            Avatar = p.User.Avatar
-        }).ToList()
-    })
-    .ToListAsync();
-                return Ok(mealDtos);
+                // 添加分頁支持以減少數據庫負載
+                var mealDtos = await _mealRepository.GetAllMealsWithDetailsAsync(page, pageSize);
+                var totalCount = await _mealRepository.GetTotalMealsCountAsync();
+                
+                return Ok(new 
+                { 
+                    meals = mealDtos,
+                    pagination = new 
+                    {
+                        currentPage = page,
+                        pageSize = pageSize,
+                        totalCount = totalCount,
+                        totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -76,35 +64,12 @@ namespace backend.Controller
         {
             try
             {
-                var meal = await _db.Meals.FindAsync(id);
+                var mealDto = await _mealRepository.GetMealWithDetailsAsync(id);
 
-                if (meal == null)
+                if (mealDto == null)
                 {
                     return NotFound();
                 }
-
-                var mealDto = new ShowMealDto
-                {
-                    Mid = meal.Mid,
-                    Title = meal.Title,
-                    Description = meal.Description,
-                    MaxParticipant = meal.MaxParticipant,
-                    CurrentParticipant = meal.CurrentParticipant,
-                    RestaurantName = meal.RestaurantName,
-                    RestaurantAddress = meal.RestaurantAddress,
-                    MealDate = meal.MealDate,
-                    Tags = meal.Tags,
-                    RealTimeStatus = meal.GetRealTimeStatus(),
-                    CreatedAt = meal.CreatedAt,
-                    HostId = meal.HostId,
-
-                    Participants = meal.Participants.Select(p => new ParticipantDto
-                    {
-                        UserId = p.UserId,
-                        Avatar = p.User.Avatar
-                    }).ToList()
-
-                };
 
                 return Ok(mealDto);
             }
@@ -115,31 +80,11 @@ namespace backend.Controller
         }
 
         [HttpGet("latest")]
-        public async Task<IActionResult> GetLatestUpcomingMeals ()
+        public async Task<IActionResult> GetLatestUpcomingMeals()
         {
             try
             {
-                var meals = await _db.Meals
-                    .Where(m => m.Status == 0)
-                    .OrderByDescending(m => m.CreatedAt)
-                    .Take(3)
-                    .Select(m => new ShowMealDto
-                    {
-                        Mid = m.Mid,
-                        Title = m.Title,
-                        Description = m.Description,
-                        MealDate = m.MealDate,
-                        MaxParticipant = m.MaxParticipant,
-                        CurrentParticipant = m.CurrentParticipant,
-                        RestaurantName = m.RestaurantName,
-                        RestaurantAddress = m.RestaurantAddress,
-                        Tags = m.Tags,
-                        RealTimeStatus = m.GetRealTimeStatus(),
-                        CreatedAt = m.CreatedAt,
-                        HostId = m.HostId
-                    })
-                    .ToListAsync();
-
+                var meals = await _mealRepository.GetLatestUpcomingMealsAsync(3);
                 return Ok(meals);
             }
             catch (Exception ex)
@@ -151,7 +96,7 @@ namespace backend.Controller
 
         [HttpPost]
         [AuthorizeUser]
-        public async Task<IActionResult> AddMeal ([FromBody]AddMealDto newMeal)
+        public async Task<IActionResult> AddMeal([FromBody] AddMealDto newMeal)
         {
             var userId = this.GetCurrentUserId();
             try
@@ -208,17 +153,17 @@ namespace backend.Controller
 
                 var mealDto = new ShowMealDto
                 {
-                    Mid= meal.Mid,
+                    Mid = meal.Mid,
                     Title = meal.Title,
                     Description = meal.Description,
                     MealDate = meal.MealDate,
-                    MaxParticipant=meal.MaxParticipant,
+                    MaxParticipant = meal.MaxParticipant,
                     RestaurantName = meal.RestaurantName,
                     RestaurantAddress = meal.RestaurantAddress,
                     Tags = meal.Tags,
                     RealTimeStatus = meal.GetRealTimeStatus(),
-                    CreatedAt =meal.CreatedAt,
-                    HostId=meal.HostId,
+                    CreatedAt = meal.CreatedAt,
+                    HostId = meal.HostId,
 
                     Participants = meal.Participants.Select(p => new ParticipantDto
                     {
@@ -232,18 +177,18 @@ namespace backend.Controller
             catch (Exception ex)
             {
                 return BadRequest(new { message = "Error in creating meal: ", ex.Message });
-            }            
+            }
         }
 
         [HttpPatch("{id}")]
         [AuthorizeUser]
-        public async Task<IActionResult> UpdateMeal (int id, [FromBody]UpdateMealDto newMeal)
+        public async Task<IActionResult> UpdateMeal(int id, [FromBody] UpdateMealDto newMeal)
         {
             try
             {
                 var userId = this.GetCurrentUserId();
 
-                var meal=await _db.Meals.FindAsync(id);
+                var meal = await _db.Meals.FindAsync(id);
                 if (meal == null)
                 {
                     return NotFound();
@@ -274,7 +219,7 @@ namespace backend.Controller
                 };
 
 
-                return Ok(new {message = "Meal updated successful", mealDto });
+                return Ok(new { message = "Meal updated successful", mealDto });
             }
             catch (Exception ex)
             {
@@ -283,11 +228,11 @@ namespace backend.Controller
             }
         }
 
-        [HttpDelete ("{id}")]
+        [HttpDelete("{id}")]
         [AuthorizeUser]
-        public async Task<IActionResult> DeleteMeal (int id )
+        public async Task<IActionResult> DeleteMeal(int id)
         {
-            var userId= this.GetCurrentUserId();
+            var userId = this.GetCurrentUserId();
             try
             {
                 var meal = await _db.Meals.FindAsync(id);
@@ -324,54 +269,30 @@ namespace backend.Controller
             {
                 return BadRequest(new { message = "Error in deleting meal: ", ex.Message });
             }
-            
+
         }
 
         [HttpGet("hostedmeals")]
         [AuthorizeUser]
-        public async Task<IActionResult> GetMyHostedMeals ()
+        public async Task<IActionResult> GetMyHostedMeals([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
                 var userId = this.GetCurrentUserId();
-
-                var myHostedMeals = await _db.Meals
-    .Where(m => m.HostId == userId)
-    .OrderByDescending(m => m.CreatedAt)
-    .GroupJoin(
-        _db.ChatRooms,
-        meal => meal.Mid,
-        chat => chat.MealId,
-        (meal, chatRooms) => new { meal, chatRoom = chatRooms.FirstOrDefault() }
-    )
-    .Select(x => new ShowMealDto
-    {
-        Mid = x.meal.Mid,
-        Title = x.meal.Title,
-        Description = x.meal.Description,
-        MealDate = x.meal.MealDate,
-        MaxParticipant = x.meal.MaxParticipant,
-        CurrentParticipant = x.meal.CurrentParticipant,
-        RestaurantName = x.meal.RestaurantName,
-        RestaurantAddress = x.meal.RestaurantAddress,
-        Tags = x.meal.Tags,
-        RealTimeStatus = x.meal.GetRealTimeStatus(),
-        CreatedAt = x.meal.CreatedAt,
-        HostId = x.meal.HostId,
-        ChatRoomId = x.chatRoom != null ? x.chatRoom.Id : (int?)null,
-
-        Participants = x.meal.Participants.Select(p => new ParticipantDto
-        {
-            UserId = p.UserId,
-            Avatar = p.User.Avatar
-        }).ToList()
-    })
-    .ToListAsync();
+                var myHostedMeals = await _mealRepository.GetHostedMealsAsync(userId, page, pageSize);
+                var totalCount = await _mealRepository.GetHostedMealsCountAsync(userId);
 
                 return Ok(new
                 {
                     message = "My hosted meals retrieved successfully",
-                    meals = myHostedMeals
+                    meals = myHostedMeals,
+                    pagination = new 
+                    {
+                        currentPage = page,
+                        pageSize = pageSize,
+                        totalCount = totalCount,
+                        totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+                    }
                 });
             }
             catch (Exception ex)

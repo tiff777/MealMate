@@ -6,6 +6,7 @@ using backend.Models.Dto;
 using backend.Models.Dto.Chat;
 using backend.Models.Dto.Meal;
 using backend.Models.Entity;
+using backend.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -14,59 +15,62 @@ using System.Linq;
 
 namespace backend.Controller
 {
-    
-        [ApiController]
-        [Route("api/chat")]
-        public class ChatRoomController : ControllerBase
+
+    [ApiController]
+    [Route("api/chat")]
+    public class ChatRoomController : ControllerBase
+    {
+        private readonly IChatRoomRepository _chatRoomRepository;
+        private readonly ApplicationDbContext _db;
+        private readonly IHubContext<ChatHub> _hubContext;
+
+        public ChatRoomController(IChatRoomRepository chatRoomRepository, ApplicationDbContext db, IHubContext<ChatHub> hubContext)
         {
-            private ApplicationDbContext _db;
-            private IHubContext<ChatHub> _hubContext;
+            _chatRoomRepository = chatRoomRepository;
+            _db = db;
+            _hubContext = hubContext;
+        }
 
-            public ChatRoomController (ApplicationDbContext db,IHubContext<ChatHub> hubContext)
-            {
-                _db = db;
-                _hubContext = hubContext;
-            }
-
-            [HttpGet]
-            [AuthorizeUser]
-            public async Task<IActionResult> GetAllRooms ()
-            {
-                var userId= this.GetCurrentUserId();
-                var rooms = await _db.ChatRoomMembers
-                    .Where(m => m.UserId == userId)
-                    .Select(m => new
-                    {
-                        RoomId = m.ChatRoom.Id,
-                        Name = m.ChatRoom.Name,
-                        Description = m.ChatRoom.Description,
-
-                        memberCount= m.ChatRoom.Members.Count(),
-
-                        LastMessage = m.ChatRoom.Messages
-                        .OrderByDescending(msg => msg.Timestamp)
-                        .Select(msg => new {
-                         Content = msg.Content, 
-                         TimeStamp = msg.Timestamp,
-                        })
-                    .FirstOrDefault()
-                    })
-                    .ToListAsync();
-                return Ok(rooms);
-            }
-
-            [HttpPost("meal")]
-            [AuthorizeUser]
-            public async Task<IActionResult> CreateRoom ([FromBody] CreateChatRoomDto dto)
-            {
-                var user = this.GetCurrentUser();
-                var room = new ChatRoom
+        [HttpGet]
+        [AuthorizeUser]
+        public async Task<IActionResult> GetAllRooms()
+        {
+            var userId = this.GetCurrentUserId();
+            var rooms = await _db.ChatRoomMembers
+                .Where(m => m.UserId == userId)
+                .Select(m => new
                 {
-                    Name = dto.Name,
-                    Description = dto.Description,
-                    IsPrivate = false,
-                    HostId = user.Uid,
-                    Members = new List<ChatRoomMember>
+                    RoomId = m.ChatRoom.Id,
+                    Name = m.ChatRoom.Name,
+                    Description = m.ChatRoom.Description,
+
+                    memberCount = m.ChatRoom.Members.Count(),
+
+                    LastMessage = m.ChatRoom.Messages
+                    .OrderByDescending(msg => msg.Timestamp)
+                    .Select(msg => new
+                    {
+                        Content = msg.Content,
+                        TimeStamp = msg.Timestamp,
+                    })
+                .FirstOrDefault()
+                })
+                .ToListAsync();
+            return Ok(rooms);
+        }
+
+        [HttpPost("meal")]
+        [AuthorizeUser]
+        public async Task<IActionResult> CreateRoom([FromBody] CreateChatRoomDto dto)
+        {
+            var user = this.GetCurrentUser();
+            var room = new ChatRoom
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                IsPrivate = false,
+                HostId = user.Uid,
+                Members = new List<ChatRoomMember>
                     {
                         new ChatRoomMember
                         {
@@ -76,19 +80,19 @@ namespace backend.Controller
                             JoinedAt = DateTimeOffset.UtcNow
                         }
                        }
-                };
+            };
 
-                _db.ChatRooms.Add(room);
-                await _db.SaveChangesAsync();
+            _db.ChatRooms.Add(room);
+            await _db.SaveChangesAsync();
 
-                return Ok(room);
-            }
+            return Ok(room);
+        }
 
-            [HttpPost("private")]
-            [AuthorizeUser]
-            public async Task<IActionResult> CreatePrivateChatRoom ([FromBody] CreatePrivateChatRoomDto dto)
-            {
-                var user = this.GetCurrentUser();
+        [HttpPost("private")]
+        [AuthorizeUser]
+        public async Task<IActionResult> CreatePrivateChatRoom([FromBody] CreatePrivateChatRoomDto dto)
+        {
+            var user = this.GetCurrentUser();
 
             try
             {
@@ -139,60 +143,57 @@ namespace backend.Controller
             {
                 return BadRequest(ex.Message);
             }
-                
-            }
 
-            [HttpPost("{roomId}/join")]
-            [AuthorizeUser]
-            public async Task<IActionResult> JoinRoom (int roomId)
+        }
+
+        [HttpPost("{roomId}/join")]
+        [AuthorizeUser]
+        public async Task<IActionResult> JoinRoom(int roomId)
+        {
+            var user = this.GetCurrentUser();
+            var room = _db.ChatRooms.FindAsync(roomId);
+            if (room == null) return NotFound("Room not found");
+
+            if (!_db.ChatRoomMembers.Any(m => m.ChatRoomId == roomId && m.UserId == user.Uid))
             {
-                var user = this.GetCurrentUser();
-                var room = _db.ChatRooms.FindAsync(roomId);
-                if (room == null) return NotFound("Room not found");
-
-                if (!_db.ChatRoomMembers.Any(m => m.ChatRoomId == roomId && m.UserId == user.Uid))
+                var member = new ChatRoomMember
                 {
-                    var member = new ChatRoomMember
-                    {
-                        ChatRoomId = roomId,
-                        UserId = user.Uid,
-                        UserName = user.Name,
-                        IsHost = false
-                    };
-                    _db.ChatRoomMembers.Add(member);
-                    await _db.SaveChangesAsync();
-                }
-
-                return Ok(room);
-            }
-
-            [HttpPost("{roomId}/leave")]
-            [AuthorizeUser]
-            public async Task<IActionResult> LeaveRoom (int roomId)
-            {
-                var userId = this.GetCurrentUserId();
-
-                var member = await _db.ChatRoomMembers
-                    .FirstOrDefaultAsync(m => m.ChatRoomId == roomId && m.UserId == userId);
-
-                if (member == null) return NotFound("You are not a member of this room.");
-
-                _db.ChatRoomMembers.Remove(member);
+                    ChatRoomId = roomId,
+                    UserId = user.Uid,
+                    UserName = user.Name,
+                    IsHost = false
+                };
+                _db.ChatRoomMembers.Add(member);
                 await _db.SaveChangesAsync();
-
-                return Ok();
             }
 
-            [HttpGet("{roomId}/messages")]
-            [AuthorizeUser]
-            public async Task<IActionResult> GetMessages (int roomId)
-            {
+            return Ok(room);
+        }
+
+        [HttpPost("{roomId}/leave")]
+        [AuthorizeUser]
+        public async Task<IActionResult> LeaveRoom(int roomId)
+        {
+            var userId = this.GetCurrentUserId();
+
+            var member = await _db.ChatRoomMembers
+                .FirstOrDefaultAsync(m => m.ChatRoomId == roomId && m.UserId == userId);
+
+            if (member == null) return NotFound("You are not a member of this room.");
+
+            _db.ChatRoomMembers.Remove(member);
+            await _db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpGet("{roomId}/messages")]
+        [AuthorizeUser]
+        public async Task<IActionResult> GetMessages(int roomId, [FromQuery] int page = 1, [FromQuery] int pageSize = 50)
+        {
             var currentUserId = this.GetCurrentUserId();
 
-            var messageEntities = await _db.ChatMessages
-                .Where(m => m.ChatRoomId == roomId)
-                .OrderBy(m => m.Timestamp)
-                .ToListAsync();
+            var messageEntities = await _chatRoomRepository.GetRoomMessagesAsync(roomId, page, pageSize);
 
             var userIds = messageEntities.Select(m => m.UserId).Distinct().ToList();
 
@@ -217,13 +218,13 @@ namespace backend.Controller
                 };
             }).ToList();
 
-            return Ok (roomMessages);
-            }
+            return Ok(roomMessages);
+        }
 
-            [HttpPost("{roomId}/messages")]
-            [AuthorizeUser]
-            public async Task<IActionResult> PostMessage (int roomId, [FromBody] CreateMessageDto dto)
-            {
+        [HttpPost("{roomId}/messages")]
+        [AuthorizeUser]
+        public async Task<IActionResult> PostMessage(int roomId, [FromBody] CreateMessageDto dto)
+        {
             try
             {
                 var user = this.GetCurrentUser();
@@ -277,8 +278,8 @@ namespace backend.Controller
             {
                 return BadRequest(new { message = "Error in posting message: ", ex.Message });
             }
-            
-            }
+
         }
-    
+    }
+
 }

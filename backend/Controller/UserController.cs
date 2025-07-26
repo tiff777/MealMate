@@ -4,6 +4,7 @@ using backend.Extention;
 using backend.Models.Dto.Meal;
 using backend.Models.Dto.User;
 using backend.Models.Entity;
+using backend.Repository;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -20,44 +21,41 @@ namespace backend.Controller
     [Route("api/user")]
     public class UserController : ControllerBase
     {
-        private ApplicationDbContext _db;
-        private IAuthService _authService;
-        public UserController(ApplicationDbContext db, IAuthService authService)
+        private readonly IUserRepository _userRepository;
+        private readonly ApplicationDbContext _db;
+        private readonly IAuthService _authService;
+        
+        public UserController(IUserRepository userRepository, ApplicationDbContext db, IAuthService authService)
         {
+            _userRepository = userRepository;
             _db = db;
             _authService = authService;
-
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
             try
             {
-                var dbAllUsers = await _db.Users.ToListAsync();
+                var users = await _userRepository.GetAllUsersAsync(page, pageSize);
+                var totalCount = await _userRepository.GetTotalUsersCountAsync();
 
-                var users = dbAllUsers.Select(user => new ShowUserDto
-                {
-                    Uid = user.Uid,
-                    Name = user.Name,
-                    Email = user.Email,
-                    University = user.University,
-                    Major = user.Major,
-                    Bio = user.Bio,
-                    Avatar = user.Avatar,
-                    Interests = user.Interests,
-                    PreferredCuisines = user.PreferredCuisines,
-                    IsOnline = user.IsOnline,
-                    LastSeen = user.LastSeen,
-                }).ToList();
-
-                return Ok(users);
+                return Ok(new 
+                { 
+                    users = users,
+                    pagination = new 
+                    {
+                        currentPage = page,
+                        pageSize = pageSize,
+                        totalCount = totalCount,
+                        totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+                    }
+                });
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
         }
 
         [HttpGet("profile/info")]
@@ -152,7 +150,7 @@ namespace backend.Controller
         }
 
         [HttpGet("check-duplicate")]
-        public async Task<IActionResult> CheckDuplicate ([FromQuery] string field, [FromQuery] string value)
+        public async Task<IActionResult> CheckDuplicate([FromQuery] string field, [FromQuery] string value)
         {
             try
             {
@@ -167,8 +165,8 @@ namespace backend.Controller
             }
             catch (Exception ex)
             {
-                return BadRequest (ex.Message);
-            }            
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
@@ -180,7 +178,7 @@ namespace backend.Controller
                 if (existingUser != null)
                 {
                     return BadRequest(new { message = "User already exist" });
-                }                
+                }
 
                 var user = new User()
                 {
@@ -210,7 +208,7 @@ namespace backend.Controller
         }
 
         [HttpPost("upload-avatar")]
-        public async Task<IActionResult> UploadAvatar (IFormFile file)
+        public async Task<IActionResult> UploadAvatar(IFormFile file)
         {
             const long maxSize = 3 * 1024 * 1024; // 3MB
 
@@ -268,7 +266,7 @@ namespace backend.Controller
 
         [HttpPost("password/verify")]
         [AuthorizeUser]
-        public  IActionResult CheckPassword ([FromBody] CheckOldPasswordDto dto)
+        public IActionResult CheckPassword([FromBody] CheckOldPasswordDto dto)
         {
             var user = this.GetCurrentUser();
 
