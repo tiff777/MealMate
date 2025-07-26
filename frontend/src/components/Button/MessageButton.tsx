@@ -13,7 +13,7 @@ function MessageButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex items-center gap-2 px-4 py-2 rounded-md font-medium shadow-sm transition-colors
+      className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium shadow-sm transition-colors
         ${
           disabled
             ? "bg-gray-400 text-white cursor-not-allowed"
