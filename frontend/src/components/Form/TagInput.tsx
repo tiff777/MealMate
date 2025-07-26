@@ -8,25 +8,48 @@ interface TagInputProps {
   placeholder?: string;
 }
 
-const TagInput: React.FC<TagInputProps> = ({
+function TagInput({
   label = "Tags",
   icon,
   tags,
   setTags,
   placeholder = "Add a tag",
-}) => {
+}: TagInputProps) {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
-  const hasError = tags.length >= 10;
+  const [hasError, setHasError] = useState(false);
+
+  const MAX_TAGS = 10;
+  const MAX_TAG_LENGTH = 20;
+  const MIN_TAG_LENGTH = 1;
+
+  const hasTooManyTags = tags.length >= MAX_TAGS;
 
   const handleAdd = () => {
     const trimmed = input.trim();
-    if (trimmed !== "" && !tags.includes(trimmed) && !hasError) {
+    console.log("Test word: ", trimmed);
+
+    if (hasTooManyTags) {
+      setError(`You can only add up to ${MAX_TAGS} tags.`);
+      setHasError(true);
+    } else if (
+      trimmed.length < MIN_TAG_LENGTH ||
+      trimmed.length > MAX_TAG_LENGTH
+    ) {
+      setError(
+        `Each tag must be between ${MIN_TAG_LENGTH}-${MAX_TAG_LENGTH} characters.`
+      );
+      setHasError(true);
+    } else if (tags.includes(trimmed)) {
+      setError("Duplicate tag is not allowed.");
+      setHasError(true);
+    } else {
       setTags([...tags, trimmed]);
       setInput("");
-      setError(""); // clear error if previously shown
-    } else if (hasError) {
-      setError("You can only add up to 10 tags.");
+      setError("");
+      setHasError(false);
+      console.log("Current tags: ", tags);
+      console.log("Trying to add: ", trimmed);
     }
   };
 
@@ -53,7 +76,11 @@ const TagInput: React.FC<TagInputProps> = ({
           type="text"
           placeholder={placeholder}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value);
+            setError("");
+            setHasError(false);
+          }}
           onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           className={`flex-1 py-2 pr-4 rounded-lg pl-${
             icon ? "10" : "4"
@@ -65,7 +92,6 @@ const TagInput: React.FC<TagInputProps> = ({
         <button
           type="button"
           onClick={handleAdd}
-          disabled={hasError}
           className={`px-3 py-1 rounded text-sm text-white ${
             hasError
               ? "bg-orange-300 cursor-not-allowed"
@@ -101,6 +127,6 @@ const TagInput: React.FC<TagInputProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default TagInput;

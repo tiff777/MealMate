@@ -4,9 +4,11 @@ interface TextBoxInputProps {
   title: string;
   value: string;
   rows: number;
+  placeholder?: string;
   onChange: (value: string) => void;
   onBlur?: (value: string) => void;
   error?: string;
+  required?: boolean;
 }
 
 function TextBoxInput({
@@ -15,7 +17,9 @@ function TextBoxInput({
   rows,
   onChange,
   onBlur,
+  placeholder = "Tell us a bit about yourself...",
   error,
+  required = false,
 }: TextBoxInputProps) {
   const hasError = !!error;
   const [isFocused, setIsFocused] = useState(false);
@@ -24,9 +28,12 @@ function TextBoxInput({
     <div>
       <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
         {title}
+        {required && (
+          <span className="text-red-500 dark:text-red-400 ml-1">*</span>
+        )}
       </label>
       <textarea
-        placeholder="Tell us a bit about yourself..."
+        placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onBlur={(e) => {
@@ -43,6 +50,7 @@ function TextBoxInput({
           }
           ${isFocused ? "ring-2 ring-rose-500 dark:ring-rose-400" : ""}
         `}
+        required={required}
       />
 
       {hasError && (

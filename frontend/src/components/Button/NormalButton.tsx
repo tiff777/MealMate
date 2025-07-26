@@ -13,6 +13,7 @@ function NormalButton({
       onClick={onClick}
       className={`
     w-full 
+    px-4
     py-2 
     rounded-lg 
     border-2 
@@ -23,8 +24,7 @@ function NormalButton({
     focus:ring-2 
     ${
       disabled
-        ?
-          `
+        ? `
         border-gray-300 
         dark:border-gray-600 
         text-gray-400 
@@ -34,8 +34,7 @@ function NormalButton({
         cursor-not-allowed 
         opacity-60
         `
-        : 
-          `
+        : `
         border-orange-500 
         dark:border-orange-400 
         text-orange-500 
