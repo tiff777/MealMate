@@ -10,7 +10,7 @@ import { FiUsers } from "react-icons/fi";
 import PageHeader from "../../components/UI/PageHeader";
 
 function BuddyPage() {
-  const { setLoading, setPendingId, user } = useContext(AppContext);
+  const { setLoading, setPendingId, user, showError } = useContext(AppContext);
   const [users, setUsers] = useState<User[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [filters, setFilters] = useState({
@@ -25,19 +25,16 @@ function BuddyPage() {
     setLoading(true);
     try {
       const response = await apiClient.get("/user");
-      //   console.log("Test response: ", response);
-
-      const usersData = response.data;
+      const usersData = response.data.users || response.data;
 
       if (user) {
         const filteredUsers = usersData.filter((u: any) => u.uid !== user.uid);
         setUsers(filteredUsers);
         return;
       }
-      //   console.log(usersData);
       setUsers(usersData);
     } catch (error) {
-      console.error("Error fetching users:", error);
+      showError(`Error fetching users: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -45,8 +42,6 @@ function BuddyPage() {
 
   const handleMessage = async (userId: number, userName: string) => {
     try {
-      console.log(`Message with ${userId}`);
-
       const response = await authClient.post("/chat/private", {
         TargetUserId: userId,
         TargetUserName: userName,
@@ -54,16 +49,15 @@ function BuddyPage() {
       });
 
       if (response.status !== 200) {
-        console.log("Cannot send message to this user");
+        showError("Cannot send message to this user");
       }
 
       const roomId = response.data;
-      console.log("Test room id: ", roomId);
 
       setPendingId(roomId);
       navigate("/messages");
     } catch (error) {
-      console.log("Cannot send message to user");
+      showError("Cannot send message to this user");
     }
   };
 

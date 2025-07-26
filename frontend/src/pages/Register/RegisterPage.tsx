@@ -6,7 +6,7 @@ import type { RegisterUser } from "../../types";
 import { AppContext } from "../../context/AppContext";
 
 function ResgisterPage() {
-  const { loginUser } = useContext(AppContext);
+  const { loginUser, showError } = useContext(AppContext);
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -38,7 +38,6 @@ function ResgisterPage() {
     e.preventDefault();
 
     if (avatarFile) {
-      console.log("Have image", avatarFile);
       const fileData = new FormData();
       fileData.append("file", avatarFile);
       const avatarResponse = await apiClient.post(
@@ -52,27 +51,23 @@ function ResgisterPage() {
       );
 
       if (avatarResponse.status !== 200) {
-        console.log("Error in uploading avatar");
+        showError("Error in uploading avatar");
       }
       formData.avatar = avatarResponse.data.avatarUrl;
     }
-
-    console.log("Test response: ", formData.avatar);
-    console.log("Sign up data:", formData);
 
     try {
       const response = await apiClient.post("/user", formData);
       if (!response) {
         throw new Error("Regiter failed");
       }
-      console.log("Test response: ", response.data);
 
       if (response.data.user) {
         loginUser(response.data.user, response.data.token);
         navigate("/meal");
       }
     } catch (error) {
-      console.log("Error in register: ", error);
+      showError(`Error in register: ${error}`);
     }
   };
 

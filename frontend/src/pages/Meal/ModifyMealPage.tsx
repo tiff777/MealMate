@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiClient, authClient } from "../../hook/api";
 import MealForm from "../../components/Meal/MealForm";
 import type { MealFormData, UpdateMeal } from "../../types";
+import { AppContext } from "../../context/AppContext";
 
 function UpdateMealPage() {
   const { mid } = useParams();
+  const { showError } = useContext(AppContext);
   const navigate = useNavigate();
   const [originalData, setOriginalData] = useState<UpdateMeal | null>(null);
   const [formData, setFormData] = useState<MealFormData>({
@@ -20,8 +22,8 @@ function UpdateMealPage() {
 
   const fetchMealDetail = async () => {
     const mealResponse = await apiClient.get(`/meal/${mid}`);
-    if (!mealResponse) {
-      console.log("Cannot find meal");
+    if (mealResponse.status !== 200) {
+      showError("Cannot find meal");
       return;
     }
 
@@ -37,14 +39,10 @@ function UpdateMealPage() {
     });
 
     setOriginalData(meal);
-
-    console.log("Test meal data: ", formData);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log("Test original data: ", originalData);
 
     if (!originalData) return;
 
@@ -67,13 +65,13 @@ function UpdateMealPage() {
 
     try {
       const response = await authClient.patch(`/meal/${mid}`, updatedFields);
-      if (!response) {
-        console.log("Cannot update meal");
+      if (response.status !== 200) {
+        showError("Cannot update meal");
       }
 
       navigate("/my-meals");
     } catch (err) {
-      console.error("Error updating meal:", err);
+      showError(`Error updating meal:  ${err}`);
     }
   };
 

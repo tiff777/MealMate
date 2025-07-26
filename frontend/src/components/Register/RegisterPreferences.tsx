@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { FiImage, FiHeart } from "react-icons/fi";
 import { LuUtensilsCrossed } from "react-icons/lu";
 import type { RegisterUser } from "../../types";
-import SubmitButton from "../Button/SubmitButton";
-import NormalButton from "../Button/NormalButton";
 import TextBoxInput from "../Form/TextBoxInput";
 import type { UserFormData } from "../../util/userValidation";
 import TagInput from "../Form/TagInput";

@@ -9,7 +9,7 @@ import ButtonFactory from "../../components/Button/ButtonFactory";
 import RoundButton from "../../components/Button/RoundButton";
 
 function myMealPage() {
-  const { setLoading, user, setPendingId } = useContext(AppContext);
+  const { setLoading, user, setPendingId, showError } = useContext(AppContext);
   const [activeTab, setActiveTab] = useState<"created" | "joined">("created");
   const [createdMeals, setCreatedMeals] = useState<Meal[]>([]);
   const [joinedMeals, setJoinedMeals] = useState<Meal[]>([]);
@@ -18,8 +18,7 @@ function myMealPage() {
   const fetchMeals = async () => {
     setLoading(true);
     if (!user) {
-      console.log("No user cannot enter");
-      setLoading(false);
+      showError("No user cannot enter");
       return;
     }
 
@@ -35,15 +34,13 @@ function myMealPage() {
         `/participant/user/${user.uid}`
       );
 
-      console.log("Test data: ", joinedMealsResponse.data);
-
       if (joinedMealsResponse) {
         setJoinedMeals(joinedMealsResponse.data);
       } else {
         setJoinedMeals([]);
       }
     } catch (error) {
-      console.log("Error in fetching meals: ", error);
+      showError(`Error in fetching meals: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -55,15 +52,14 @@ function myMealPage() {
     }
     try {
       const response = await authClient.delete(`/participant/leave/${mid}`);
-      if (!response) {
-        console.log("Cannot leave");
+      if (response.status !== 200) {
+        showError("Cannot leave");
         return;
       }
-      console.log("Leave meal");
+
       fetchMeals();
-      // setShowSuccess(true);
     } catch (error) {
-      console.log("Error in joining the meal: ", error);
+      showError(`Error in joining the meal: ${error}`);
     }
   };
 
@@ -74,20 +70,18 @@ function myMealPage() {
 
     try {
       const response = await authClient.delete(`/meal/${mid}`);
-      if (!response) {
-        console.log("Cannot not leave");
+      if (response.status !== 200) {
+        showError("Cannot leave");
+        return;
       }
-      console.log("Leave meal");
 
       fetchMeals();
     } catch (error) {
-      console.log("Error in deleting: ", error);
+      showError(`Error in joining the meal: ${error}`);
     }
   };
 
   const handleMessage = (roomId: number) => {
-    console.log("Test id in my-meal page: ", roomId);
-
     setPendingId(roomId);
     navigate("/messages");
   };

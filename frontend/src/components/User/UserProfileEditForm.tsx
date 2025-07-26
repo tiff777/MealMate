@@ -1,4 +1,4 @@
-import { FiImage, FiHeart } from "react-icons/fi";
+import { FiHeart } from "react-icons/fi";
 import { FaUniversity } from "react-icons/fa";
 import { FiUser, FiMail, FiBookOpen } from "react-icons/fi";
 import TagInput from "../Form/TagInput";

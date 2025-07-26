@@ -10,7 +10,7 @@ import { AppContext } from "../../context/AppContext";
 
 function HomePage() {
   const [currentMealIndex, setCurrentMealIndex] = useState(0);
-  const { isAuthenticated } = useContext(AppContext);
+  const { isAuthenticated, showError } = useContext(AppContext);
   const navigate = useNavigate();
 
   const [latestMeals, setLatestMeals] = useState<Meal[]>();
@@ -25,10 +25,9 @@ function HomePage() {
     try {
       const response = apiClient.get("/meal/latest");
       const mealData = (await response).data;
-      console.log("Test data: ", mealData);
       setLatestMeals(mealData);
     } catch (error) {
-      console.log("Error in fetching the latest meal");
+      showError("Error in fetching the latest meal");
     }
   };
   useEffect(() => {

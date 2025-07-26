@@ -9,8 +9,6 @@ interface MessageInputProps {
 function MessageInput({ onSendMessage, disabled = false }: MessageInputProps) {
   const [newMessage, setNewMessage] = useState("");
 
-  console.log("MessageInput rendered");
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || disabled) return;

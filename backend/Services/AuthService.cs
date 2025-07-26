@@ -19,7 +19,6 @@ namespace backend.Services
 
         public string HashPassword (string password)
         {
-            Console.WriteLine("Hash password:" + BCrypt.Net.BCrypt.HashPassword(password));
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 

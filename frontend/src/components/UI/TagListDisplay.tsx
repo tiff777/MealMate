@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 function TagListDisplay({
   tags,
   className = "mb-4",
-  maxCharsPerRow = 30, // 每行最大字符數
+  maxCharsPerRow = 30,
 }: {
   tags: string[];
   className?: string;
@@ -20,10 +20,8 @@ function TagListDisplay({
       const tagLength = tags[i].length + 2; // +2 for padding
 
       if (totalChars + tagLength > maxCharsPerRow) {
-        // 如果加上 +N 指示器還有剩餘標籤
         if (i < tags.length - 1) {
           const plusIndicatorLength = `+${tags.length - i}`.length + 2;
-          // 檢查是否需要移除最後一個標籤為 +N 讓位
           if (
             totalChars + plusIndicatorLength > maxCharsPerRow &&
             visibleCount > 0

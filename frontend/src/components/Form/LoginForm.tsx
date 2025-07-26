@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import { FaUtensils } from "react-icons/fa";
-import { FiEye, FiEyeOff } from "react-icons/fi";
 import ButtonFactory from "../Button/ButtonFactory";
 import TextInput from "./TextInput";
 import PasswordInput from "./PasswordInput";
@@ -37,9 +36,6 @@ function LoginForm({ onSubmit }: LoginFormProps) {
     }
 
     if (!valid) return;
-
-    console.log("Login attempt with email in form:", email);
-    console.log("Login attempt with password in form:", password);
 
     onSubmit(email, password, rememberMe);
   }

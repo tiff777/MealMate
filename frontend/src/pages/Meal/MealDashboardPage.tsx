@@ -1,10 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { apiClient, authClient } from "../../hook/api";
-import type { Meal, Participant, MealWithParticipants } from "../../types";
+import type { MealWithParticipants } from "../../types";
 import MealCard from "../../components/Meal/MealCard";
 import { AppContext } from "../../context/AppContext";
-import ErrorToast from "../../components/Modal/ErrorToast";
-import SuccessToast from "../../components/Modal/SuccessfulToast";
 import MealFilterSidebar from "../../components/Meal/MenuFilter";
 import { useFilteredMeals } from "../../hook/useFilteredMeals";
 import { useMealButtons } from "../../hook/useMealButtons";
@@ -13,10 +11,9 @@ import { LuUtensilsCrossed } from "react-icons/lu";
 import PageHeader from "../../components/UI/PageHeader";
 
 function MealDashboard() {
-  const { setLoading, user, setPendingId } = useContext(AppContext);
+  const { setLoading, user, setPendingId, showError, showSuccess } =
+    useContext(AppContext);
   const [meals, setMeals] = useState<MealWithParticipants[]>([]);
-  const [showError, setShowError] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [filters, setFilters] = useState({
@@ -32,7 +29,7 @@ function MealDashboard() {
     try {
       const response = await apiClient.get("/meal");
 
-      const mealsData = response.data;
+      const mealsData = response.data.meals || response.data;
 
       const meals = mealsData.map((meal: MealWithParticipants) => ({
         ...meal,
@@ -41,32 +38,29 @@ function MealDashboard() {
           : false,
         isHost: user ? meal.hostId === user.uid : false,
       }));
-      console.log(meals);
 
       setMeals(meals);
     } catch (error) {
-      console.log("Error of fetching meals:", error);
-    } finally {
-      setLoading(false);
+      showError(`Error of fetching meals: ${error}`);
     }
   };
 
   const handleJoin = async (mid: number) => {
     if (!user) {
-      setShowError(true);
+      showError("Please login for joining the meal");
       return;
     }
     try {
       const response = await authClient.post(`/participant/join/${mid}`);
-      if (!response) {
-        console.log("Cannot join");
+      if (response.status !== 200) {
+        showError("Cannot join");
         return;
       }
-      console.log("Join meal");
+
       fetchMeals();
-      setShowSuccess(true);
+      showSuccess("Successful join the meal");
     } catch (error) {
-      console.log("Error in joining the meal: ", error);
+      showError(`Error in joining meals: ${error}`);
     }
   };
 
@@ -76,15 +70,14 @@ function MealDashboard() {
     }
     try {
       const response = await authClient.delete(`/participant/leave/${mid}`);
-      if (!response) {
-        console.log("Cannot leave");
+      if (response.status !== 200) {
+        showError("Cannot leave");
         return;
       }
-      console.log("Leave meal");
+      showSuccess("Successful for leaving the meal");
       fetchMeals();
-      // setShowSuccess(true);
     } catch (error) {
-      console.log("Error in joining the meal: ", error);
+      showError(`Error in leaving meals: ${error}`);
     }
   };
 
@@ -95,14 +88,13 @@ function MealDashboard() {
 
     try {
       const response = await authClient.delete(`/meal/${mid}`);
-      if (!response) {
-        console.log("Cannot not delete");
+      if (response.status !== 200) {
+        showError("Cannot not delete");
       }
-      console.log("Delete meal");
-
+      showSuccess("Delete meal successful");
       fetchMeals();
     } catch (error) {
-      console.log("Error in deleting: ", error);
+      showError(`Error in deleting meals: ${error}`);
     }
   };
 
@@ -193,19 +185,6 @@ function MealDashboard() {
           )}
         </div>
       </div>
-      {showError && (
-        <ErrorToast
-          message={"Need login to join"}
-          onClose={() => setShowError(false)}
-        />
-      )}
-
-      {showSuccess && (
-        <SuccessToast
-          message="Successful Join the meal"
-          onClose={() => setShowSuccess(false)}
-        />
-      )}
     </>
   );
 }

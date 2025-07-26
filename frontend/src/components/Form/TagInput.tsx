@@ -27,7 +27,6 @@ function TagInput({
 
   const handleAdd = () => {
     const trimmed = input.trim();
-    console.log("Test word: ", trimmed);
 
     if (hasTooManyTags) {
       setError(`You can only add up to ${MAX_TAGS} tags.`);
@@ -48,8 +47,6 @@ function TagInput({
       setInput("");
       setError("");
       setHasError(false);
-      console.log("Current tags: ", tags);
-      console.log("Trying to add: ", trimmed);
     }
   };
 

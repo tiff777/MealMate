@@ -1,36 +1,55 @@
 import { useParams } from "react-router-dom";
 import type { UserProfile } from "../../types";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PublicUserProfile from "../../components/User/PublicUserProfile";
-import { apiClient } from "../../hook/api";
+import { apiClient, authClient } from "../../hook/api";
+import { AppContext } from "../../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 function PublicUserProfilePage() {
   const { id } = useParams();
   const [profileUser, setProfileUser] = useState<UserProfile>();
+  const { setPendingId, showError } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const fetchProfileUser = async () => {
-    console.log("in fetching");
-
     if (!id) {
-      console.error("No id in params!");
+      showError("No id in params!");
       return;
     }
 
     try {
       const response = await apiClient.get(`/user/${id}`);
-      console.log("Test response: ", response);
 
       if (response.status !== 200) {
-        console.log("Error in fetching profile user");
+        showError("Error in fetching profile user");
         return;
       }
-      console.log("Test response data: ", response.data);
 
       const profileUserData = response.data;
-      console.log("Test user: ", profileUserData);
       setProfileUser(profileUserData);
     } catch (error) {
-      console.log("Error in fetching profile");
+      showError("Error in fetching profile");
+    }
+  };
+
+  const handleMessage = async (userId: number, userName: string) => {
+    try {
+      const response = await authClient.post("/chat/private", {
+        TargetUserId: userId,
+        TargetUserName: userName,
+        Description: `Chat Room with ${userName}`,
+      });
+
+      if (response.status !== 200) {
+        showError("Cannot send message to this user");
+      }
+
+      const roomId = response.data;
+      setPendingId(roomId);
+      navigate("/messages");
+    } catch (error) {
+      showError("Cannot send message to user");
     }
   };
 
@@ -42,7 +61,16 @@ function PublicUserProfilePage() {
     return <div>Loading...</div>;
   }
 
-  return <>{profileUser && <PublicUserProfile user={profileUser} />}</>;
+  return (
+    <>
+      {profileUser && (
+        <PublicUserProfile
+          user={profileUser}
+          handleMessage={() => handleMessage(profileUser.uid, profileUser.name)}
+        />
+      )}
+    </>
+  );
 }
 
 export default PublicUserProfilePage;

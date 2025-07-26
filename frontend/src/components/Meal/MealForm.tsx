@@ -1,7 +1,4 @@
-import { useState } from "react";
 import type { CreateMeal, UpdateMeal } from "../../types";
-import SubmitButton from "../Button/SubmitButton";
-import NormalButton from "../Button/NormalButton";
 import { useSimpleMealValidation } from "../../hook/useMealValidation";
 import { IoIosPricetags } from "react-icons/io";
 import ButtonFactory from "../Button/ButtonFactory";
@@ -9,7 +6,6 @@ import TagInput from "../Form/TagInput";
 import TextInput from "../Form/TextInput";
 import TextBoxInput from "../Form/TextBoxInput";
 import { FaRegAddressCard } from "react-icons/fa6";
-import formatDate from "../../util/dateUtils";
 
 type MealFormData = CreateMeal | UpdateMeal;
 
@@ -28,7 +24,6 @@ function MealForm({
   setFormData,
   mode = "create",
 }: MeaFormlProps) {
-  const [tagInput, setTagInput] = useState(formData.tags);
   const today = new Date().toISOString().split("T")[0];
 
   const { updateField, errors, validateAll, isFormValid } =

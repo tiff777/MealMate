@@ -1,7 +1,6 @@
 import RegisterPersonalInfo from "./RegisterPersonalInfo";
 import RegisterPreferences from "./RegisterPreferences";
 import type { RegisterUser } from "../../types";
-import { useState } from "react";
 import { useSimpleUserValidation } from "../../hook/useUserValidation";
 import { Link } from "react-router-dom";
 

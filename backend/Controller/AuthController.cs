@@ -25,8 +25,6 @@ namespace backend.Controller
         [HttpPost("login")]
         public async Task<IActionResult> Login ([FromBody] LoginDto dto)
         {
-            Console.WriteLine("testing email: ", dto.Email);
-            Console.WriteLine("testing password: ", dto.Email);
             var dbuser = await _db.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
             if (dbuser == null || !_authService.VerifyPassword(dto.Password, dbuser.PasswordHash))
             {

@@ -2,8 +2,6 @@ import type { Meal } from "../../types";
 import { FiMapPin, FiUser } from "react-icons/fi";
 import { FaCalendarAlt } from "react-icons/fa";
 import formatDate from "../../util/dateUtils";
-import JoinButton from "../Button/JoinButton";
-import TagDisplay from "../UI/TagDisplay";
 import MealParticipantAvatar from "./MealParticipantAvatar";
 import MealStatus from "./MealStatus";
 import TagListDisplay from "../UI/TagListDisplay";
@@ -24,8 +22,6 @@ function MealCard({
       if (!cardRef.current) return;
 
       const cardWidth = cardRef.current.offsetWidth;
-
-      // 根據卡片寬度決定佈局
       if (cardWidth >= 350) {
         setLayout("spacious");
       } else {
@@ -55,7 +51,7 @@ function MealCard({
               {meal.title}
             </h2>
           </div>
-          <MealStatus status={meal.status} />
+          <MealStatus status={meal.realTimeStatus} />
         </div>
 
         <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2 leading-relaxed break-words min-h-[3em]">
@@ -86,7 +82,7 @@ function MealCard({
         )}
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4 sm:mt-0">
-          {/* 左邊：avatars + count */}
+          {/* Left：avatars + count */}
           <div className="flex items-center space-x-3">
             {/* avatar stack */}
             <div className="flex -space-x-2">

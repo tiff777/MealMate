@@ -1,15 +1,8 @@
 import type { User } from "../../types";
-import JoinButton from "../Button/JoinButton";
 import ButtonFactory from "../Button/ButtonFactory";
 import UserAvatar from "./UserAvatar";
 import { useNavigate } from "react-router-dom";
-import {
-  FiMapPin,
-  FiUser,
-  FiHeart,
-  FiMessageCircle,
-  FiEye,
-} from "react-icons/fi";
+import { FiMapPin, FiUser, FiHeart } from "react-icons/fi";
 import TagListDisplay from "../UI/TagListDisplay";
 
 function UserCard({

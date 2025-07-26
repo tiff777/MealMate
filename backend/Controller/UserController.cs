@@ -249,7 +249,6 @@ namespace backend.Controller
             try
             {
                 var user = this.GetCurrentUser();
-                Console.WriteLine(user.Name);
 
                 user.UpdateFromUserDto(newUser);
                 await _db.SaveChangesAsync();

@@ -34,18 +34,10 @@ function ProtectedRoute({
 
   hasCheckedAuth.current = true;
 
-  console.log("Test is auth: ", isAuthenticated);
-
   useEffect(() => {
     if (!isLoading && user && !isAuthenticated) {
-      console.log(
-        "🔧 ProtectedRoute: Found user but not authenticated, fixing..."
-      );
-      console.log("🔧 User data:", { uid: user.uid, name: user.name });
-
       const savedUser = localStorage.getItem("user");
       if (savedUser && user.uid) {
-        console.log("🔧 ProtectedRoute: Forcing authentication to true");
         setAuthenticated(true);
       }
     }

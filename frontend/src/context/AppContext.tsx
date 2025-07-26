@@ -1,13 +1,7 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useCallback,
-  use,
-} from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import type { User } from "../types";
-import { apiClient, authClient } from "../hook/api";
+import { authClient } from "../hook/api";
 import ErrorToast from "../components/Modal/ErrorToast";
 import SuccessToast from "../components/Modal/SuccessfulToast";
 
@@ -77,9 +71,6 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logoutUser = useCallback(async () => {
-    const token = getToken();
-    console.log("Token in logout: ", token);
-
     try {
       setIsLoading(true);
 
@@ -104,7 +95,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem("justLoggedOut");
       }, 0);
     } catch (err) {
-      console.error("Logout error:", err);
+      showError(`Logout error: ${err}`);
     } finally {
       setIsLoading(false);
     }
@@ -129,7 +120,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false);
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      console.error("Error fetching user profile:", error);
+      showError(`Error fetching user profile: ${error}`);
       return null;
     }
   }, []);
@@ -144,16 +135,8 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
         try {
           localStorage.setItem("user", JSON.stringify(updatedUser));
           setIsAuthenticated(true);
-          console.log("✅ Context: User data saved to localStorage");
-          console.log("✅ Context: Final auth state after update:", {
-            isAuthenticated: true,
-            userUid: updatedUser.uid,
-          });
         } catch (error) {
-          console.error(
-            "❌ Context: Failed to save user to localStorage",
-            error
-          );
+          showError(`Failed to save user to localStorage: ${error}`);
         }
       }, 0);
     },
@@ -263,7 +246,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem("user");
       }
     } catch (error) {
-      console.error("Error parsing cached user:", error);
+      showError(`Error parsing cached user: ${error}`);
       setUser(null);
       setIsAuthenticated(false);
       localStorage.removeItem("token");

@@ -14,9 +14,6 @@ function LoginPage() {
     password: string,
     isRemember: boolean
   ) {
-    console.log("Login attempt with email in page:", email);
-    console.log("Login attempt with password in page:", password);
-
     try {
       const response = await apiClient.post("/auth/login", {
         email,

@@ -17,20 +17,11 @@ const ChatRoom = ({
   room,
   userName,
   messages,
-  // newMessage,
-  // setNewMessage,
   handleSendMessage,
   handleLeave,
   onShowNav,
 }: ChatRoomProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  console.log(
-    "after setUserChatRooms, selectedRoomId still valid?",
-    room.roomId
-  );
-  console.log("Test messages: ", messages);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };

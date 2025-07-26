@@ -1,4 +1,3 @@
-import React from "react";
 import NormalButton from "./NormalButton";
 import JoinButton from "./JoinButton";
 import SubmitButton from "./SubmitButton";

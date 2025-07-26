@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, use } from "react";
+import { useState, useContext, useEffect } from "react";
 import SettingNavBar from "../../components/User/SettingNavBar";
 import UserPasswordForm from "../../components/User/UserPasswordForm";
 import UserDeleteForm from "../../components/User/UserDeleteForm";
@@ -11,14 +11,13 @@ import { authClient } from "../../hook/api";
 type SettingsTab = "profile" | "password" | "account";
 
 function SettingsPage() {
-  const { user, updateUser, logoutUser, deleteUser, showSuccess } =
+  const { user, updateUser, logoutUser, deleteUser, showSuccess, showError } =
     useContext(AppContext);
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
   const [formData, setFormData] = useState<User>(user!);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
 
   const handleUpdateUser = async () => {
-    console.log("Test update: ", formData);
     if (!user) {
       return;
     }
@@ -43,16 +42,14 @@ function SettingsPage() {
         updatedFields
       );
       if (!response) {
-        console.log("Cannot update user");
+        showError("Cannot update user");
       }
 
       const updateUserData = response.data.user;
       updateUser(updateUserData);
-      console.log("Update user: ", updateUser);
-
       setFormData(updateUserData);
     } catch (error) {
-      console.log("Error of updating user: ", user);
+      showError(`Error of updating user: ${user}`);
     }
   };
 
@@ -76,7 +73,7 @@ function SettingsPage() {
       );
 
       if (avatarResponse.status !== 200) {
-        console.log("Error in uploading avatar");
+        showError("Error in uploading avatar");
       }
       avatarValue = avatarResponse.data.avatarUrl;
     }
@@ -86,9 +83,9 @@ function SettingsPage() {
     });
 
     if (updateResponse.status !== 200) {
-      console.error("Update avatar fail");
+      showError("Update avatar fail");
     } else {
-      console.log("Avatar updated!");
+      showSuccess("Avatar updated!");
       if (user) {
         updateUser({ ...user, avatar: avatarValue });
       }
@@ -107,7 +104,7 @@ function SettingsPage() {
     try {
       const response = await authClient.patch("user/password", { newPassword });
       if (response.status !== 200) {
-        console.log("Cannot change password");
+        showError("Cannot change password");
         return;
       }
 
@@ -117,7 +114,7 @@ function SettingsPage() {
         logoutUser();
       }, 500);
     } catch (error) {
-      console.log("Cannot change password");
+      showError("Cannot change password");
     }
   };
 
@@ -126,7 +123,7 @@ function SettingsPage() {
       const response = await authClient.delete("user");
 
       if (response.status !== 200) {
-        console.log("Delete unsuccessful");
+        showError("Delete unsuccessful");
       }
 
       showSuccess("Account deleted successfully");
@@ -134,14 +131,13 @@ function SettingsPage() {
         deleteUser();
       }, 500);
     } catch (error) {
-      console.log("Cannot delete user");
+      showError("Cannot delete user");
     }
   };
 
   useEffect(() => {
     if (user) {
       setFormData(user);
-      console.log("Test user: ", user);
     }
   }, [user]);
 

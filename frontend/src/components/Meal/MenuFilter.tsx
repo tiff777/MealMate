@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FiX } from "react-icons/fi";
 import { IoIosPricetags } from "react-icons/io";
-import { HiMagnifyingGlass } from "react-icons/hi2";
 import CurrentTimeCard from "../UI/CurrentTimeCard";
 import SmallGroupTagDisplay from "../UI/SmallGroupTagDisplay";
 import LargeGroupTagDisplay from "../UI/LargeGroupTagDisplay";

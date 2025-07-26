@@ -77,11 +77,6 @@ export async function validateName(
 
   if (!user || trimmedName !== user.name.trim()) {
     const isDuplicate = await checkDuplicate("name", trimmedName);
-    console.log("Checking duplication:", {
-      trimmedName,
-      originalName: user?.name,
-      comparison: trimmedName !== user?.name?.trim(),
-    });
     if (isDuplicate) {
       errors.push("This name is already taken");
     }
@@ -210,7 +205,6 @@ export async function validateUserForm(
   userData: UserFormData,
   user?: User
 ): Promise<UserValidationResults> {
-  console.log("Test user in util", user?.name);
   const nameValidation = await validateName(userData.name, user);
   const emailValidation = await validateEmail(userData.email);
   const universityValidation = validateUniversity(userData.university);
@@ -243,8 +237,6 @@ export async function validateField(
   value: any,
   user?: User
 ): Promise<ValidationResult> {
-  console.log("Test user in util: ", user);
-
   switch (fieldName) {
     case "name":
       return await validateName(value as string, user);
@@ -262,15 +254,12 @@ export async function validateField(
 }
 
 async function checkDuplicate(field: "email" | "name", value: string) {
-  console.log("Checking");
-
   try {
     const response = await apiClient.get("/user/check-duplicate", {
       params: { field, value },
     });
     return response.data.exists;
   } catch (error) {
-    console.error("Error checking duplicate:", error);
     return false;
   }
 }

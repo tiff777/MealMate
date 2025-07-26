@@ -13,7 +13,6 @@ export function useFilteredMeals(
 ) {
   return useMemo(() => {
     return meals.filter((meal) => {
-      console.log("Test meal in filter: ", meal);
 
       if (filters.availability === "available") {
         if (

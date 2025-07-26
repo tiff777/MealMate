@@ -16,8 +16,6 @@ function MyMealTabNav({
     { id: "joined", label: "Meals I Joined", count: joinedLength },
   ] as const;
 
-  const activeIndex = tabs.findIndex((t) => t.id === activeTab);
-
   return (
     <div className="w-full shadow rounded-lg">
       <div className="relative bg-white dark:bg-gray-700 rounded-lg px-1.5 py-1.5 mb-6">

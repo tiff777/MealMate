@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-  useRef,
-} from "react";
+import { useState, useEffect, useContext, useCallback, useRef } from "react";
 import { AppContext } from "../../context/AppContext";
 import ChatRoom from "../../components/Chat/ChatRoom";
 import { authClient } from "../../hook/api";
@@ -14,7 +8,7 @@ import { ChatService } from "../../hook/chatService";
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 
 const ChatRoomPage = () => {
-  const { pendingRoomId, setPendingId } = useContext(AppContext);
+  const { pendingRoomId, setPendingId, showError } = useContext(AppContext);
   const [userChatRooms, setUserChatRooms] = useState<ChatRoomInfo[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,14 +29,13 @@ const ChatRoomPage = () => {
       const response = await authClient.get("/chat");
 
       if (response.status !== 200) {
-        console.log("Cannot fetch chatroom data");
+        showError("Cannot fetch this chatroom data");
         return;
       }
 
       const chatRooms = response.data;
       setUserChatRooms(chatRooms);
 
-      console.log("Test chatroom: ", chatRooms);
       if (pendingRoomId) {
         setSelectedRoomId(pendingRoomId);
         setPendingId(null);
@@ -50,38 +43,33 @@ const ChatRoomPage = () => {
         setSelectedRoomId(chatRooms[0].roomId);
       }
     } catch (error) {
-      console.error("Failed to fetch chat rooms:", error);
+      showError(`Failed to fetch chat rooms: ${error}`);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   const fetchChatHistory = useCallback(async () => {
-    console.log("Fetch history");
-
     if (!selectedRoomId) return;
 
     try {
-      console.log(`Fetching messages for room ${selectedRoomId}`);
       const response = await authClient.get(`/chat/${selectedRoomId}/messages`);
 
       if (response.status !== 200) {
-        console.log("Cannot fetch message");
+        showError("Cannot fetch message");
         return;
       }
       setMessages(response.data);
     } catch (error) {
-      console.log("Fail to fetch message:", error);
+      showError(`Fail to fetch message: ${error}`);
     }
   }, [selectedRoomId]);
 
   const handleLeaveChatRoom = async (roomId: number) => {
     try {
-      console.log(`Leaving chat room: ${roomId}`);
-
       const response = await authClient.post(`chat/${roomId}/leave`);
       if (response.status !== 200) {
-        console.log("Cannot leave the room");
+        showError("Cannot leave the room");
         return;
       }
 
@@ -97,7 +85,7 @@ const ChatRoomPage = () => {
         setShowMobileNav(false);
       }
     } catch (error) {
-      console.error("Failed to leave chat room:", error);
+      showError(`Failed to leave chat room: ${error}`);
     }
   };
 
@@ -106,8 +94,6 @@ const ChatRoomPage = () => {
       return;
     }
 
-    console.log("Test new message: ", messageContent);
-
     try {
       const response = await authClient.post(
         `/chat/${selectedRoomId}/messages`,
@@ -115,7 +101,7 @@ const ChatRoomPage = () => {
       );
 
       if (response.status !== 200) {
-        console.log("Cannot send message");
+        showError("Cannot send message");
       }
 
       setUserChatRooms((prev) =>
@@ -133,7 +119,7 @@ const ChatRoomPage = () => {
         )
       );
     } catch (error) {
-      console.log("Error in sending message");
+      showError("Error in sending message");
     }
   };
 
@@ -155,7 +141,6 @@ const ChatRoomPage = () => {
       setIsSignalRReady(true);
 
       service.onMessageReceived((message) => {
-        console.log("Received new message:", message);
         setMessages((prev) => [...prev, message]);
       });
     };
@@ -187,7 +172,6 @@ const ChatRoomPage = () => {
   }, [selectedRoomId, user, isSignalRReady]);
 
   useEffect(() => {
-    console.log("selectedRoomId changed: ", selectedRoomId);
     if (selectedRoomId) {
       fetchChatHistory();
     }

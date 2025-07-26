@@ -1,15 +1,14 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import SwitchThemeButton from "../Button/SwitchThemeButton";
 import Navigation from "./Navigation";
-import NavButton from "../Button/NavButton";
 import UserNavIcon from "./UserNavIcon";
 import { AppContext } from "../../context/AppContext";
 import { FaUtensils } from "react-icons/fa";
 import { FiX, FiMenu } from "react-icons/fi";
 
 function NavBar() {
-  const { user, logoutUser } = useContext(AppContext);
+  const { user, logoutUser, showError } = useContext(AppContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,7 +19,6 @@ function NavBar() {
     { path: "/buddy", label: "Find Buddy", exact: true },
     { path: "/my-meals", label: "My Meals", exact: false },
     { path: "/messages", label: "Messages", exact: false },
-    { path: "/setting", label: "Profile Setting", exact: false },
   ];
 
   const guestNavItems = [
@@ -38,7 +36,7 @@ function NavBar() {
       logoutUser();
       navigate("/");
     } catch (error) {
-      console.error("Logout failed:", error);
+      showError(`Logout failed: ${error}`);
     }
   };
 

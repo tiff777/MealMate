@@ -19,19 +19,18 @@ export default function ResetPasswordPage() {
   });
   const [step, setStep] = useState(1);
 
-  const { loginUser } = useContext(AppContext);
+  const { loginUser, showError, showSuccess } = useContext(AppContext);
 
   const handleGetToken = async () => {
     try {
       const response = await apiClient.post("/auth/forgot-password", { email });
 
-      console.log("Test token: ", response.data);
       const token = response.data;
 
       setToken(token);
       setStep(2);
     } catch (err) {
-      console.log("Fail to reset");
+      showError("Fail to reset");
     }
   };
 
@@ -43,14 +42,14 @@ export default function ResetPasswordPage() {
       });
 
       if (response.status !== 200) {
-        console.log("Fail to reset");
+        showError("Fail to reset");
       }
 
       loginUser(response.data.user, response.data.token);
 
-      console.log("Password reset successful");
+      showSuccess("Password reset successful");
     } catch (err) {
-      console.log("Fail to reset");
+      showError("Fail to reset");
     }
   };
 

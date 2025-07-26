@@ -1,5 +1,4 @@
-import { title } from "process";
-import React, { useState } from "react";
+import React from "react";
 import { IoWarning, IoClose } from "react-icons/io5";
 import LoadingSpinner from "../UI/LoadingSpinner";
 

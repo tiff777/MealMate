@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authClient } from "../../hook/api";
 import MealForm from "../../components/Meal/MealForm";
-import type { CreateMeal, MealFormData } from "../../types";
+import type { MealFormData } from "../../types";
+import { AppContext } from "../../context/AppContext";
 
 function CreateMealPage() {
   const navigate = useNavigate();
+  const { showError } = useContext(AppContext);
 
   const [formData, setFormData] = useState<MealFormData>({
     title: "",
@@ -18,7 +20,6 @@ function CreateMealPage() {
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("Sign up data:", formData);
     e.preventDefault();
 
     try {
@@ -26,13 +27,11 @@ function CreateMealPage() {
       if (!response) {
         throw new Error("Regiter failed");
       }
-      //   console.log("Test response: ", response.data);
-
       if (response.data) {
         navigate("/my-meals");
       }
     } catch (error) {
-      console.log("Error in create meal: ", error);
+      showError(`Error in create meal: ${error}`);
     }
   };
 
