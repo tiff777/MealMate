@@ -6,7 +6,7 @@ import SubmitButton from "../Button/SubmitButton";
 import NormalButton from "../Button/NormalButton";
 import TextBoxInput from "../Form/TextBoxInput";
 import type { UserFormData } from "../../util/userValidation";
-import TagInput from "../Form/TagInout";
+import TagInput from "../Form/TagInput";
 import ButtonFactory from "../Button/ButtonFactory";
 
 interface Props {
@@ -23,7 +23,7 @@ interface Props {
   isUserFormValid: boolean;
 }
 
-function RegisterPage2({
+function RegisterPreferences({
   formData,
   handleInputChange,
   handleArrayInputChange,
@@ -122,4 +122,4 @@ function RegisterPage2({
   );
 }
 
-export default RegisterPage2;
+export default RegisterPreferences;

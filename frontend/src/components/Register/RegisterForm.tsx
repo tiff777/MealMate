@@ -1,5 +1,5 @@
-import RegisterPage1 from "./RegisterPage1";
-import RegisterPage2 from "./RegisterPage2";
+import RegisterPersonalInfo from "./RegisterPersonalInfo";
+import RegisterPreferences from "./RegisterPreferences";
 import type { RegisterUser } from "../../types";
 import { useState } from "react";
 import { useSimpleUserValidation } from "../../hook/useUserValidation";
@@ -75,7 +75,7 @@ function RegisterForm({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {currentPage === 1 ? (
-            <RegisterPage1
+            <RegisterPersonalInfo
               formData={formData}
               handleInputChange={handleInputChange}
               handleNext={handleNext}
@@ -83,7 +83,7 @@ function RegisterForm({
               updateUserField={updateUserField}
             />
           ) : (
-            <RegisterPage2
+            <RegisterPreferences
               formData={formData}
               handleInputChange={handleInputChange}
               handleArrayInputChange={handleArrayInputChange}

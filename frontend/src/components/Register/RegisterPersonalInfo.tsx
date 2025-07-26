@@ -18,7 +18,7 @@ interface Props {
   userErrors: Record<string, string>;
 }
 
-function RegisterPage1({
+function RegisterPersonalInfo({
   formData,
   handleInputChange,
   handleNext,
@@ -170,4 +170,4 @@ function RegisterPage1({
   );
 }
 
-export default RegisterPage1;
+export default RegisterPersonalInfo;
