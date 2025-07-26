@@ -11,7 +11,7 @@ namespace backend.Data.DummyData
                 new User
                 {
                     Name = "sophiacarter01",
-                    Email = "sophia.carter@aucklanduni.ac.nz",
+                    Email = "sophia.carter@gmail.com",
                     PasswordHash = conifg["dummyPassword:user1"]?? throw new InvalidOperationException("Missing dummyPassword:user1 in config"),
                     University = "University of Auckland",
                     Major = "Computer Science",
@@ -28,9 +28,9 @@ namespace backend.Data.DummyData
                 new User
                 {
                     Name = "emma92",
-                    Email = "emma.zhang@aucklanduni.ac.nz",
+                    Email = "emma.zhang@gmail.com",
                     PasswordHash = conifg["dummyPassword:user2"]?? throw new InvalidOperationException("Missing dummyPassword:user2 in config"),
-                    University = "University of Auckland",
+                    University = "Auckland University of Technology",
                     Major = "Computer Science",
                     Bio = "Love trying new cuisines and discussing tech over food! Always up for discovering hidden campus food gems.",
                     Avatar = "👩‍💻",
@@ -45,7 +45,7 @@ namespace backend.Data.DummyData
                 new User
                 {
                     Name = "Marcus123",
-                    Email = "marcus.johnson@aucklanduni.ac.nz",
+                    Email = "marcus.johnson@gmail.com",
                     PasswordHash = conifg["dummyPassword:user3"]?? throw new InvalidOperationException("Missing dummyPassword:user3 in config"),
                     University = "University of Auckland",
                     Major = "Design",
@@ -62,9 +62,9 @@ namespace backend.Data.DummyData
                 new User
                 {
                     Name = "SophieC456",
-                    Email = "sophie.chen@aucklanduni.ac.nz",
+                    Email = "sophie.chen@gmail.com",
                     PasswordHash = conifg["dummyPassword:user4"]?? throw new InvalidOperationException("Missing dummyPassword:user4 in config"),
-                    University = "University of Auckland",
+                    University = "Auckland University of Technology",
                     Major = "Medicine",
                     Bio = "Med student looking for quick lunch companions between study sessions.",
                     Avatar = "👩‍🔬",
@@ -79,7 +79,7 @@ namespace backend.Data.DummyData
                 new User
                 {
                     Name = "Alexkim77",
-                    Email = "alex.kim@aucklanduni.ac.nz",
+                    Email = "alex.kim@gmail.com",
                     PasswordHash = conifg["dummyPassword:user5"]?? throw new InvalidOperationException("Missing dummyPassword:user5 in config"),
                     University = "University of Auckland",
                     Major = "Business",
@@ -96,9 +96,9 @@ namespace backend.Data.DummyData
                 new User
                 {
                     Name = "MayaP165",
-                    Email = "maya.patel@aucklanduni.ac.nz",
+                    Email = "maya.patel@gmail.com",
                     PasswordHash = conifg["dummyPassword:user6"]?? throw new InvalidOperationException("Missing dummyPassword:user6 in config"),
-                    University = "University of Auckland",
+                    University = "Auckland University of Technology",
                     Major = "Engineering",
                     Bio = "New to campus and looking to make friends!",
                     Avatar = "👩‍🎓",

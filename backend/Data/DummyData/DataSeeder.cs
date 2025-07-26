@@ -50,7 +50,7 @@ namespace backend.Data.DummyData
                     RestaurantAddress = "480 Queen Street, Auckland Central, Auckland 1010",
                     MealDate = DateTimeOffset.UtcNow.AddHours(3),
                     Tags = new List<string> { "Korean Food", "Social", "Weekend" },
-                    Status = MealStatus.Confirmed,
+                    Status = MealStatus.Completed,
                     CreatedAt = DateTimeOffset.UtcNow.AddDays(-1),
                     UpdatedAt = DateTimeOffset.UtcNow
                 },
@@ -95,7 +95,7 @@ namespace backend.Data.DummyData
                     RestaurantAddress = "level 2, Kate Edger Information Commons, 2 Alfred Street, Auckland Central, Auckland 1010",
                     MealDate = DateTimeOffset.UtcNow.AddHours(2),
                     Tags = new List<string> { "Casual", "Friends", "Quick Lunch" },
-                    Status = MealStatus.Confirmed,
+                    Status = MealStatus.Upcoming,
                     CreatedAt = DateTimeOffset.UtcNow.AddHours(-1),
                     UpdatedAt = DateTimeOffset.UtcNow
                 },
