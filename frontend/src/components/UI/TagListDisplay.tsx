@@ -50,14 +50,14 @@ function TagListDisplay({
         {visibleTags.map((tag, i) => (
           <span
             key={i}
-            className="inline-flex items-center px-2 sm:px-2.5 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-medium rounded-full hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors duration-200"
+            className="inline-flex items-center px-2 sm:px-2.5 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 text-xs font-medium rounded-lg hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors duration-200"
           >
             {tag}
           </span>
         ))}
 
         {hiddenCount > 0 && (
-          <span className="inline-flex items-center px-2 sm:px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-full">
+          <span className="inline-flex items-center px-2 sm:px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-lg">
             +{hiddenCount}
           </span>
         )}

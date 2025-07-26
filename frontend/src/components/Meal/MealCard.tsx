@@ -6,6 +6,8 @@ import JoinButton from "../Button/JoinButton";
 import TagDisplay from "../UI/TagDisplay";
 import MealParticipantAvatar from "./MealParticipantAvatar";
 import MealStatus from "./MealStatus";
+import TagListDisplay from "../UI/TagListDisplay";
+import { useRef, useState, useEffect } from "react";
 
 function MealCard({
   meal,
@@ -14,8 +16,35 @@ function MealCard({
   meal: Meal;
   buttons: React.ReactNode[];
 }) {
+  const [layout, setLayout] = useState<"compact" | "spacious">("compact");
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateLayout = () => {
+      if (!cardRef.current) return;
+
+      const cardWidth = cardRef.current.offsetWidth;
+
+      // 根據卡片寬度決定佈局
+      if (cardWidth >= 350) {
+        setLayout("spacious");
+      } else {
+        setLayout("compact");
+      }
+    };
+
+    updateLayout();
+
+    const resizeObserver = new ResizeObserver(updateLayout);
+    if (cardRef.current) {
+      resizeObserver.observe(cardRef.current);
+    }
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
   return (
-    <div className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/30 overflow-hidden hover:shadow-2xl dark:hover:shadow-gray-900/50 transition-all duration-300 transform hover:scale-105 cursor-pointer">
+    <div className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/30 overflow-hidden hover:shadow-2xl dark:hover:shadow-gray-900/50 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer w-full">
       <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl bg-gradient-to-r from-[#FF7F7F] to-[#FFA07A] dark:from-[#0F0F23] dark:via-[#1A1A2E] dark:to-[#16213E]"></div>
       <div className="p-6">
         {/* Header section */}
@@ -52,15 +81,14 @@ function MealCard({
         {/* Tags section */}
         {meal.tags.length > 0 && (
           <div className="flex gap-1 mt-2 flex-wrap">
-            {meal.tags.map((tag, i) => (
-              <TagDisplay key={i} text={tag} />
-            ))}
+            <TagListDisplay tags={meal.tags} />
           </div>
         )}
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4 sm:mt-0">
+          {/* 左邊：avatars + count */}
           <div className="flex items-center space-x-3">
-            {/* Avatar stack */}
+            {/* avatar stack */}
             <div className="flex -space-x-2">
               {meal.participants
                 .slice(0, Math.min(3, meal.maxParticipant))
@@ -79,7 +107,7 @@ function MealCard({
               )}
             </div>
 
-            {/* Participant count */}
+            {/* count */}
             <div className="flex items-center space-x-1">
               <FiUser className="w-4 h-4 text-gray-400" />
               <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -88,17 +116,21 @@ function MealCard({
             </div>
           </div>
 
-          {/* Buttons with enhanced styling */}
-          <div className="flex gap-2">
-            {buttons.map((button, index) => (
-              <div
-                key={index}
-                className="group-hover:scale-110 transform transition-transform duration-200"
-              >
-                {button}
-              </div>
-            ))}
-          </div>
+          {(layout === "compact" || window.innerWidth < 640) && (
+            <div className="flex gap-2">
+              {buttons.map((button, index) => (
+                <div key={index}>{button}</div>
+              ))}
+            </div>
+          )}
+
+          {layout === "spacious" && (
+            <div className="hidden sm:flex gap-2">
+              {buttons.map((button, index) => (
+                <div key={index}>{button}</div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
