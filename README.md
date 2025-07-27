@@ -13,8 +13,8 @@
 - [Docker Deployment](#docker-deployment)
 - [Testing](#running-tests)
 - [API Documentation](#api-documentation)
-- [Demo Video](#live-demo-video)
 - [Live Deployment](#live-deployment)
+- [Screen Shots](#screen-shots)
 
 ## Quick Start Guide
 
@@ -55,7 +55,7 @@ The platform enables users to create meal events, discover dining partners with 
 - Creates comfortable, low-pressure environments for meeting new people
 - Uses shared food interests as the foundation for lasting relationships
 
-The warm orange color scheme reinforces this networking theme - orange represents warmth, energy, and appetite, creating a welcoming atmosphere that encourages users to reach out and connect with others.
+The warm orange color scheme reinforces this networking theme. It is because orange represents warmth, energy, and appetite, creating a welcoming atmosphere that encourages users to reach out and connect with others.
 
 ## Unique Features & Highlights
 
@@ -68,37 +68,58 @@ The warm orange color scheme reinforces this networking theme - orange represent
 ### 🔄 **Real-time Social Features**
 
 - **Live Chat System**: Instant messaging between meal partners using SignalR WebSockets
-- **Dynamic Meal Discovery**: Real-time updates when new meals are posted
-- **Social Notifications**: Get notified when someone joins your meal or sends a message
 
 ### 🔍 **Smart Discovery System**
 
-- **Advanced Search & Filtering**: Find meals by cuisine type, dietary restrictions, location, and time
-- **Tag-based Recommendations**: Discover new dining experiences based on your interests
-- **Location-aware Matching**: Connect with people dining nearby
+- **Advanced Search & Filtering**: Find meals by cuisine type, title, and time
 
 ### 👥 **Community Building**
 
-- **User Profiles**: Showcase your food preferences, dietary restrictions, and dining personality
+- **User Profiles**: Showcase your food preferences and dining personality
 - **Meal History**: Track your dining experiences and the connections you've made
 - **Social Validation**: Build trust through user reviews and meal participation history
 
 ## Advanced Features Implemented
 
-- ✅ **Theme Switching (Light/Dark Mode)** - Enhanced user experience with personalized visual preferences
-- ✅ **Real-time Chat using WebSockets** - Live messaging system for meal coordination and social interaction
-- ✅ **Dockerized Deployment** - Full containerization of both frontend and backend for consistent deployment
-- ✅ **Unit Testing Components** - Comprehensive testing suite ensuring reliable functionality
+### 1. **Theme Switching (Light/Dark Mode)**
+
+- Complete UI theme system with persistent user preference
+- Smooth transitions between themes
+- Consistent styling across all components
+- Enhanced user experience and accessibility
+
+  ![Light View](screenshots/light_mode.png)
+  ![Dark View](screenshots/dark_mode.png)
+
+### 2. **Real-time Chat using WebSockets (SignalR)**
+
+- Live messaging between meal participants
+- Instant message delivery
+- Scalable real-time communication infrastructure
+
+### 3. **Dockerized Deployment**
+
+- Full containerization of both frontend and backend
+- Docker Compose for multi-service orchestration
+- Environment-specific configurations
+- Production-ready deployment pipeline
+
+### 4. **Unit Testing Components**
+
+- Comprehensive React component testing with Jest
+- Backend API endpoint testing with Postman
+- Test coverage for critical user flows
+- Continuous integration ready test suitefunctionality
 
 ## Technology Stack
 
 ### Backend (.NET 8)
 
-- **Framework**: ASP.NET Core 8
-- **Database**: Entity Framework Core with SQL Server (local) / SQLite (Docker)
+- **Framework**: ASP.NET Core 8 with EF core
+- **Database**: Entity Framework Core with Azure SQL Server / local server
 - **Authentication**: JWT Bearer tokens for secure user sessions
 - **Real-time Communication**: SignalR for WebSocket connections
-- **API Documentation**: Swagger/OpenAPI for endpoint documentation
+- **API Documentation**: Swagger for endpoint documentation
 
 ### Frontend (React + TypeScript)
 
@@ -268,7 +289,6 @@ docker run -p 5173:5173 mealmate-frontend
 
 The application automatically detects Docker environment via `DOTNET_RUNNING_IN_CONTAINER=true` and switches to:
 
-- SQLite database instead of SQL Server
 - Simplified CORS policy
 - Disabled HTTPS redirection
 - Container-optimized settings
@@ -296,29 +316,31 @@ npm test
 Local vs Docker Environment
 Local Development Environment
 
-Backend: Uses Azure SQL server (configured in appsettings.json)
-Frontend: Uses http://localhost:5050 for API calls (configured in .env)
-HTTPS: Enabled with certificate validation
-CORS: Restricted to localhost origins with credentials
-Database: Persistent SQL Server database with seeded data
+- Backend: Uses Azure SQL server (configured in appsettings.json)
+- Frontend: Uses http://localhost:5050 for API calls (configured in .env)
+- HTTPS: Enabled with certificate validation
+- CORS: Restricted to localhost origins with credentials
+- Database: Persistent SQL Server database with seeded data
 
 Docker Environment
 
-Backend: Uses Azure SQL server for deployment (configured via AZURE_SQL_CONNECTION environment variable)
-Frontend: Uses same configuration as local development
-HTTPS: Disabled in containers for compatibility
-CORS: Open for cross-origin requests
-Database: Lightweight SQLite with automatic schema creation
+- Backend: Uses Azure SQL server for deployment (configured via AZURE_SQL_CONNECTION environment variable)
+- Frontend: Uses same configuration as local development
+- HTTPS: Disabled in containers for compatibility
+- CORS: Open for cross-origin requests
+- Database: Lightweight SQLite with automatic schema creation
 
 Configuration File Locations
 ✅ Required Files:
 
 ```
-backend/
-└── appsettings.json          # Main configuration (REQUIRED)
-
-frontend/
-└── .env                      # Environment variables (REQUIRED)
+MealMate/                         # Docker environment variable
+├── .env
+├── backend/
+|    └── appsettings.json          # Main configuration (REQUIRED)
+|
+└──frontend/
+    └── .env                      # Environment variables (REQUIRED)
 
 ```
 
@@ -371,23 +393,34 @@ mealmate/
 └── README.md               # This file
 ```
 
-## Live Demo Video
-
-🎥 **[Demo Video Link]** - _5-minute walkthrough showcasing all features and advanced requirements_
-
-The video demonstrates:
-
-- Application overview and networking theme explanation
-- Theme switching functionality
-- Real-time chat system in action
-- Docker containerization demonstration
-- All basic and advanced requirements
-
 ## Live Deployment
 
-🌐 **Frontend**: [Your Frontend Deployment URL]
+🌐 **Frontend**: https://mealmate-1-ny79.onrender.com
 
-🔗 **Backend API**: [Your Backend Deployment URL]
+🔗 **Backend API**: https://mealmate-q4oj.onrender.com
+
+### ⚠️ Important Notes
+
+#### Backend Warm-up
+
+- First load may take 30-60 seconds due to Render's free tier cold start
+- The service automatically spins down after inactivity
+- Subsequent requests will be faster once warmed up
+
+#### Backend Interface
+
+- No web interface is expected as this is an API-only service
+- Accessing the root URL shows 404, which is normal behavior
+
+## Screen Shots
+
+### Desktop Experience
+
+![Desktop View](screenshots/desktop.png)
+
+### Mobile Responsive Design
+
+![Desktop View](screenshots/mobile.png)
 
 ## Future Development
 
