@@ -29,9 +29,12 @@ namespace backend.Services
 
         public string GenerateToken (User user)
         {
-            var jwtKey = _config["JwtSettings:Key"];
-            var jwtIssuer = _config["JwtSettings:Issuer"];
-            var jwtAudience = _config["JwtSettings:Audience"];
+                var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") 
+                            ?? _config["JwtSettings:Key"];
+                var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") 
+                            ?? _config["JwtSettings:Issuer"];
+                var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") 
+                             ?? _config["JwtSettings:Audience"];
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

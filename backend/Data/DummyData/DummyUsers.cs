@@ -12,7 +12,9 @@ namespace backend.Data.DummyData
                 {
                     Name = "sophiacarter01",
                     Email = "sophia.carter@gmail.com",
-                    PasswordHash = conifg["dummyPassword:user1"]?? throw new InvalidOperationException("Missing dummyPassword:user1 in config"),
+                    PasswordHash = Environment.GetEnvironmentVariable("DUMMY_PASSWORD_USER1")
+                                ?? conifg["dummyPassword:user1"]
+                                ?? throw new InvalidOperationException("Missing password for user1"),
                     University = "University of Auckland",
                     Major = "Computer Science",
                     Bio = "Hey there! I'm a senior CS student who loves exploring new restaurants and meeting fellow students.",
@@ -29,7 +31,9 @@ namespace backend.Data.DummyData
                 {
                     Name = "emma92",
                     Email = "emma.zhang@gmail.com",
-                    PasswordHash = conifg["dummyPassword:user2"]?? throw new InvalidOperationException("Missing dummyPassword:user2 in config"),
+                    PasswordHash = Environment.GetEnvironmentVariable("DUMMY_PASSWORD_USER2")
+                                ?? conifg["dummyPassword:user2"]
+                                ?? throw new InvalidOperationException("Missing password for user2"),
                     University = "Auckland University of Technology",
                     Major = "Computer Science",
                     Bio = "Love trying new cuisines and discussing tech over food! Always up for discovering hidden campus food gems.",
@@ -46,7 +50,9 @@ namespace backend.Data.DummyData
                 {
                     Name = "Marcus123",
                     Email = "marcus.johnson@gmail.com",
-                    PasswordHash = conifg["dummyPassword:user3"]?? throw new InvalidOperationException("Missing dummyPassword:user3 in config"),
+                    PasswordHash = Environment.GetEnvironmentVariable("DUMMY_PASSWORD_USER3")
+                                ?? conifg["dummyPassword:user3"]
+                                ?? throw new InvalidOperationException("Missing password for user3"),
                     University = "University of Auckland",
                     Major = "Design",
                     Bio = "Design student who loves good coffee and creative conversations.",
@@ -63,7 +69,9 @@ namespace backend.Data.DummyData
                 {
                     Name = "SophieC456",
                     Email = "sophie.chen@gmail.com",
-                    PasswordHash = conifg["dummyPassword:user4"]?? throw new InvalidOperationException("Missing dummyPassword:user4 in config"),
+                    PasswordHash = Environment.GetEnvironmentVariable("DUMMY_PASSWORD_USER4")
+                                ?? conifg["dummyPassword:user4"]
+                                ?? throw new InvalidOperationException("Missing password for user4"),
                     University = "Auckland University of Technology",
                     Major = "Medicine",
                     Bio = "Med student looking for quick lunch companions between study sessions.",
@@ -80,7 +88,9 @@ namespace backend.Data.DummyData
                 {
                     Name = "Alexkim77",
                     Email = "alex.kim@gmail.com",
-                    PasswordHash = conifg["dummyPassword:user5"]?? throw new InvalidOperationException("Missing dummyPassword:user5 in config"),
+                    PasswordHash = Environment.GetEnvironmentVariable("DUMMY_PASSWORD_USER5")
+                                ?? conifg["dummyPassword:user5"]
+                                ?? throw new InvalidOperationException("Missing password for user5"),
                     University = "University of Auckland",
                     Major = "Business",
                     Bio = "Business major who enjoys networking over good food.",
@@ -97,7 +107,9 @@ namespace backend.Data.DummyData
                 {
                     Name = "MayaP165",
                     Email = "maya.patel@gmail.com",
-                    PasswordHash = conifg["dummyPassword:user6"]?? throw new InvalidOperationException("Missing dummyPassword:user6 in config"),
+                    PasswordHash = Environment.GetEnvironmentVariable("DUMMY_PASSWORD_USER6")
+                                ?? conifg["dummyPassword:user6"]
+                                ?? throw new InvalidOperationException("Missing password for user6"),
                     University = "Auckland University of Technology",
                     Major = "Engineering",
                     Bio = "New to campus and looking to make friends!",
