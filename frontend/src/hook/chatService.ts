@@ -1,10 +1,14 @@
 import * as signalR from "@microsoft/signalr";
 import type { ChatMessage } from "../types";
 
+// ChatService handles SignalR WebSocket-based real-time messaging
 export class ChatService {
   private connection: signalR.HubConnection;
 
-  constructor(baseUrl: string = "http://localhost:5050") {
+  constructor(
+    baseUrl: string = import.meta.env.VITE_API_URL || "http://localhost:5050"
+  ) {
+    // Build SignalR connection with WebSocket transport and auto reconnect
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl(`${baseUrl}/chathub`, {
         skipNegotiation: true,
@@ -31,18 +35,18 @@ export class ChatService {
   }
 
   async connect(): Promise<void> {
-    // 檢查當前連接狀態，避免重複連接
     if (this.connection.state === signalR.HubConnectionState.Connected) {
       return;
     }
-    
+
     if (this.connection.state === signalR.HubConnectionState.Connecting) {
-      // 如果正在連接中，等待連接完成
       return new Promise((resolve, reject) => {
         const checkConnection = () => {
           if (this.connection.state === signalR.HubConnectionState.Connected) {
             resolve();
-          } else if (this.connection.state === signalR.HubConnectionState.Disconnected) {
+          } else if (
+            this.connection.state === signalR.HubConnectionState.Disconnected
+          ) {
             reject(new Error("Connection failed"));
           } else {
             setTimeout(checkConnection, 100);
@@ -65,7 +69,7 @@ export class ChatService {
     if (this.connection.state === signalR.HubConnectionState.Disconnected) {
       return;
     }
-    
+
     try {
       await this.connection.stop();
       console.log("SignalR: Disconnected");
@@ -76,9 +80,8 @@ export class ChatService {
 
   async joinRoom(roomId: number, userName: string): Promise<void> {
     try {
-      // 確保連接
       await this.connect();
-      
+
       console.log(`[SignalR] Joining room ${roomId} as ${userName}`);
       await this.connection.invoke("JoinRoom", roomId, userName);
     } catch (error) {
@@ -91,7 +94,7 @@ export class ChatService {
     if (this.connection.state !== signalR.HubConnectionState.Connected) {
       return;
     }
-    
+
     try {
       await this.connection.invoke("LeaveRoom", roomId, userName);
     } catch (error) {
@@ -107,7 +110,7 @@ export class ChatService {
     if (this.connection.state !== signalR.HubConnectionState.Connected) {
       throw new Error("Not connected to chat hub");
     }
-    
+
     try {
       await this.connection.invoke(
         "SendMessageToRoom",

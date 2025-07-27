@@ -14,7 +14,8 @@ function UserAvatar({
   size = "md",
 }: AvatarProps) {
   const isEmoji = !avatar.startsWith("/avatars");
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5050";
+  const baseUrl =
+    import.meta.env.VITE_IMAGE_BASE_URL || "http://localhost:5050";
   const avatarUrl = avatar.startsWith("/") ? `${baseUrl}${avatar}` : avatar;
   const statusDotColor = isOnline ? "bg-green-400" : "bg-red-400";
 
