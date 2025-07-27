@@ -18,7 +18,32 @@ builder.Services.AddControllers();
 
 builder.Services.AddSignalR();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    var azureConnection = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTION");
+    var dockerContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER");
+
+    if (!string.IsNullOrEmpty(azureConnection))
+    {
+        // Azure database
+        options.UseSqlServer(azureConnection);
+        Console.WriteLine("Using Azure SQL Database");
+    }
+    else if (dockerContainer == "true")
+    {
+        // Local Docker fallback
+        options.UseSqlite("Data Source=mealmate.db");
+        Console.WriteLine("Using SQLite in Docker");
+    }
+    else
+    {
+        // Local development
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+        Console.WriteLine("Using Local SQL Server");
+    }
+});
 
 // Register Repository services
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -53,10 +78,19 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+        if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+        {
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+        else
+        {
+            policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
     });
 });
 
@@ -70,7 +104,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != "true")
+{
+    app.UseHttpsRedirection();
+}
+
+
 
 app.UseStaticFiles();
 
@@ -85,6 +124,7 @@ using (var scope = app.Services.CreateScope())
     var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
     await context.Database.EnsureCreatedAsync();
+
     //await DataSeeder.SeedAsync(context, config);
 }
 
