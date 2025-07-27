@@ -141,7 +141,7 @@ The warm orange color scheme reinforces this networking theme - orange represent
     }
   },
   "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=MealMate;Trusted_Connection=true;MultipleActiveResultSets=true;TrustServerCertificate=true"
+    "DefaultConnection": "[Azure_SQL_Server_Link]"
   },
   "JwtSettings": {
     "Key": "[YOUR_JWT_SECRET_KEY_HERE]",
@@ -214,6 +214,7 @@ The frontend will be available at `http://localhost:5173`
 
 - Docker Desktop installed and running
 - Configuration files set up (see [Configuration Files Setup](#configuration-files-setup))
+- Demo avatar images in backend/wwwroot/avatars/ directory
 - **Alternative**: For local development without Docker, see [Local Development Setup](#local-development-setup)
 
 #### Quick Start with Docker Compose
@@ -295,7 +296,7 @@ npm test
 Local vs Docker Environment
 Local Development Environment
 
-Backend: Uses SQL Server LocalDB (configured in appsettings.json)
+Backend: Uses Azure SQL server (configured in appsettings.json)
 Frontend: Uses http://localhost:5050 for API calls (configured in .env)
 HTTPS: Enabled with certificate validation
 CORS: Restricted to localhost origins with credentials
@@ -303,7 +304,7 @@ Database: Persistent SQL Server database with seeded data
 
 Docker Environment
 
-Backend: Uses SQLite for simplified deployment (automatically configured)
+Backend: Uses Azure SQL server for deployment (configured via AZURE_SQL_CONNECTION environment variable)
 Frontend: Uses same configuration as local development
 HTTPS: Disabled in containers for compatibility
 CORS: Open for cross-origin requests
@@ -352,6 +353,8 @@ mealmate/
 │   ├── Repository/          # Data access layer
 │   ├── Services/            # Business logic
 │   ├── Hubs/                # SignalR hubs for real-time features
+│   ├── wwwroot/             # Static files directory
+│   │   └── avatars/         # User avatar images
 │   ├── Dockerfile           # Backend containerization
 │   └── Program.cs           # Application entry point
 ├── frontend/
