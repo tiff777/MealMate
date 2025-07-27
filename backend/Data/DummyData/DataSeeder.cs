@@ -8,6 +8,14 @@ namespace backend.Data.DummyData
         public static async Task SeedAsync(ApplicationDbContext context, IConfiguration configuration)
         {
             // Clear existing data
+            if (context.ChatMessages.Any())
+            {
+                context.ChatMessages.RemoveRange(context.ChatMessages);
+            }
+            if (context.ChatRooms.Any())
+            {
+                context.ChatRooms.RemoveRange(context.ChatRooms);
+            }
             if (context.MealParticipants.Any())
             {
                 context.MealParticipants.RemoveRange(context.MealParticipants);

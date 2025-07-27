@@ -36,7 +36,6 @@ namespace backend.Controller
         {
             try
             {
-                // 添加分頁支持以減少數據庫負載
                 var mealDtos = await _mealRepository.GetAllMealsWithDetailsAsync(page, pageSize);
                 var totalCount = await _mealRepository.GetTotalMealsCountAsync();
                 
@@ -279,6 +278,7 @@ namespace backend.Controller
             try
             {
                 var userId = this.GetCurrentUserId();
+                Console.WriteLine($"id: {userId}");
                 var myHostedMeals = await _mealRepository.GetHostedMealsAsync(userId, page, pageSize);
                 var totalCount = await _mealRepository.GetHostedMealsCountAsync(userId);
 
