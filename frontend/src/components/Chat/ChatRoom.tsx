@@ -148,7 +148,7 @@ const ChatRoom = ({
                       text-xs mt-1 
                       ${
                         isOwn
-                          ? "text-orange-100"
+                          ? "text-orange-900 dark:text-orange-200"
                           : "text-gray-500 dark:text-gray-400"
                       }
                     `}

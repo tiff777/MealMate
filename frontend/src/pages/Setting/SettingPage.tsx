@@ -42,15 +42,21 @@ function SettingsPage() {
         `/user/${user.uid}`,
         updatedFields
       );
-      if (!response) {
+
+      if (response.status !== 200) {
         showError("Cannot update user");
+        return;
       }
 
       const updateUserData = response.data.user;
+      console.log("Updated user data: ", updateUserData);
+
       updateUser(updateUserData);
       setFormData(updateUserData);
+      showSuccess("Profile updated successfully!");
     } catch (error) {
-      showError(`Error of updating user: ${user}`);
+      console.error("Update user error:", error);
+      showError(`Error updating user: ${error}`);
     }
   };
 

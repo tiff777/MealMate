@@ -76,7 +76,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 
       const response = await authClient.post("/auth/logout");
 
-      if (!response) {
+      if (response.status !== 200) {
         throw new Error("Logout failed");
       }
 
