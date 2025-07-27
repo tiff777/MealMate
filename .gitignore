@@ -56,7 +56,15 @@ nunit-*.xml
 # Environment Variables
 .env
 appsettings.Development.json
+appsettings.json
 
+# Docker files
+# Docker images
+*.tar
+# Docker volumes
+docker-volumes/
+# Docker logs
+docker-logs/
 
 # React
 .DS_Store
@@ -86,6 +94,3 @@ coverage/
 *.sln.docstates
 *.vsidx
 .vs/
-
-# image
-wwwroot/avatars/*
