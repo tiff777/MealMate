@@ -65,12 +65,12 @@ export async function validateName(
   }
 
   if (
-    !/^[a-zA-Z\s\u4e00-\u9fff\u0100-\u017f\u0180-\u024f\u1e00-\u1eff'-]+$/.test(
+    !/^[a-zA-Z0-9\s\u4e00-\u9fff\u0100-\u017f\u0180-\u024f\u1e00-\u1eff'-]+$/.test(
       trimmedName
     )
   ) {
     errors.push(
-      "Name can only contain letters, spaces, hyphens, and apostrophes"
+      "Name can only contain letters, numbers, spaces, hyphens, and apostrophes"
     );
   }
 
